@@ -1,0 +1,11 @@
+parameters:
+    image.handler.class: LogbookREST\ImageBundle\Handler\ImageHandler
+    image.thumbnail.handler.class: LogbookREST\ImageBundle\Handler\ImageThumbnailHandler
+
+services:
+    image.handler:
+        class: %image.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory]
+    image.thumbnail.handler:
+        class: %image.thumbnail.handler.class%
+        arguments: [@doctrine.orm.entity_manager]    

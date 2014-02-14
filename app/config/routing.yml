@@ -1,0 +1,14 @@
+entry:
+    resource: "@EntryBundle/Resources/config/routing.yml"
+    prefix:   /
+
+user:
+    resource: "@UserBundle/Resources/config/routing.yml"
+    prefix:   / 
+    
+o_auth:
+    resource: "@OAuthBundle/Resources/config/routing.yml"
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc

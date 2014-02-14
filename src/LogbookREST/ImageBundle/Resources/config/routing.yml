@@ -1,0 +1,3 @@
+images:
+    type: rest
+    resource: "LogbookREST\ImageBundle\Controller\ImageController"

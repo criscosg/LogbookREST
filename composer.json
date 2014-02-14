@@ -18,7 +18,14 @@
         "sensio/distribution-bundle": "2.3.*",
         "sensio/framework-extra-bundle": "2.3.*",
         "sensio/generator-bundle": "2.3.*",
-        "incenteev/composer-parameter-handler": "~2.0"
+        "incenteev/composer-parameter-handler": "~2.0",
+        "friendsofsymfony/rest-bundle": "1.1.*",
+        "jms/serializer-bundle": "0.*",
+        "beberlei/DoctrineExtensions": "dev-master",
+        "stof/doctrine-extensions-bundle": "~1.1@dev",
+        "raulfraile/ladybug-bundle": "v0.7",
+        "nelmio/api-doc-bundle": "@dev",
+        "friendsofsymfony/oauth-server-bundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [
