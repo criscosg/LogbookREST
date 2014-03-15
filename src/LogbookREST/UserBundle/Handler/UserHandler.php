@@ -1,6 +1,8 @@
 <?php
 
 namespace LogbookREST\UserBundle\Handler;
+use Symfony\Component\Security\Core\Encoder\EncoderFactory;
+
 use LogbookREST\UserBundle\Handler\UserHandlerInterface;
 use Doctrine\ORM\EntityManager;
 use LogbookREST\UserBundle\Entity\AdminUser;
@@ -12,11 +14,13 @@ class UserHandler
 {
     private $em;
     private $factory;
+    private $encoderFactory;
     
-    public function __construct(EntityManager $em, FormFactoryInterface $formFactory)
+    public function __construct(EntityManager $em, FormFactoryInterface $formFactory, EncoderFactory $encoderFactory)
     {
         $this->em = $em;
         $this->factory = $formFactory;
+        $this->encoderFactory = $encoderFactory;
     }
 
     public function get($id)
@@ -98,7 +102,14 @@ class UserHandler
         $form = $this->factory->create(new AdminUserType(), $entity, array('method' => $method));
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $user = $form->getData();
+            if ($method!='POST') {
+                $req = $request->request->get('api_user');
+                if($req['password']){
+                    $encoder = $this->encoderFactory->getEncoder($entity);
+                    $passwordEncoded = $encoder->encodePassword($entity->getPassword(), $entity->getSalt());
+                    $entity->setPassword($passwordEncoded);
+                }
+            }
             $this->em->persist($entity);
             $this->em->flush($entity);
 

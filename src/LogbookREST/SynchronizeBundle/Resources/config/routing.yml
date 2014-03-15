@@ -1,0 +1,3 @@
+synchronize:
+    type: rest
+    resource: "LogbookREST\SynchronizeBundle\Controller\SynchronizeController"

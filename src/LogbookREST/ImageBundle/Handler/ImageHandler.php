@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\BrowserKit\Request;
 use LogbookREST\ImageBundle\Form\Type\ImageType;
 use LogbookREST\ImageBundle\Entity\Image;
-use LogbookREST\ImageBundle\Entity\ImageHorse;
+use LogbookREST\ImageBundle\Entity\ImageEntry;
 
 class ImageHandler
 {
@@ -31,10 +31,10 @@ class ImageHandler
      *
      * @return array
      */
-    public function all($limit = 20, $offset = 0, $orderby = null, $horse)
+    public function all($limit = 20, $offset = 0, $orderby = null, $entry)
     {
         $images=array();
-        foreach ($this->em->getRepository('ImageBundle:ImageHorse')->findBy(array('horse'=>$horse), $orderby, $limit, $offset) as $image) {
+        foreach ($this->em->getRepository('ImageBundle:ImageEntry')->findBy(array('entry'=>$entry), $orderby, $limit, $offset) as $image) {
             $images[]=$image->getWebFilePath();
         }
 
@@ -50,7 +50,7 @@ class ImageHandler
      */
     public function post($request)
     {
-        $image = new ImageHorse();
+        $image = new ImageEntry();
         $this->em->persist($image);
         $this->em->flush();
 

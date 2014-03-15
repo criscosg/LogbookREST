@@ -1,6 +1,8 @@
 <?php
 
 namespace LogbookREST\UserBundle\Handler;
+use Symfony\Component\Security\Core\Encoder\EncoderFactory;
+
 use LogbookREST\UserBundle\Form\ApiUserType;
 
 use LogbookREST\UserBundle\Handler\ApiUserHandlerInterface;
@@ -14,11 +16,13 @@ class ApiUserHandler
 {
     private $em;
     private $factory;
+    private $encoderFactory;
     
-    public function __construct(EntityManager $em, FormFactoryInterface $formFactory)
+    public function __construct(EntityManager $em, FormFactoryInterface $formFactory, EncoderFactory $encoderFactory)
     {
         $this->em = $em;
         $this->factory = $formFactory;
+        $this->encoderFactory = $encoderFactory;
     }
 
     public function get($id)
@@ -100,7 +104,14 @@ class ApiUserHandler
         $form = $this->factory->create(new ApiUserType(), $user, array('method' => $method));
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $user = $form->getData();
+            if ($method!='POST') {
+                $req = $request->request->get('api_user');
+                if($req['password']){
+                    $encoder = $this->encoderFactory->getEncoder($user);
+                    $passwordEncoded = $encoder->encodePassword($user->getPassword(), $user->getSalt());
+                    $user->setPassword($passwordEncoded);
+                }
+            }
             $this->em->persist($user);
             $this->em->flush($user);
 

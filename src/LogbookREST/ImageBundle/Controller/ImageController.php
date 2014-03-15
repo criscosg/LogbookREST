@@ -19,7 +19,7 @@ class ImageController extends FOSRestController
     /**
      * @QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing pages.")
      * @QueryParam(name="limit", requirements="\d+", nullable=true, default="20", description="How many pages to return.")
-     * @QueryParam(name="horse", requirements="\d+", nullable=true, description="The horse.")
+     * @QueryParam(name="entry", requirements="\d+", nullable=true, description="The entry.")
      *
      * @View()
      *
@@ -33,9 +33,9 @@ class ImageController extends FOSRestController
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
-        $horse = $paramFetcher->get('horse');
+        $entry = $paramFetcher->get('entry');
 
-        return $this->container->get('image.handler')->all($limit, $offset, null, $horse);
+        return $this->container->get('image.handler')->all($limit, $offset, null, $entry);
     }
 
     /**
@@ -176,7 +176,7 @@ class ImageController extends FOSRestController
     /**
      * @QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing pages.")
      * @QueryParam(name="limit", requirements="\d+", nullable=true, default="20", description="How many pages to return.")
-     * @QueryParam(name="horse", requirements="\d+", nullable=true, description="The horse.")
+     * @QueryParam(name="entry", requirements="\d+", nullable=true, description="The entry.")
      *
      * @View()
      *
@@ -190,9 +190,9 @@ class ImageController extends FOSRestController
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
-        $horse = $paramFetcher->get('horse');
+        $entry = $paramFetcher->get('entry');
     
-        return $this->container->get('image.thumbnail.handler')->all($limit, $offset, null, $horse);
+        return $this->container->get('image.thumbnail.handler')->all($limit, $offset, null, $entry);
     }
 
     /**

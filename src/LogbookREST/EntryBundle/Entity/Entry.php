@@ -2,7 +2,7 @@
 namespace LogbookREST\EntryBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use LogbookREST\UserBundle\Entity\ApiUser;
+use LogbookREST\LogBundle\Entity\Log;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
@@ -10,7 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="EntryRepository")
  * @ExclusionPolicy("all")
  */
 
@@ -43,10 +43,10 @@ class Entry
     protected $text;
 
     /**
-     * @ORM\ManyToOne(targetEntity="LogbookREST\UserBundle\Entity\ApiUser", inversedBy="entries")
+     * @ORM\ManyToOne(targetEntity="LogbookREST\LogBundle\Entity\Log", inversedBy="entries")
      * @Expose
      */
-    private $user;
+    private $log;
     
     /**
      * @ORM\ManyToMany(targetEntity="LogbookREST\EntryBundle\Entity\Tag", mappedBy="entries")
@@ -117,14 +117,14 @@ class Entry
         return $this->name;
     }
 
-    public function getUser()
+    public function getLog()
     {
-        return $this->user;
+        return $this->log;
     }
     
-    public function setUser(ApiUser $user)
+    public function setLog(Log $log)
     {
-        $this->user = $user;
+        $this->log = $log;
     }
     
     public function getTags()

@@ -1,0 +1,11 @@
+parameters:
+    synchronize.class: LogbookREST\SynchronizeBundle\Synchronize\Synchronize
+    synchronize.images.class: LogbookREST\SynchronizeBundle\Synchronize\SynchronizeImages
+
+services:
+    synchronize:
+        class: %synchronize.class%
+        arguments: [@doctrine.orm.entity_manager, @process.dental.extra]
+    synchronize.images:
+        class: %synchronize.images.class%
+        arguments: [@doctrine.orm.entity_manager]    

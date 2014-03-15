@@ -12,7 +12,7 @@ use LogbookREST\EntryBundle\Entity\Entry;
 
 /**
  * @ORM\Table()
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="ImageEntryRepository")
  * @ExclusionPolicy("all")
  */
 class ImageEntry extends Image

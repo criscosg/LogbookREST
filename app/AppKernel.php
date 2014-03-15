@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
             new LogbookREST\EntryBundle\EntryBundle(),
+            new LogbookREST\LogBundle\LogBundle(),
             new LogbookREST\ImageBundle\ImageBundle(),
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
             new LogbookREST\OAuthBundle\OAuthBundle(),    

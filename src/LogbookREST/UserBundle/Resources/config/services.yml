@@ -10,10 +10,10 @@ parameters:
 services:
     user.handler:
         class: %user.handler.class%
-        arguments: [@doctrine.orm.entity_manager, @form.factory]
+        arguments: [@doctrine.orm.entity_manager, @form.factory, @security.encoder_factory]
     api.user.handler:
         class: %api.user.handler.class%
-        arguments: [@doctrine.orm.entity_manager, @form.factory]    
+        arguments: [@doctrine.orm.entity_manager, @form.factory, @security.encoder_factory]    
     user.create_salt_listener:
         class: %user.create_salt.class%
         arguments: [@security.encoder_factory]

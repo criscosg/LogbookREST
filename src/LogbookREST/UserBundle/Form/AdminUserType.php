@@ -12,7 +12,7 @@ class AdminUserType extends AbstractType
         $builder->add('email', 'email', array('required'=>false))
             ->add('password', 'password', array('required'=>false))
             ->add('name', 'text', array('required'=>false))
-            ->add('lastName', 'text', array('required'=>false));
+            ->add('last_name', 'text', array('required'=>false));
     }
 
     public function getName()

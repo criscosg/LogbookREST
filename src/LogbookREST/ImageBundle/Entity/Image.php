@@ -21,7 +21,7 @@ use JMS\Serializer\Annotation\Expose;
 abstract class Image
 {
     const WEB_PATH = 'bundles/frontend/img/';
-    const UPLOAD_PATH = '/var/www/LogbookREST/web/uploads/';
+    const UPLOAD_PATH = '/var/www/logbookrest/web/uploads/';
     const ERROR_MESSAGE = "Ha ocurrido un error. Asegúrate de subir imágenes JPG o PNG y con menos de 2 megas.";
     const INFO_MESSAGE = "El formato de las imágenes ha de ser JPG o PNG y deben pesar menos de 2 megas.";
     const AJAX_LOADER = 'bundles/frontend/img/ajax-loader.gif';

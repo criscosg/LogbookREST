@@ -1,0 +1,3 @@
+logs:
+    type: rest
+    resource: "LogbookREST\\LogBundle\\Controller\\LogController"

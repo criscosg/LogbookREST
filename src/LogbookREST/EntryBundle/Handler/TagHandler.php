@@ -30,9 +30,9 @@ class TagHandler
      *
      * @return array
      */
-    public function all($limit = 20, $offset = 0, $orderby = null, $horse)
+    public function all($limit = 20, $offset = 0, $orderby = null)
     {
-        return $this->em->getRepository('EntryBundle:Tag')->findBy(array('horse' => $horse), $orderby, $limit, $offset);
+        return $this->em->getRepository('EntryBundle:Tag')->findBy(array(), $orderby, $limit, $offset);
     }
 
     /**
@@ -42,10 +42,10 @@ class TagHandler
      *
      * @return Tag
      */
-    public function post($horse, $request)
+    public function post($entry, $request)
     {
         $tag = new Tag();
-        $tag->setHorse($horse);
+        $tag->addEntry($entry);
         return $this->processForm($tag, $request, 'POST', $horse);
     }
 
@@ -55,9 +55,9 @@ class TagHandler
      *
      * @return Tag
      */
-    public function put($horse, Tag $tag, $request)
+    public function put($entry, Tag $tag, $request)
     {
-        return $this->processForm($tag, $request, "PUT", $horse);
+        return $this->processForm($tag, $request, "PUT", $entry);
     }
 
     /**
@@ -66,9 +66,9 @@ class TagHandler
      *
      * @return Tag
      */
-    public function patch(Tag $tag, $request, $horse)
+    public function patch(Tag $tag, $request, $entry)
     {
-        return $this->processForm($tag, $request, 'PATCH', $horse);
+        return $this->processForm($tag, $request, 'PATCH', $entry);
     }
 
     /**
@@ -94,15 +94,16 @@ class TagHandler
      *
      * @throws \Exception
      */
-    private function processForm(Tag $tag, $request, $method = "PUT", $horse)
+    private function processForm(Tag $tag, $request, $method = "PUT", $entry)
     {
         $form = $this->factory->create(new TagType(), $tag, array('method' => $method));
         $form->handleRequest($request);
         if (!$form->getErrors()) {
             $tag = $form->getData();
-            $tag->setHorse($horse);
+            $entry->addTag($tag);
             $this->em->persist($tag);
-            $this->em->flush($tag);
+            $this->em->persist($entry);
+            $this->em->flush();
 
             return $tag;
         }

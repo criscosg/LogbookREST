@@ -11,7 +11,7 @@ class EntryType extends AbstractType
     {
         $builder->add('name', 'text', array('required'=>true))
                 ->add('text', 'text', array('required'=>true))
-                ->add('user', 'entity', array('class'=>'UserBundle:ApiUser', 'required' => false));;
+                ->add('log', 'entity', array('class'=>'LogBundle:Log', 'required' => false));;
     }
 
     public function getName()

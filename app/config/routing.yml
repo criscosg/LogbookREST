@@ -4,7 +4,15 @@ entry:
 
 user:
     resource: "@UserBundle/Resources/config/routing.yml"
-    prefix:   / 
+    prefix:   /
+    
+log:
+    resource: "@LogBundle/Resources/config/routing.yml"
+    prefix:   /    
+    
+image:
+    resource: "@ImageBundle/Resources/config/routing.yml"
+    prefix:   /
     
 o_auth:
     resource: "@OAuthBundle/Resources/config/routing.yml"

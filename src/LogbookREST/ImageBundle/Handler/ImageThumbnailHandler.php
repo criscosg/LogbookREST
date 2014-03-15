@@ -28,10 +28,10 @@ class ImageThumbnailHandler
      *
      * @return array
      */
-    public function all($limit = 20, $offset = 0, $orderby = null, $horse)
+    public function all($limit = 20, $offset = 0, $orderby = null, $entry)
     {
         $images=array();
-        foreach ($this->em->getRepository('ImageBundle:ImageHorse')->findBy(array('horse'=>$horse), $orderby, $limit, $offset) as $image) {
+        foreach ($this->em->getRepository('ImageBundle:ImageEntry')->findBy(array('entry'=>$entry), $orderby, $limit, $offset) as $image) {
             $thumb=$image->getImageThumbnail();
             if ($thumb) {
                 $images[]=$thumb->getWebFilePath();

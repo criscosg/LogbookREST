@@ -28,13 +28,13 @@ class TagController extends FOSRestController
      *
      * @return array
      */
-    public function getHistoriesAction($horse, Request $request, ParamFetcherInterface $paramFetcher)
+    public function getHistoriesAction($entry, Request $request, ParamFetcherInterface $paramFetcher)
     {
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
 
-        return $this->container->get('tag.handler')->all($limit, $offset,null,$horse);
+        return $this->container->get('tag.handler')->all($limit, $offset,null,$entry);
     }
 
     /**
@@ -43,7 +43,7 @@ class TagController extends FOSRestController
      * @View()
      * @return array
      */
-    public function getTagAction($horse, $id)
+    public function getTagAction($entry, $id)
     {
         $tag = $this->getOr404($id);
 
@@ -57,17 +57,17 @@ class TagController extends FOSRestController
      *
      * @return FormTypeInterface|View
      */
-    public function postTagAction($horse, Request $request)
+    public function postTagAction($entry, Request $request)
     {
         try {
-            $horseObj = $this->get('horse.handler')->get($horse);
-            $newTag = $this->get('tag.handler')->post($horseObj, $request);
+            $entryObj = $this->get('entry.handler')->get($entry);
+            $newTag = $this->get('tag.handler')->post($entryObj, $request);
             $routeOptions = array(
-                'id' => $horse,
+                'id' => $entry,
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('get_horse', $routeOptions, Codes::HTTP_CREATED);
+            return $this->routeRedirectView('get_entry', $routeOptions, Codes::HTTP_CREATED);
         } catch (InvalidFormException $exception) {
 
             return $exception->getForm();
@@ -96,17 +96,17 @@ class TagController extends FOSRestController
      *
      * @throws NotFoundHttpException when Tag not exist
      */
-    public function putTagAction($horse, Request $request, $id)
+    public function putTagAction($entry, Request $request, $id)
     {
         try {
             if (!($tag = $this->container->get('tag.handler')->get($id))) {
-                $horseObj = $this->get('horse.handler')->get($horse);
+                $entryObj = $this->get('entry.handler')->get($entry);
                 $statusCode = Codes::HTTP_CREATED;
-                $tag = $this->container->get('tag.handler')->post($horseObj, $request);
+                $tag = $this->container->get('tag.handler')->post($entryObj, $request);
             } else {
                 $statusCode = Codes::HTTP_NO_CONTENT;
-                $horseObj = $this->get('horse.handler')->get($horse);
-                $tag = $this->container->get('tag.handler')->put($horseObj, $tag, $request);
+                $entryObj = $this->get('entry.handler')->get($entry);
+                $tag = $this->container->get('tag.handler')->put($entryObj, $tag, $request);
             }
             $response = new Response('Das Pferd wurde erfolgreich gespeichert', $statusCode);
 
@@ -128,13 +128,13 @@ class TagController extends FOSRestController
      *
      * @throws NotFoundHttpException when Tag not exist
      */
-    public function patchTagAction($horse, Request $request, $id)
+    public function patchTagAction($entry, Request $request, $id)
     {
         try {
             if (($tag = $this->container->get('tag.handler')->get($id))) {
                 $statusCode = Codes::HTTP_ACCEPTED;
-                $horseObj = $this->get('horse.handler')->get($horse);
-                $tag = $this->container->get('tag.handler')->patch($tag, $request, $horseObj);
+                $entryObj = $this->get('entry.handler')->get($entry);
+                $tag = $this->container->get('tag.handler')->patch($tag, $request, $entryObj);
             } else {
                 $statusCode = Codes::HTTP_NO_CONTENT;
             }
@@ -158,7 +158,7 @@ class TagController extends FOSRestController
      *
      * @throws NotFoundHttpException when tag not exist
      */
-    public function deleteTagAction($horse, Request $request, $id)
+    public function deleteTagAction($entry, Request $request, $id)
     {
         if (($tag = $this->container->get('tag.handler')->get($id))) {
             $statusCode = Codes::HTTP_ACCEPTED;

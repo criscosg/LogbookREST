@@ -2,7 +2,7 @@
 namespace LogbookREST\UserBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 
-use LogbookREST\EntryBundle\Entity\Entry;
+use LogbookREST\LogBundle\Entity\Log;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,28 +16,28 @@ class ApiUser extends User
 {
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="LogbookREST\EntryBundle\Entity\Entry", mappedBy="user", cascade={"persist", "merge", "remove"})
+     * @ORM\OneToMany(targetEntity="LogbookREST\LogBundle\Entity\Log", mappedBy="user", cascade={"persist", "merge", "remove"})
      * @Expose
      */
-    private $entries;
+    private $logs;
     
     public function __construct()
     {
-        $this->entries = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     public function getEntries()
     {
-        return $this->entries;
+        return $this->logs;
     }
     
-    public function setEntries(ArrayCollection $entries)
+    public function setEntries(ArrayCollection $logs)
     {
-        $this->entries = $entries;
+        $this->logs = $logs;
     }
     
-    public function addEntry(Entry $entry)
+    public function addLog(Log $log)
     {
-        $this->entries->add($entry);
+        $this->logs->add($log);
     }
 }
