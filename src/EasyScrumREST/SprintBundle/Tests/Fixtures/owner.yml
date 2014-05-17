@@ -1,0 +1,12 @@
+EasyScrumREST\OwnerBundle\Entity\Owner:
+    created: "__date__2013-02-23"
+    modified: "__date__2013-02-23"
+    name: 'Owner_test'
+    lastName: 'owner_last_test'
+    email: 'test@test.com'
+    address: 'Berlin'
+    phone: '123456789'
+    mobile: '123456789'
+    comments: null
+    company: 'VeterinaryBundle:Company__id__1'
+

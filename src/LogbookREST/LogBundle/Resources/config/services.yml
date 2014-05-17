@@ -1,7 +1,0 @@
-parameters:
-    log.handler.class: LogbookREST\LogBundle\Handler\LogHandler
-
-services:
-    log.handler:
-        class: %log.handler.class%
-        arguments: [@doctrine.orm.entity_manager, @form.factory]

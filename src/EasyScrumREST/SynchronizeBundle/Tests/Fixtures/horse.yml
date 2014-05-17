@@ -1,0 +1,9 @@
+EasyScrumREST\HorseBundle\Entity\Horse:
+    created: "__date__2013-02-23"
+    name: 'Horse_test'
+    owner: 'OwnerBundle:Owner__id__1'
+    sex: null
+    comment: null
+    birthdate: "__date__2013-02-23"
+    salt: '123'
+

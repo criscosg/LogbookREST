@@ -120,10 +120,10 @@ stof_doctrine_extensions:
             
 fos_oauth_server:
     db_driver: orm
-    client_class:        LogbookREST\OAuthBundle\Entity\Client
-    access_token_class:  LogbookREST\OAuthBundle\Entity\AccessToken
-    refresh_token_class: LogbookREST\OAuthBundle\Entity\RefreshToken
-    auth_code_class:     LogbookREST\OAuthBundle\Entity\AuthCode
+    client_class:        EasyScrumREST\OAuthBundle\Entity\Client
+    access_token_class:  EasyScrumREST\OAuthBundle\Entity\AccessToken
+    refresh_token_class: EasyScrumREST\OAuthBundle\Entity\RefreshToken
+    auth_code_class:     EasyScrumREST\OAuthBundle\Entity\AuthCode
     service:
         user_provider: user.provider
         options:

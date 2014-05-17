@@ -1,18 +1,14 @@
-entry:
-    resource: "@EntryBundle/Resources/config/routing.yml"
+task:
+    resource: "@TaskBundle/Resources/config/routing.yml"
     prefix:   /
 
 user:
     resource: "@UserBundle/Resources/config/routing.yml"
     prefix:   /
     
-log:
-    resource: "@LogBundle/Resources/config/routing.yml"
+sprint:
+    resource: "@SprintBundle/Resources/config/routing.yml"
     prefix:   /    
-    
-image:
-    resource: "@ImageBundle/Resources/config/routing.yml"
-    prefix:   /
     
 o_auth:
     resource: "@OAuthBundle/Resources/config/routing.yml"

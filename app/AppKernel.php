@@ -16,18 +16,17 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new LogbookREST\UserBundle\UserBundle(),
-            new LogbookREST\TestBundle\TestBundle(),
+            new EasyScrumREST\UserBundle\UserBundle(),
+            new EasyScrumREST\TestBundle\TestBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new FOS\RestBundle\FOSRestBundle(),
             new RaulFraile\Bundle\LadybugBundle\RaulFraileLadybugBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
-            new LogbookREST\EntryBundle\EntryBundle(),
-            new LogbookREST\LogBundle\LogBundle(),
-            new LogbookREST\ImageBundle\ImageBundle(),
+            new EasyScrumREST\TaskBundle\TaskBundle(),
+            new EasyScrumREST\SprintBundle\SprintBundle(),
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
-            new LogbookREST\OAuthBundle\OAuthBundle(),    
+            new EasyScrumREST\OAuthBundle\OAuthBundle(),    
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

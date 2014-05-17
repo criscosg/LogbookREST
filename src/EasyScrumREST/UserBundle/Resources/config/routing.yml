@@ -1,0 +1,11 @@
+users:
+    type: rest
+    resource: "EasyScrumREST\UserBundle\Controller\UserController"
+    
+api_users:
+    type: rest
+    resource: "EasyScrumREST\UserBundle\Controller\ApiUserController"
+    
+companies:
+    type: rest
+    resource: "EasyScrumREST\UserBundle\Controller\CompanyController"    

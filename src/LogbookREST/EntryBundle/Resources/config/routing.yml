@@ -1,3 +1,0 @@
-entries:
-    type: rest
-    resource: "LogbookREST\EntryBundle\Controller\EntryController"    

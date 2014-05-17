@@ -1,7 +1,0 @@
-users:
-    type: rest
-    resource: "LogbookREST\UserBundle\Controller\UserController"
-    
-api_users:
-    type: rest
-    resource: "LogbookREST\UserBundle\Controller\ApiUserController"    

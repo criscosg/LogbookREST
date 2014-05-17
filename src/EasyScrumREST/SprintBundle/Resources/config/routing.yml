@@ -1,0 +1,3 @@
+sprints:
+    type: rest
+    resource: "EasyScrumREST\\SprintBundle\\Controller\\SprintController"

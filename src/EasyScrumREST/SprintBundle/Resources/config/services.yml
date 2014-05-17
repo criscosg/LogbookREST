@@ -1,0 +1,7 @@
+parameters:
+    sprint.handler.class: EasyScrumREST\SprintBundle\Handler\SprintHandler
+
+services:
+    sprint.handler:
+        class: %sprint.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory]

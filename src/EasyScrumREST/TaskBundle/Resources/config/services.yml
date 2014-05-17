@@ -1,0 +1,11 @@
+parameters:
+    task.handler.class: EasyScrumREST\TaskBundle\Handler\TaskHandler
+    tag.handler.class: EasyScrumREST\TaskBundle\Handler\TagHandler
+services:
+    task.handler:
+        class: %task.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory]   
+
+    tag.handler:
+          class: %tag.handler.class%
+          arguments: [@doctrine.orm.entity_manager, @form.factory]

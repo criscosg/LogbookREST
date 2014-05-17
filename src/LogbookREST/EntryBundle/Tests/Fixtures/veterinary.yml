@@ -1,8 +1,0 @@
-LogbookREST\EntryBundle\Entity\Entry:
-    email: "jiminy@cricket.com"
-    password: "MNVcqP/TlOHsEHQ8snI1MWDAnSleMHHMrJCnnVGBfPVymDAyORxCv3R0JQ3ymQ5OF1jung5MNlPzeTr0Szt1fw=="
-    salt: "657bc0f28b00b2e0ebe9f968fe26b9db"
-    created: "__date__2013-02-23"
-    name: 'Pepe'
-    lastName: 'Grillo'
-    clinic: EntryBundle:Clinic__id__1

@@ -1,0 +1,39 @@
+parameters:
+    user.handler.class: EasyScrumREST\UserBundle\Handler\UserHandler
+    api.user.handler.class: EasyScrumREST\UserBundle\Handler\ApiUserHandler
+    user.create_salt.class: EasyScrumREST\UserBundle\EventListener\CreateUserSaltEventSubscriber
+    user.class: EasyScrumREST\UserBundle\Entity\User
+    user.provider.class: EasyScrumREST\UserBundle\Provider\UserProvider
+    user.repository.class: EasyScrumREST\UserBundle\Entity\UserRepository
+    company.handler.class: IHorseREST\VeterinaryBundle\Handler\CompanyHandler
+    
+
+services:
+    user.handler:
+        class: %user.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory, @security.encoder_factory]
+    api.user.handler:
+        class: %api.user.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory, @security.encoder_factory]    
+    user.create_salt_listener:
+        class: %user.create_salt.class%
+        arguments: [@security.encoder_factory]
+        tags:
+            - { name: doctrine.event_subscriber }
+    user.manager:
+        class:            Doctrine\ORM\EntityManager
+        factory_service:  doctrine
+        factory_method:   getManagerForClass
+        arguments: [%user.class%]        
+    user.repository:
+        class: %user.repository.class% 
+        factory_service: user.manager
+        factory_method: getRepository
+        arguments: [%user.class%]
+    user.provider:
+        class: %user.provider.class%
+        arguments: [@user.repository]
+    company.handler:
+        class: %company.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory]    
+        

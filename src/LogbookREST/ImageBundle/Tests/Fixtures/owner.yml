@@ -1,7 +1,0 @@
-LogbookREST\OwnerBundle\Entity\Owner:
-    created: "__date__2013-02-23"
-    name: 'Owner_test'
-    lastName: 'owner_last_test'
-    email: 'test@test.com'
-    city: 'Berlin'
-

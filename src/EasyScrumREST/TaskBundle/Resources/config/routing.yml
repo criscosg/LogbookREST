@@ -1,0 +1,3 @@
+tasks:
+    type: rest
+    resource: "EasyScrumREST\TaskBundle\Controller\TaskController"    

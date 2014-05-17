@@ -1,0 +1,9 @@
+EasyScrumREST\UserBundle\Entity\AdminUser:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+        email:
+            expose: true
+        created:
+            exposed: true

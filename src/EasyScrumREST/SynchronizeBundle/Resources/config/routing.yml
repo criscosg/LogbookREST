@@ -1,0 +1,3 @@
+synchronize:
+    type: rest
+    resource: "EasyScrumREST\SynchronizeBundle\Controller\SynchronizeController"
