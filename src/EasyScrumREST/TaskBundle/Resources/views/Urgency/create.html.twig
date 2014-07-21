@@ -1,0 +1,75 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+{%  set edit = "Edit urgency"|trans %}
+{%  set create = "Creation of new urgency"|trans %}
+
+{% block title_section %}
+    {% if edition is defined %}
+        {{ edit }}
+    {% else %}
+        {{ create }}
+    {% endif %}
+
+{% endblock %}
+
+{% block breadcrumb %}
+    {% if edition is defined %}
+        {% set crumbs = {'Sprints':path('sprints_list'), 'planification':path('sprint_planification', {id:sprint}), (urgency.title): ''} %}
+    {% else %}
+        {% set crumbs = {'Sprints':path('sprints_list'), 'planification':path('sprint_planification', {id:sprint}), 'create':''} %}
+    {% endif %}
+
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-pencil"></i>
+            </span>
+            {% if edition is defined %}
+                <h5>{{ edit }}</h5>
+            {% else %}
+                <h5>{{ create }}</h5>
+            {% endif %}
+        </div>
+        <div class="widget-content nopadding">
+            <form class="form-horizontal" id="form-create-item" role="form"
+                  action="{% if edition is defined %}{{ path('edit_normal_urgency',{'id':urgency.id}) }} {% else %} {{ path('new_normal_urgency', {'id':sprint}) }} {% endif %}"
+                  method="post" {% if edition is defined %}{{ form_enctype(form) }} {% endif %} xmlns="http://www.w3.org/1999/html">
+
+                <div class="form-group">
+                    <label id="label_name" for="urgency_name" class="col-sm-3 control-label log-active is-public"><span class="red">*</span> {{ "Title" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.title, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="label_description" for="urgency_description" class="col-sm-3 control-label user-active">{{ "Description" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.description, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+
+                {{ form_rest(form) }}
+                <div class="form-actions">
+                    <button id="register" type="submit" class="btn btn-large btn-primary">
+                        {{ "Save"|trans }}
+                    </button>
+                    <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
+                    <div class="help-block mt10">
+                        <span class="red">*</span> {{"Mandatory fields" | trans }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

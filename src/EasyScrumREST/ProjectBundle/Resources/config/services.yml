@@ -1,0 +1,7 @@
+parameters:
+    project.handler.class: EasyScrumREST\ProjectBundle\Handler\ProjectHandler
+
+services:
+    project.handler:
+        class: %project.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory]

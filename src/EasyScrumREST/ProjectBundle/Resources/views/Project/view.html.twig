@@ -1,0 +1,327 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{ "Sprint" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Sprints':path('sprints_list'), (sprint.title): ''} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {% set params = {'title':'Introduce time spent on this task', 'text':'<div class="hours"></div>', 'btn-close':false} %}
+    {{ makeModal('modalHours', params) }}
+    {% set params = {'title':'Introduce time spent on this urgency', 'text':'<div class="hours-urgency"></div>', 'btn-close':false} %}
+    {{ makeModal('modalUrgencyHours', params) }}
+
+    {% if sprint %}
+
+        <div class="row">
+        {% if is_granted('ROLE_SCRUM_MASTER') %}
+            <a title="Finalize" href="{{ path('sprint_finalize', { 'id': sprint.id }) }}" class="btn btn-primary btn-s">
+               {{"Finalize Sprint" | trans}}
+            </a>
+        
+            <a title="Delete" href="{{ path('delete_normal_sprint', { 'id': sprint.id }) }}" class="btn btn-danger btn-s">
+                <i class="fa fa-trash-o"></i> {{"Delete" | trans}}
+            </a>
+        {% endif %}    
+        </div>
+
+        <div class="widget-box">
+            <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-th-list"></i>
+            </span>
+                <h5>{{ "Sprint: " ~ sprint.title|trans }}</h5>
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table table-bordered table-striped table-hover">
+                    <tbody>
+                        <tr>
+                            <td style="width:20%;">{{ "Description"|trans }}</td>
+                            <td>{% if sprint.description is defined %}{{ sprint.description }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "From - To"|trans }}</td>
+                            <td>{% if sprint.fromDate is not empty %}{{ sprint.fromDate |date('d/m/Y') }} - {{ sprint.toDate |date('d/m/Y') }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "Hours planified"|trans }}</td>
+                            <td>{% if sprint.hoursPlanified is not empty %}{{ sprint.hoursPlanified }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "Hours spent / Remaining hours "|trans }}</td>
+                            <td>{{ sprint.getSpentHours() ~ " / " ~ sprint.getHoursUndone()}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% if is_granted('ROLE_SCRUM_MASTER') %}
+        <div class="row">
+            <a title="Add task" href="{{ path('new_normal_task', { 'id': sprint.id }) }}" class="btn btn-primary btn-s">
+                <i class="fa fa-pencil"></i> {{"Add task" | trans}}
+            </a>
+        </div>
+        {% endif %}
+
+        {% if sprint.tasks | length > 0 %}
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="fa fa-align-justify"></i>
+                    </span>
+                    <h5>{{ "Tasks"|trans }}</h5>
+                    <ul class="nav nav-tabs pull-right steps">
+                        <li class="active" data-target="#todo">
+                            <a data-toggle="tab" href="#inbox-tab">
+                                <span class="text"> {{ "TODO" | trans }}</span>
+                            </a>
+                        </li>
+                        <li data-target="#on-process">
+                            <a data-toggle="tab" href="#inbox-tab">
+                                <span class="text"> {{ "ON PROCESS" | trans }}</span>
+                            </a>
+                        </li>
+                        <li data-target="#done">
+                            <a data-toggle="tab" href="#inbox-tab">
+                                <span class="text">
+                                    {{"DONE" | trans }}
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="widget-content nopadding" id="sprint-tasks">
+                    <div class="row" id="todo">
+                    {% for task in sprint.tasks if task.state == "TODO" %}
+                        {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: true} %}
+                    {% else %}
+                        <div class="alert alert-info mt">
+                            <strong>{{"Information!" | trans }}</strong>
+                            {{"There is no tasks on this state" | trans }}
+                        </div>    
+                    {% endfor %}
+                    </div>
+                    <div class="row" id="on-process" style="display: none;">
+                    {% for task in sprint.tasks if task.state == "ONPROCESS" %}
+                        {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: true} %}
+                    {% else %}
+                        <div class="alert alert-info mt">
+                            <strong>{{"Information!" | trans }}</strong>
+                            {{"There is no tasks on this state" | trans }}
+                        </div>    
+                    {% endfor %}
+                    </div>
+                    <div class="row" id="done" style="display: none;">
+                    {% for task in sprint.tasks if task.state == "DONE" %}
+                        {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: true} %}
+                    {% else %}
+                        <div class="alert alert-info mt">
+                            <strong>{{"Information!" | trans }}</strong>
+                            {{"There is no tasks on this state" | trans }}
+                        </div>    
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info mt">
+                <strong>{{"Information!" | trans }}</strong>
+                {{"No task where created for this sprint" | trans }}
+            </div>
+        {% endif %}
+        
+        <div class="row">
+            <a title="Add urgency" href="{{ path('new_normal_urgency', { 'id': sprint.id }) }}" class="btn btn-primary btn-s">
+                <i class="fa fa-pencil"></i> {{"Add urgency" | trans}}
+            </a>
+        </div>
+
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="fa fa-align-justify"></i>
+                </span>
+                <h5>{{ "Urgencies"|trans }}</h5>
+                <ul class="nav nav-tabs pull-right steps-urgency">
+                    <li class="active" data-target="#urgencies-todo">
+                        <a data-toggle="tab" href="#inbox-tab">
+                            <span class="text"> {{ "TODO" | trans }}</span>
+                        </a>
+                    </li>
+                    <li data-target="#urgencies-on-process">
+                        <a data-toggle="tab" href="#inbox-tab">
+                            <span class="text"> {{ "ON PROCESS" | trans }}</span>
+                        </a>
+                    </li>
+                    <li data-target="#urgencies-done">
+                        <a data-toggle="tab" href="#inbox-tab">
+                            <span class="text">
+                                {{"DONE" | trans }}
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="widget-content nopadding" id="sprint-urgencies">
+                <div class="row" id="urgencies-todo">
+                {% for urgency in urgencies if urgency.state == "TODO" %}
+                    {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+                {% else %}
+                    <div class="alert alert-info mt">
+                        <strong>{{"Information!" | trans }}</strong>
+                        {{"There is no urgencies on this state" | trans }}
+                    </div>    
+                {% endfor %}
+                </div>
+                <div class="row" id="urgencies-on-process" style="display: none;">
+                {% for urgency in urgencies if urgency.state == "ONPROCESS" %}
+                    {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+                {% else %}
+                    <div class="alert alert-info mt">
+                        <strong>{{"Information!" | trans }}</strong>
+                        {{"There is no urgencies on this state" | trans }}
+                    </div>    
+                {% endfor %}
+                </div>
+                <div class="row" id="urgencies-done" style="display: none;">
+                {% for urgency in doneUrgencies if urgency.state == "DONE" %}
+                    {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+                {% else %}
+                    <div class="alert alert-info mt">
+                        <strong>{{"Information!" | trans }}</strong>
+                        {{"There is no urgencies on this state" | trans }}
+                    </div>    
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <div class="alert alert-info mt">
+            <strong>{{"Information!" | trans }}</strong>
+            {{"No sprint found" | trans }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">
+    $(document).ready(function(){
+    	$("body").on('click', '.task', function(event){
+    	    event.preventDefault();
+    	    $.get($(this).attr('href'), function(response){
+                $('.hours').html(response);
+            });
+    	    $('#modalHours').modal('toggle');
+    	});
+
+    	$("body").on('click', '.urgency', function(event){
+    	    event.preventDefault();
+    	    $.get($(this).attr('href'), function(response){
+                $('.hours-urgency').html(response);
+            });
+    	    $('#modalUrgencyHours').modal('toggle');
+    	});
+
+    	$(".hours").on('submit', '#form-hours', function(event){
+    		event.preventDefault();
+    		$('#modalHours').modal('toggle');
+    		var frm = $('#form-hours');
+        	var data = frm.serializeArray();
+        	var myjson = {}; 
+        	var url = $(this).attr('action');
+        	$.when($(data).each(function() {
+        		myjson[this.name] = this.value;
+        	})).then(function(){
+        		$.post(url, myjson, function(response){
+                    $('#task_'+response.task + ' .spent-end').html(response.text);
+                });
+    	    });
+    	});
+
+    	$(".hours-urgency").on('submit', '#form-hours-urgency', function(event){
+    		event.preventDefault();
+    		$('#modalUrgencyHours').modal('toggle');
+    		var frm = $('#form-hours-urgency');
+        	var data = frm.serializeArray();
+        	var myjson = {}; 
+        	var url = $(this).attr('action');
+        	$.when($(data).each(function() {
+        		myjson[this.name] = this.value;
+        	})).then(function(){
+        		$.post(url, myjson, function(response){
+                    $('#urgency_'+response.urgency + ' .spent-end').html(response.text);
+                });
+    	    });
+    	});
+    	
+
+    	//Mostramos/ocultamos las capas del formulario
+        $('.steps li').click(function() {
+
+            var target_current = $(this).attr('data-target');
+            $('.steps li').each(function(key, element){
+                var target = $(element).attr('data-target');
+                if(target_current == target){
+                    $(target).show("slow");
+                    $(element).addClass('active');
+                }else{
+                    $(target).hide("slow");
+                    $(element).removeClass('active');
+                }
+            });
+
+        });
+
+      //Mostramos/ocultamos las capas del formulario
+        $('.steps-urgency li').click(function() {
+
+            var target_current = $(this).attr('data-target');
+            $('.steps-urgency li').each(function(key, element){
+                var target = $(element).attr('data-target');
+                if(target_current == target){
+                    $(target).show("slow");
+                    $(element).addClass('active');
+                }else{
+                    $(target).hide("slow");
+                    $(element).removeClass('active');
+                }
+            });
+
+        });
+
+        $("body").on('click', '.actions-task', function(event){
+        	var shown=$(this).attr('data-shown');
+            if (shown === "true") {
+                $(this).attr('data-shown', "false");
+                $(this).popover('hide');
+            } else {
+                $(this).attr('data-shown', "true");
+                $(this).popover('show');
+            }
+        });
+
+        $("body").on('click', '.move', function(event){
+        	event.preventDefault();
+    	    $.get($(this).attr('href'), function(response){
+                $('#sprint-tasks').html(response);
+            });
+        });
+
+        $("body").on('click', '.move-urgency', function(event){
+        	event.preventDefault();
+    	    $.get($(this).attr('href'), function(response){
+                $('#sprint-urgencies').html(response);
+            });
+        });
+        
+    });
+
+</script>
+{% endblock %}

@@ -1,0 +1,3 @@
+messages:
+    type: rest
+    resource: "EasyScrumREST\\MessageBundle\\Controller\\MessageController"

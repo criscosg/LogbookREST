@@ -1,0 +1,68 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{ "List of users" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Users':'#'} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+    {% if is_granted('ROLE_SCRUM_MASTER') %}  
+        <a href="{{ path('new_normal_api_user') }}" class="btn btn-primary btn-m">
+            <i class="fa fa-plus"></i> {{ "New" | trans }}
+        </a>
+    {% endif %}
+    </div>
+
+    {% if api_users | length > 0 %}
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-align-justify"></i>
+            </span>
+            <h5>{{ "List of users"|trans }}</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>{{ "Name"|trans }}</th>
+                    <th>{{ "Surname"|trans }}</th>
+                    <th>{{ "Email"|trans }}</th>
+                    <th>{{ "Created"|trans }}</th>
+                    <th>{{ "Actions"|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for api_user in api_users %}
+                    <tr>
+                        <td>{% if api_user.name is defined %}{{ api_user.name }}{% endif %}</td>
+                        <td>{% if api_user.lastName is defined %}{{ api_user.lastName }}{% endif %}</td>
+                        <td>{{ api_user.email }}</td>
+                        <td>{% if api_user.created is defined %}{{ api_user.created |date('d/m/Y') }}{% endif %}</td>
+                        <td class="taskOptions">
+                            <a title="Ver" href="{{ path('show_normal_api_user', { 'id': api_user.id }) }}"><i class="fa fa-eye"></i></a>
+                            {% if is_granted('ROLE_SCRUM_MASTER') %}  
+                                <a title="Modificar" href="{{ path('edit_normal_api_user', { 'id': api_user.id }) }}"><i class="fa fa-pencil"></i></a>
+                                <a title="Borrar" href="{{ path('delete_normal_api_user', { 'id': api_user.id }) }}"><i class="fa fa-trash-o"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+        <div class="alert alert-info mt">
+            <strong>{{"Information!" | trans }}</strong>
+            {{"No users found" | trans }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{ "Listado de usuarios" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Listado de usuarios administradores':'#'} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-align-justify"></i>
+            </span>
+            <h5>{{ "usuario"|trans }}</h5>
+        </div>
+        <div class="widget-content nopadding">
+            
+                {% if user.name is defined %}{{ user.name }}{% endif %}
+                {% if user.last_name is defined %}{{ user.last_name }}{% endif %}
+                {{ user.email }}
+                {% if user.created is defined %}{{ user.created }}{% endif %}
+      
+        </div>
+    </div>
+{% endblock %}

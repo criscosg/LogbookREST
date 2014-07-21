@@ -1,6 +1,7 @@
 parameters:
     task.handler.class: EasyScrumREST\TaskBundle\Handler\TaskHandler
     tag.handler.class: EasyScrumREST\TaskBundle\Handler\TagHandler
+    urgency.handler.class: EasyScrumREST\TaskBundle\Handler\UrgencyHandler
 services:
     task.handler:
         class: %task.handler.class%
@@ -9,3 +10,7 @@ services:
     tag.handler:
           class: %tag.handler.class%
           arguments: [@doctrine.orm.entity_manager, @form.factory]
+          
+    urgency.handler:
+        class: %urgency.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory]      

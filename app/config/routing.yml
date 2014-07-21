@@ -1,14 +1,50 @@
+project:
+    resource: "@ProjectBundle/Resources/config/routing.yml"
+    prefix:   /
+
+frontend:
+    resource: "@FrontendBundle/Resources/config/routing.yml"
+    prefix:   /
+
+message:
+    resource: "@MessageBundle/Resources/config/routing.yml"
+    prefix:   /security
+
 task:
     resource: "@TaskBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /security
 
 user:
     resource: "@UserBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /security
+    
+users_normal:
+    resource: "@UserBundle/Resources/config/routing/api_users.yml"
+    prefix:   /users
+    
+sprint_normal:
+    resource: "@SprintBundle/Resources/config/routing/sprint.yml"
+    prefix:   /sprint
+   
+task_normal:
+    resource: "@TaskBundle/Resources/config/routing/task.yml"
+    prefix:   /task
+    
+urgencies_normal:
+    resource: "@TaskBundle/Resources/config/routing/urgency.yml"
+    prefix:   /urgency
+    
+project_normal:
+    resource: "@ProjectBundle/Resources/config/routing/project.yml"
+    prefix:   /project     
     
 sprint:
     resource: "@SprintBundle/Resources/config/routing.yml"
-    prefix:   /    
+    prefix:   /security
+
+synchonize:
+    resource: "@SynchronizeBundle/Resources/config/routing.yml"
+    prefix:   /security   
     
 o_auth:
     resource: "@OAuthBundle/Resources/config/routing.yml"
@@ -16,3 +52,13 @@ o_auth:
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
     prefix:   /api/doc
+
+login:
+    pattern: /login
+    defaults: { _controller: FrontendBundle:Frontend:login }
+
+login_check:
+    pattern: /login_check
+
+logout:
+    pattern: /logout

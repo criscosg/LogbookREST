@@ -1,6 +1,12 @@
 <?php
 
 namespace EasyScrumREST\SprintBundle\Handler;
+use EasyScrumREST\SprintBundle\Form\SprintLastStepType;
+
+use EasyScrumREST\UserBundle\Entity\Company;
+
+use EasyScrumREST\SprintBundle\Form\SprintCreationFirstType;
+
 use EasyScrumREST\SprintBundle\Entity\Sprint;
 use EasyScrumREST\SprintBundle\Form\SprintType;
 use EasyScrumREST\UserBundle\Handler\UserHandlerInterface;
@@ -35,7 +41,7 @@ class SprintHandler
     public function all($limit = 20, $offset = 0, $orderby = null, $search=null)
     {
 
-        return $this->em->getRepository('SprintBundle:Sprint')->findSprintBySearch($search, $orderby, $limit, $offset);
+        return $this->em->getRepository('SprintBundle:Sprint')->findSprintBySearch($limit, $offset, $search, $orderby);
     }
 
     /**
@@ -116,5 +122,54 @@ class SprintHandler
         }
 
         throw new \Exception('Invalid submitted data');
+    }
+    
+    public function firstStep($request,Company $company)
+    {
+        $sprint = new Sprint();
+        $sprint->setCompany($company);
+        $form = $this->factory->create(new SprintCreationFirstType(), $sprint, array('method' => 'POST'));
+        $form->handleRequest($request);
+        if (!$form->getErrors()) {
+            $sprint = $form->getData();
+            $sprint->setHoursPlanified(($sprint->getHoursAvailable() * $sprint->getFocus())/100);
+            $this->em->persist($sprint);
+            $this->em->flush($sprint);
+        
+            return $sprint;
+        }
+        
+        throw new \Exception($form->getErrorsAsString());
+    }
+    
+    public function endPlanificationSprint($request, Sprint $sprint)
+    {
+        $form = $this->factory->create(new SprintLastStepType(), $sprint, array('method' => 'POST'));
+        $form->handleRequest($request);
+        if (!$form->getErrors()) {
+            $sprint = $form->getData();
+            $sprint->setPlanified(true);
+            $sprint->setHoursPlanified($sprint->getPlanificationHours());
+            $sprint->setFocus(($sprint->getHoursPlanified() * 100) / $sprint->getHoursAvailable());
+            $this->em->persist($sprint);
+            $this->em->flush($sprint);
+
+            return $sprint;
+        }
+
+        throw new \Exception($form->getErrorsAsString());
+    }
+    
+    public function finalizeSprint(Sprint $sprint)
+    {
+        foreach ($sprint->getTaskUndone() as $task) {
+            if ($task->getState() != "UNDONE") {
+                $task->setState("UNDONE");
+                $this->em->persist($task);
+            }
+        }
+        $sprint->setFinalized(true);
+        $this->em->persist($sprint);
+        $this->em->flush();
     }
 }

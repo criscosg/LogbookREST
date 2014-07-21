@@ -3,43 +3,46 @@ namespace EasyScrumREST\SprintBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
-class SprintRepository extends EntityRepository {
+class SprintRepository extends EntityRepository
+{
 
-    public function findSprintBySearch($search = null, $orderby = null, $limit, $offset)
+    public function findSprintBySearch($limit, $offset, $search = null, $orderby = null)
     {
-        $qb = $this->createQueryBuilder('l');
-        $qb->select('l');
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('s');
         if (isset($search['name'])) {
-            $qb->orWhere($qb->expr()->like('l.name',"'%".$search['name']."%'"));
+            $qb->orWhere($qb->expr()->like('s.name', "'%".$search['name']."%'"));
         }
 
-        if (isset($search['user'])) {
-            $qb->andWhere($qb->expr()->eq('l.user', $search['user']));
+        if (isset($search['company'])) {
+            $qb->andWhere($qb->expr()->eq('s.company', $search['company']));
         }
 
-        $qb->andWhere($qb->expr()->isNull('l.deleted'));
+        $qb->andWhere($qb->expr()->isNull('s.deleted'));
         $qb->setFirstResult($offset);
         $qb->setMaxResults($limit);
-        $qb->orderBy('l.id', 'DESC');
+        $qb->orderBy('s.id', 'DESC');
 
         return $qb->getQuery()->getResult();
     }
-    
-    public function findNotInEntities($entities = array(), $user)
-    {
-        $qb = $this->createQueryBuilder('l');
 
-        $qb->select('l');
-        $qb->andWhere($qb->expr()->eq('l.user', $user));
+    public function findNotInEntities($company, $entities = array())
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        $qb->select('s');
+        $qb->join('s.company', 'c');
+
+        $qb->andWhere($qb->expr()->eq('s.company', $company));
         if (count($entities)>0) {
-            $subqb = $this->createQueryBuilder('log');
-            $subqb->select('log.id');
+            $subqb = $this->createQueryBuilder('sprint');
+            $subqb->select('sprint.id');
             foreach ($entities as $entity) {
-                $subqb->orWhere($subqb->expr()->eq('log.id', $entity));
+                $subqb->orWhere($subqb->expr()->eq('sprint.id', $entity));
             }
-            $qb->andWhere($qb->expr()->notIn('l.id', $subqb->getDQL()));
+            $qb->andWhere($qb->expr()->notIn('s.id', $subqb->getDQL()));
         }
-        $qb->andWhere($qb->expr()->isNull('l.deleted'));
+        $qb->andWhere($qb->expr()->isNull('s.deleted'));
 
         return $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
     }

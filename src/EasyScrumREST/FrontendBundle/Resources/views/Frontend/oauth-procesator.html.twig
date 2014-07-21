@@ -1,0 +1,30 @@
+{% extends "FrontendBundle:Layouts:login.html.twig" %}
+
+{% block title_section %}
+	Título de la página
+{% endblock %}
+
+{% block breadcrumb %}
+  {% set crumbs = {'Título de la página':'#'} %}
+  {{ setCrumbs(crumbs) }}
+  {{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div id="loginbox">
+    {{ "Procesando su autenticación" | trans }}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            url=document.URL;
+            var newurl = url.replace("#","?");
+            if(url!=newurl){
+            	window.location.replace(newurl);
+            }
+        });
+    </script>
+{% endblock %}

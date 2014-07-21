@@ -34,8 +34,8 @@ class SprintController extends FOSRestController
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
         $search = $paramFetcher->get('search_sprint');
-        if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_USER'))) {
-            $search['user_id']=$this->getUser()->getId();
+        if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_API_USER'))) {
+            $search['company']=$this->getUser()->getCompany()->getId();
         }
 
         return $this->container->get('sprint.handler')->all($limit, $offset, null, $search);

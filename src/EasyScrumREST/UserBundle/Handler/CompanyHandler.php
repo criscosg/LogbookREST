@@ -1,11 +1,10 @@
 <?php
 
-namespace IHorseREST\VeterinaryBundle\Handler;
-use IHorseREST\VeterinaryBundle\Handler\CompanyHandlerInterface;
+namespace EasyScrumREST\UserBundle\Handler;
 use Doctrine\ORM\EntityManager;
-use IHorseREST\VeterinaryBundle\Entity\Company;
+use EasyScrumREST\UserBundle\Entity\Company;
 use Symfony\Component\Form\FormFactoryInterface;
-use IHorseREST\VeterinaryBundle\Form\CompanyType;
+use EasyScrumREST\UserBundle\Form\CompanyType;
 use Symfony\Component\BrowserKit\Request;
 
 class CompanyHandler
@@ -21,7 +20,7 @@ class CompanyHandler
 
     public function get($id)
     {
-        return $this->em->getRepository('VeterinaryBundle:Company')->find($id);
+        return $this->em->getRepository('UserBundle:Company')->find($id);
     }
 
     /**
@@ -32,7 +31,7 @@ class CompanyHandler
      */
     public function all($limit = 20, $offset = 0, $orderby = null)
     {
-        return $this->em->getRepository('VeterinaryBundle:Company')->findBy(array(), $orderby, $limit, $offset);
+        return $this->em->getRepository('UserBundle:Company')->findBy(array(), $orderby, $limit, $offset);
     }
 
     /**

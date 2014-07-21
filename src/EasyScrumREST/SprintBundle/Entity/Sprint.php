@@ -1,5 +1,7 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Entity;
+use EasyScrumREST\TaskBundle\Entity\Urgency;
+
 use Doctrine\ORM\Mapping as ORM;
 use EasyScrumREST\TaskBundle\Entity\Task;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,9 +36,9 @@ class Sprint
 
     /**
      * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
+     * @ORM\Column(name="updated", type="datetime", nullable=true)
      */
-    protected $modified;
+    protected $updated;
 
     /**
      * @ORM\Column(type="string", length=250, nullable=true)
@@ -52,11 +54,19 @@ class Sprint
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="EasyScrumREST\TaskBundle\Entity\Task", mappedBy="log", cascade={"persist", "merge", "remove"})
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\TaskBundle\Entity\Task", mappedBy="sprint", cascade={"persist", "merge", "remove"})
      * @Expose
      * @MaxDepth(0)
      */
     private $tasks;
+    
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\TaskBundle\Entity\Urgency", mappedBy="sprint", cascade={"persist", "merge", "remove"})
+     * @Expose
+     * @MaxDepth(0)
+     */
+    private $urgencies;
 
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\Company", inversedBy="sprints")
@@ -104,9 +114,34 @@ class Sprint
      */
     protected $finalFocus;
 
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     * @Assert\Date()
+     * @Expose
+     */
+    protected $fromDate;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     * @Assert\Date()
+     * @Expose
+     */
+    protected $toDate;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $planified;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $finalized;
+
     public function __construct()
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->urgencies = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -114,14 +149,14 @@ class Sprint
         return $this->id;
     }
 
-    public function getModified()
+    public function getUpdated()
     {
-        return $this->modified;
+        return $this->updated;
     }
 
-    public function setModified($modified)
+    public function setUpdated($updated)
     {
-        $this->modified = $modified;
+        $this->updated = $updated;
     }
 
     public function getCreated()
@@ -136,8 +171,8 @@ class Sprint
 
     public function __toString()
     {
-        if (isset($this->name)) {
-            return strval($this->name);
+        if (isset($this->title)) {
+            return strval($this->title);
         } else {
             return strval($this->id);
         }
@@ -167,6 +202,21 @@ class Sprint
     public function addTask(Task $task)
     {
         $this->tasks->add($task);
+    }
+    
+    public function getUrgencies()
+    {
+        return $this->urgencies;
+    }
+    
+    public function setUrgencies(ArrayCollection $urgencies)
+    {
+        $this->urgencies = $urgencies;
+    }
+    
+    public function addUrgency(Urgency $urgency)
+    {
+        $this->urgencies->add($urgency);
     }
 
     public function getCompany()
@@ -267,4 +317,133 @@ class Sprint
         $this->finalFocus = $finalFocus;
     }
 
+    public function getFromDate()
+    {
+        return $this->fromDate;
+    }
+
+    public function setFromDate($fromDate)
+    {
+        $this->fromDate = $fromDate;
+    }
+
+    public function getToDate()
+    {
+        return $this->toDate;
+    }
+
+    public function setToDate($toDate)
+    {
+        $this->toDate = $toDate;
+    }
+    
+    public function getFinalized()
+    {
+        return $this->finalized;
+    }
+    
+    public function setFinalized($finalized)
+    {
+        $this->finalized = $finalized;
+    }
+
+    public function getPlanified()
+    {
+        return $this->planified;
+    }
+    
+    public function setPlanified($planified)
+    {
+        $this->planified = $planified;
+    }
+    
+    public function getPlanificationHours()
+    {
+        $total=0;
+        foreach ($this->getTasks() as $Urgency) {
+            $total += $task->getHours();
+        }
+    
+        return $total;
+    }
+    
+    public function getSpentHours()
+    {
+        $total=0;
+        foreach ($this->getTasks() as $task) {
+            if ($task->getHoursSpent()){
+                $total += $task->getHoursSpent();
+            }
+        }
+        
+        return $total;
+    }
+    
+    public function getUrgenciesSpentHours()
+    {
+        $total=0;
+        foreach ($this->getUrgencies() as $urgency) {
+            if ($urgency->getHoursSpent()){
+                $total += $urgency->getHoursSpent();
+            }
+        }
+    
+        return $total;
+    }
+    
+    public function getTaskUndone()
+    {
+        $undone=array();
+        foreach ($this->getTasks() as $task) {
+            if ($task->getState() != "DONE" && (($task->getHoursEnd() && $task->getHoursEnd() != 0) || !$task->getHoursEnd()) ){
+                $undone[] = $task;
+            } elseif($task->getState() == "UNDONE") {
+                $undone[] = $task;
+            }
+        }
+    
+        return $undone;
+    }
+    
+    public function getHoursUndone()
+    {
+        $total=0;
+        foreach ($this->getTasks() as $task) {
+            if($task->getState() == "UNDONE") {
+                $total = ($task->getHoursEnd())? $total + $task->getHoursEnd():$total + $task->getHours();
+            } else if ($task->getState() != "DONE" && (($task->getHoursEnd() && $task->getHoursEnd() != 0) || !$task->getHoursEnd()) ){
+                $total = ($task->getHoursEnd())? $total + $task->getHoursEnd():$total + $task->getHours();
+            } 
+        }
+    
+        return $total;
+    }
+    
+    public function getHoursDone()
+    {
+        $total=0;
+        foreach ($this->getTasks() as $task) {
+            if($task->getState() == "DONE") {
+                $total = ($task->getHoursEnd())? $total + $task->getHoursEnd():$total + $task->getHours();
+            } elseif ($task->getState() != "UNDONE" && ($task->getHoursEnd() && $task->getHoursEnd() == 0)){
+                $total = ($task->getHoursEnd())? $total + $task->getHoursEnd():$total + $task->getHours();
+            } 
+        }
+    
+        return $total;
+    }
+    
+    public function getTaskDone()
+    {
+        $done=array();
+        foreach ($this->getTasks() as $task) {
+            if($task->getState() == "DONE") {
+                $done[] = $task;
+            } elseif ($task->getState() != "UNDONE" && ($task->getHoursEnd() && $task->getHoursEnd() == 0)){
+                $done[] = $task;
+            }
+        }
+
+        return $done;
+    }
 }

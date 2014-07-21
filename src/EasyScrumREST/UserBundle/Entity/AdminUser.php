@@ -9,4 +9,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class AdminUser extends User
 {
+    public function getRoles()
+    {
+        return array('ROLE_ADMIN_USER');
+    }
 }

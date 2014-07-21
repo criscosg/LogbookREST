@@ -28,7 +28,7 @@ class ApiUserController extends FOSRestController{
      *
      * @return array
      */
-    public function getApiUsersAction(Request $request, ParamFetcherInterface $paramFetcher)
+    public function getApiusersAction(Request $request, ParamFetcherInterface $paramFetcher)
     {
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
@@ -43,7 +43,7 @@ class ApiUserController extends FOSRestController{
     * @View()
     * @return array
      */
-    public function getApiUserAction($id)
+    public function getApiuserAction($id)
     {
         $apiUser=$this->getOr404($id);
 
@@ -57,7 +57,7 @@ class ApiUserController extends FOSRestController{
     *
     * @return FormTypeInterface|View
     */
-    public function postApiUserAction(Request $request)
+    public function postApiuserAction(Request $request)
     {
         try {
             $newApiUser = $this->get('api.user.handler')->post($request);
@@ -67,7 +67,7 @@ class ApiUserController extends FOSRestController{
                     '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('get_api_user', $routeOptions, Codes::HTTP_CREATED);
+            return $this->routeRedirectView('get_apiusers', $routeOptions, Codes::HTTP_CREATED);
         } catch (InvalidFormException $exception) {
 
             return $exception->getForm();
@@ -80,7 +80,7 @@ class ApiUserController extends FOSRestController{
      *
      * @return FormTypeInterface
      */
-    public function newApiUserAction()
+    public function newApiuserAction()
     {
         return $this->createForm(new ApiUserType());
     }
@@ -96,7 +96,7 @@ class ApiUserController extends FOSRestController{
      *
      * @throws NotFoundHttpException when apiUser not exist
      */
-    public function putApiUserAction(Request $request, $id)
+    public function putApiuserAction(Request $request, $id)
     {
         try {
             if (!($apiUser = $this->container->get('api.user.handler')->get($id))) {
@@ -110,7 +110,7 @@ class ApiUserController extends FOSRestController{
             $routeOptions = array('id' => $apiUser->getId(), '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('get_api_user', $routeOptions, $statusCode);
+            return $this->routeRedirectView('get_apiusers', $routeOptions, $statusCode);
         } catch (\Exception $exception) {
 
             return $exception->getMessage();
@@ -128,7 +128,7 @@ class ApiUserController extends FOSRestController{
      *
      * @throws NotFoundHttpException when apiUser not exist
      */
-    public function patchApiUserAction(Request $request, $id)
+    public function patchApiuserAction(Request $request, $id)
     {
         try {
             if (($apiUser = $this->getOr404($id))) {
@@ -141,7 +141,7 @@ class ApiUserController extends FOSRestController{
             $routeOptions = array('id' => $apiUser->getId(), '_format' => $request->get('_format')
             );
     
-            return $this->routeRedirectView('get_api_user', $routeOptions, $statusCode);
+            return $this->routeRedirectView('get_apiusers', $routeOptions, $statusCode);
         } catch (NotFoundHttpException $exception) {
     
             return $exception->getMessage();
@@ -159,7 +159,7 @@ class ApiUserController extends FOSRestController{
      *
      * @throws NotFoundHttpException when apiUser not exist
      */
-    public function deleteApiUserAction(Request $request, $id)
+    public function deleteApiuserAction(Request $request, $id)
     {
         if (($apiUser = $this->container->get('api.user.handler')->get($id))) {
             $statusCode = Codes::HTTP_ACCEPTED;
@@ -170,7 +170,7 @@ class ApiUserController extends FOSRestController{
 
         $routeOptions = array('_format' => $request->get('_format'));
 
-        return $this->routeRedirectView('get_api_users', $routeOptions, $statusCode);
+        return $this->routeRedirectView('get_apiusers', $routeOptions, $statusCode);
     }
     
     /**

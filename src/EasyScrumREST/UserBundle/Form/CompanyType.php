@@ -1,5 +1,5 @@
 <?php
-namespace IHorseREST\VeterinaryBundle\Form;
+namespace EasyScrumREST\UserBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,6 +12,20 @@ class CompanyType extends AbstractType
         $builder->add('name', 'text', array('required'=>true));
     }
 
+    public function getDefaultOptions(array $options)
+    {
+        return array(
+                'data_class' => 'EasyScrumREST\UserBundle\Entity\Company',
+        );
+    }
+    
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+                'data_class' => 'EasyScrumREST\UserBundle\Entity\Company'
+        ));
+    }
+    
     public function getName()
     {
         return 'company';

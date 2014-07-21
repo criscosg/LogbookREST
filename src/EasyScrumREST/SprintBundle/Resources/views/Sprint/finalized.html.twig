@@ -1,0 +1,164 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{ "Sprint" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Sprints':path('sprints_list'), (sprint.title): ''} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {% set params = {'title':'Introduce time spent on this task', 'text':'<div class="hours"></div>', 'btn-close':false} %}
+    {{ makeModal('modalHours', params) }}
+
+    {% if sprint %}
+
+        <div class="widget-box">
+            <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-th-list"></i>
+            </span>
+                <h5>{{ "Sprint: " ~ sprint.title|trans }}</h5>
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table table-bordered table-striped table-hover">
+                    <tbody>
+                        <tr>
+                            <td style="width:20%;">{{ "Description"|trans }}</td>
+                            <td>{% if sprint.description is defined %}{{ sprint.description }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "From - To"|trans }}</td>
+                            <td>{% if sprint.fromDate is not empty %}{{ sprint.fromDate |date('d/m/Y') }} - {{ sprint.toDate |date('d/m/Y') }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "Hours planified"|trans }}</td>
+                            <td>{% if sprint.hoursPlanified is not empty %}{{ sprint.hoursPlanified }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "Focus factor"|trans }}</td>
+                            <td>{% if sprint.focus is not empty %}{{ sprint.focus }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "Hours spent"|trans }}</td>
+                            <td>{{ sprint.getSpentHours() }}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "Hours spent on finished task"|trans }}</td>
+                            <td>{{ sprint.getHoursDone()}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "Real focus factor"|trans }}</td>
+                            <td>{{ (sprint.getSpentHours() / sprint.getHoursDone()) * 100 }}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:20%;">{{ "Hours spent in urgencies"|trans }}</td>
+                            <td>{{ sprint.getUrgenciesSpentHours() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if sprint.tasks | length > 0 %}
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="fa fa-align-justify"></i>
+                    </span>
+                    <h5>{{ "Tasks"|trans }}</h5>
+                    <ul class="nav nav-tabs pull-right steps">
+                        <li class="active" data-target="#done">
+                            <a data-toggle="tab" href="#inbox-tab">
+                                <span class="text"> {{ "DONE" | trans }}</span>
+                            </a>
+                        </li>
+                        <li data-target="#undone">
+                            <a data-toggle="tab" href="#inbox-tab">
+                                <span class="text"> {{ "UNDONE" | trans }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="widget-content nopadding" id="sprint-tasks">
+                    <div class="row" id="done">
+                        {% for task in sprint.getTaskDone() %}
+                            {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: false} %}
+                        {% else %}
+                            <div class="alert alert-info mt">
+                                <strong>{{"Information!" | trans }}</strong>
+                                {{"There is no tasks on this state" | trans }}
+                            </div>    
+                        {% endfor %}
+                    </div>
+                    <div class="row" id="undone" style="display: none;">
+                        {% for task in sprint.tasks if task.state == "UNDONE" %}
+                            {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: false} %}
+                        {% else %}
+                            <div class="alert alert-info mt">
+                                <strong>{{"Information!" | trans }}</strong>
+                                {{"There is no tasks on this state" | trans }}
+                            </div>    
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info mt">
+                <strong>{{"Information!" | trans }}</strong>
+                {{"No task where created for this sprint" | trans }}
+            </div>
+        {% endif %}
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="fa fa-align-justify"></i>
+                </span>
+                <h5>{{ "Urgencies"|trans }}</h5>
+            </div>
+            <div class="widget-content nopadding" id="sprint-urgencies">
+                <div class="row" id="urgencies-done">
+                {% for urgency in sprint.urgencies if urgency.state == "DONE" %}
+                    {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: false} %}
+                {% else %}
+                    <div class="alert alert-info mt">
+                        <strong>{{"Information!" | trans }}</strong>
+                        {{"No urgencies where finished during this sprint" | trans }}
+                    </div>    
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt">
+            <strong>{{"Information!" | trans }}</strong>
+            {{"No sprint found" | trans }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">
+    $(document).ready(function(){
+    	$('.steps li').click(function() {
+
+            var target_current = $(this).attr('data-target');
+            $('.steps li').each(function(key, element){
+                var target = $(element).attr('data-target');
+                if(target_current == target){
+                    $(target).show();
+                    $(element).addClass('active');
+                }else{
+                    $(target).hide();
+                    $(element).removeClass('active');
+                }
+            });
+
+        });
+    });
+</script>    
+{% endblock %}

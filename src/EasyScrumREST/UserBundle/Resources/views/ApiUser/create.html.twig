@@ -1,0 +1,102 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+{%  set edit = "Edit user"|trans %}
+{%  set create = "Create user"|trans %}
+
+{% block title_section %}
+    {% if edition is defined %}
+        {{ edit }}
+    {% else %}
+        {{ create }}
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% if edition is defined %}
+        {% set crumbs = {'Users': path('api_users_list'), (edit):''} %}
+    {% else %}
+        {% set crumbs = {'Users': path('api_users_list'), (create):''} %}
+    {% endif %}
+
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-pencil"></i>
+            </span>
+            {% if edition is defined %}
+                <h5>{{ edit }}</h5>
+            {% else %}
+                <h5>{{ create }}</h5>
+            {% endif %}
+        </div>
+        <div class="widget-content nopadding">
+            <form class="form-horizontal" id="form-create-item" role="form"
+                  action="{% if edition is defined %}{{ path('edit_normal_api_user',{'id':user.id}) }} {% else %} {{ path('new_normal_api_user') }} {% endif %}"
+                  method="post" xmlns="http://www.w3.org/1999/html">
+                
+                <div class="form-group">
+                    <label id="label_email" for="api_user_email" class="col-sm-3 control-label user-active is-public"><span class="red">*</span> {{ "Email" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.email, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="label_name" for="api_user_name" class="col-sm-3 control-label user-active is-public"><span class="red">*</span> {{ "Nombre" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.name, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="label_lastname" for="api_user_lastname" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Apellidos" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.lastName, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="label_password" for="api_user_password" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Contraseña" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.password, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="label_password" for="api_user_company" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Compañia" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.company, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="label_password" for="api_user_roles" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Roles" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.roles, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+
+                {{ form_rest(form) }}
+                <div class="form-actions">
+                    <button id="register" type="submit" class="btn btn-large btn-primary">
+                        {{ "Save changes"|trans }}
+                    </button>
+                    <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
+                    <div class="help-block mt10">
+                        <span class="red">*</span> {{"Required fields" | trans }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

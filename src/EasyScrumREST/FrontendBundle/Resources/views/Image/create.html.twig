@@ -1,0 +1,50 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{"Nueva imagen" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Caballos':path('entries_list'), (entry.name):path('show_entry', {id:entry.id}), 'Nueva imagen':''} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-picture-o"></i>
+            </span>
+                <h5>{{ "Nueva imagen"|trans }}</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <form class="form-horizontal" id="form-create-item" role="form" action="{{ path('create_image') }}" method="post" {{ form_enctype(form) }}>
+                <div class="form-group">
+                    <label id="label_name" for="admin_user_email" class="col-sm-3 control-label user-active is-public"><span class="red">*</span> {{ "Imagen" |trans}}</label>
+                    <div class="col-sm-9">
+                        {{ form_widget(form.file) }}
+                    </div>
+                </div>
+                {{ form_widget(form.entry, { 'attr': { 'class': 'form-control', 'value': entry.id }}) }}
+
+                {{ form_rest(form) }}
+                <div class="form-actions">
+                    <button id="register" type="submit" class="btn btn-large btn-primary">
+                        {{ "Guardar cambios"|trans }}
+                    </button>
+                    <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
+                    <div class="help-block mt10">
+                        <span class="red">*</span> {{"Campos obligatorios" | trans }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

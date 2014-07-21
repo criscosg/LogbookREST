@@ -12,9 +12,10 @@ security:
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
+        users:
+            entity: { class: EasyScrumREST\UserBundle\Entity\ApiUser, property: email }
         user_provider:
-            id: user.provider
-
+            id: user.provider    
 
     firewalls:
         oauth_token:
@@ -29,11 +30,28 @@ security:
                 login_path: oauth_server_auth_login
             anonymous: true
 
-
         api:
-            pattern:    ^/
+            pattern:    ^/security/
             fos_oauth:  true
-            stateless:  true
+            stateless:  true 
+            
+        user:
+            pattern: ^/
+            provider: users
+            anonymous: ~
+            form_login:
+                login_path: login
+                check_path: login_check
+            logout:
+                path:   logout
+            remember_me:
+                key: %secret%
+                lifetime: 5184000
 
     access_control:
-        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/security/*, roles: ROLE_USER }
+        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/logout, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login-check, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/*, roles: ROLE_API_USER }

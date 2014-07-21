@@ -1,11 +1,7 @@
 parameters:
     synchronize.class: EasyScrumREST\SynchronizeBundle\Synchronize\Synchronize
-    synchronize.images.class: EasyScrumREST\SynchronizeBundle\Synchronize\SynchronizeImages
 
 services:
     synchronize:
         class: %synchronize.class%
-        arguments: [@doctrine.orm.entity_manager, @process.dental.extra]
-    synchronize.images:
-        class: %synchronize.images.class%
-        arguments: [@doctrine.orm.entity_manager]    
+        arguments: [@doctrine.orm.entity_manager]  

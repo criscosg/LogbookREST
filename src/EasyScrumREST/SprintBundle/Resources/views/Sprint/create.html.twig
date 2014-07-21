@@ -1,0 +1,94 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+{%  set edit = "Edición del registro"|trans %}
+{%  set create = "Creación de nuevo registro"|trans %}
+
+{% block title_section %}
+    {% if edition is defined %}
+        {{ edit }}
+    {% else %}
+        {{ create }}
+    {% endif %}
+
+{% endblock %}
+
+{% block breadcrumb %}
+    {% if edition is defined %}
+        {% set crumbs = {'Diarios': path('sprints_list'),(edit):''} %}
+    {% else %}
+        {% set crumbs = {'Diarios': path('sprints_list'),(create):''} %}
+    {% endif %}
+
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-th"></i>
+            </span>
+            {% if edition is defined %}
+                <h5>{{ edit }}</h5>
+            {% else %}
+                <h5>{{ create }}</h5>
+            {% endif %}
+        </div>
+        <div class="widget-content nopadding">
+            <form class="form-horizontal" id="form-create-item" role="form"
+                  action="{% if edition is defined %}{{ path('put_sprint',{'id':id}) }} {% else %} {{ path('create_sprint') }} {% endif %}"
+                  method="post" {% if edition is defined %}{{ form_enctype(form) }} {% endif %} xmlns="http://www.w3.org/1999/html">
+                
+                <div class="form-group">
+                    <label id="label_name" for="sprint_name" class="col-sm-3 control-label log-active is-public"><span class="red">*</span> {{ "Nombre" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.title, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label id="label_description" for="sprint_description" class="col-sm-3 control-label log-active is-public"> {{ "Anotaciones" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.description, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label id="label_company" for="sprint_company" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Clínica" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.company, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="label_hours" for="sprint_hours" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Clínica" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.hoursAvailable, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label id="label_hours" for="sprint_hours" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Clínica" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.hoursPlanified, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+
+                {{ form_rest(form) }}
+                <div class="form-actions">
+                    <button id="register" type="submit" class="btn btn-large btn-primary">
+                        {{ "Guardar cambios"|trans }}
+                    </button>
+                    <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
+                    <div class="help-block mt10">
+                        <span class="red">*</span> {{"Campos obligatorios" | trans }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

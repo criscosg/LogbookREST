@@ -1,0 +1,32 @@
+parameters:
+#    frontend.example.class: EasyScrumREST\FrontendBundle\Example
+
+services:
+    twig.extension.ajax:
+        class: EasyScrumREST\FrontendBundle\Twig\Extension\AjaxExtension
+        arguments: 
+            container: @service_container
+        tags:
+            - { name: twig.extension }
+
+    twig.extension.interface:
+        class: EasyScrumREST\FrontendBundle\Twig\Extension\InterfaceExtension
+        arguments: 
+            container: @service_container
+        tags:
+            - { name: twig.extension }
+
+    twig.extension.javascript:
+        class: EasyScrumREST\FrontendBundle\Twig\Extension\JavascriptExtension
+        tags:
+            - { name: twig.extension }
+
+    twig.extension.breadcrumb:
+        class: EasyScrumREST\FrontendBundle\Twig\Extension\BreadCrumbExtension
+        tags:
+            - { name: twig.extension }
+
+    twig.extension.drawingboard:
+        class: EasyScrumREST\FrontendBundle\Twig\Extension\DrawingboardExtension
+        tags:
+            - { name: twig.extension }

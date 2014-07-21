@@ -1,0 +1,19 @@
+api_users_list:
+    pattern: /
+    defaults: { _controller: UserBundle:UserNormal:listApiUsers }
+    
+show_normal_api_user:
+    pattern: /api_user/{id}
+    defaults: { _controller: UserBundle:UserNormal:apiUserShow }  
+    
+new_normal_api_user:
+    pattern: /new
+    defaults: { _controller: UserBundle:UserNormal:newApiUser }
+    
+edit_normal_api_user:
+    pattern: /edit/{id}
+    defaults: { _controller: UserBundle:UserNormal:editApiUser }    
+    
+delete_normal_api_user:
+    pattern: /delete/{id}
+    defaults: { _controller: UserBundle:UserNormal:deleteApiUser }

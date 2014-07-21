@@ -1,0 +1,30 @@
+<div class="row" id="urgencies-todo">
+{% for urgency in urgencies if urgency.state == "TODO" %}
+    {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+{% else %}
+    <div class="alert alert-info mt">
+        <strong>{{"Information!" | trans }}</strong>
+        {{"There is no urgencies on this state" | trans }}
+    </div>    
+{% endfor %}
+</div>
+<div class="row" id="urgencies-on-process" style="display: none;">
+{% for urgency in urgencies if urgency.state == "ONPROCESS" %}
+    {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+{% else %}
+    <div class="alert alert-info mt">
+        <strong>{{"Information!" | trans }}</strong>
+        {{"There is no urgencies on this state" | trans }}
+    </div>    
+{% endfor %}
+</div>
+<div class="row" id="urgencies-done" style="display: none;">
+{% for urgency in doneUrgencies if urgency.state == "DONE" %}
+    {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+{% else %}
+    <div class="alert alert-info mt">
+        <strong>{{"Information!" | trans }}</strong>
+        {{"There is no urgencies on this state" | trans }}
+    </div>    
+{% endfor %}
+</div>

@@ -1,0 +1,49 @@
+{% extends 'FrontendBundle::base.html.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/jquery-ui.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/icheck/flat/blue.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/select2.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/unicorn.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/custom.unicorn.css') }}" />
+{% endblock %}
+
+{% block header %}
+    {% include 'FrontendBundle:Commons:header.html.twig' %}
+{% endblock %}
+
+{% block sidenav %}
+    {% include 'FrontendBundle:Commons:sidenav.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div id="content">
+        <div id="content-header">
+            <h1>{% block title_section %}{% endblock %}</h1>
+            {% block buttons_section %}{% endblock %}
+        </div>
+        {% block breadcrumb %}
+            {% include 'FrontendBundle:Commons:breadcrumb.html.twig' %}
+        {% endblock %}
+        <div class="row">
+            <div class="col-xs-12">
+                {% include 'FrontendBundle:Commons:flashes.html.twig' %}
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {% include 'FrontendBundle:Commons:footer.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('bundles/frontend/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('bundles/frontend/js/jquery.icheck.min.js') }}"></script>
+    <script src="{{ asset('bundles/frontend/js/select2.min.js') }}"></script>
+    <script src="{{ asset('bundles/frontend/js/jquery.dataTables.min.js') }}"></script>
+
+    <script src="{{ asset('bundles/frontend/js/jquery.nicescroll.min.js') }}"></script>
+    <script src="{{ asset('bundles/frontend/js/unicorn.js') }}"></script>
+    <script src="{{ asset('bundles/frontend/js/unicorn.tables.js') }}"></script>
+{% endblock %}

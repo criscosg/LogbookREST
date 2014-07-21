@@ -13,7 +13,7 @@ class TaskType extends AbstractType
                 ->add('description', 'text', array('required'=>false))
                 ->add('hours', 'integer', array('required'=>false))
                 ->add('priority', 'text', array('required'=>false))
-                ->add('sprint', 'entity', array('class'=>'SprintBundle:Sprint', 'required' => false));;
+                ->add('sprint', 'entity', array('class'=>'SprintBundle:Sprint', 'required' => false));
     }
 
     public function getName()

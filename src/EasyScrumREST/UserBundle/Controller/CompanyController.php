@@ -23,12 +23,12 @@ class CompanyController extends FOSRestController{
      *
      * @View()
      *
-     * @param Request               $request      the request object
+     * @param Request $request      the request object
      * @param ParamFetcherInterface $paramFetcher param fetcher service
      *
      * @return array
      */
-    public function getCompanysAction(Request $request, ParamFetcherInterface $paramFetcher)
+    public function getCompaniesAction(Request $request, ParamFetcherInterface $paramFetcher)
     {
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
@@ -75,7 +75,6 @@ class CompanyController extends FOSRestController{
     }
 
     /**
-     *
      * @View()
      *
      * @return FormTypeInterface
@@ -107,7 +106,7 @@ class CompanyController extends FOSRestController{
                 $company = $this->container->get('company.handler')->put($company, $request);
             }
             $response = new Response('Die Klinik wurde erfolgreich gespeichert', $statusCode);
-            
+
             return $response;
         } catch (\Exception $exception) {
 
@@ -116,11 +115,10 @@ class CompanyController extends FOSRestController{
     }
 
     /**
-     *
-     * @View()
-     *
      * @param Request $request
      * @param int     $id
+     * 
+     * @View()
      *
      * @return FormTypeInterface|View
      *
@@ -136,7 +134,7 @@ class CompanyController extends FOSRestController{
                 $statusCode = Codes::HTTP_NO_CONTENT;
             }
             $response = new Response('Die Klinik wurde erfolgreich gespeichert', $statusCode);
-            
+
             return $response;
         } catch (NotFoundHttpException $exception) {
 
@@ -145,12 +143,10 @@ class CompanyController extends FOSRestController{
     }
 
     /**
-     *
-     * @View()
-     *
      * @param Request $request
-     * @param int     $id
-     *
+     * @param int $id
+     * 
+     * @View()
      * @return FormTypeInterface|View
      *
      * @throws NotFoundHttpException when company not exist

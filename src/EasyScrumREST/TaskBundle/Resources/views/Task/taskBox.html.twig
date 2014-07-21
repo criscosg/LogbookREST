@@ -1,0 +1,50 @@
+<div class="col-sm-3">
+    <div class="task-box">
+        <div class="top">
+            {% if (is_granted('ROLE_SCRUM_MASTER') or is_granted('ROLE_TEAM')) and ended %}
+                <button class="actions-task" data-toggle="popover" data-shown="false" data-placement="left" data-html="true" type="button"
+                    {% if task.state == "TODO" %}
+                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_on_process', {id: task.id}) }}' class='btn btn-small btn-block btn-primary move'>{{"move to on process"}}</a></li> <li><a href='{{ path('move_done', {id: task.id}) }}' class='btn btn-small btn-block btn-primary move'>{{"move to done"}}</a></li><li><a href='{{ path('move_undone', {id: task.id}) }}' class='btn btn-small btn-block btn-primary move'>{{"drop from sprint"}}</a></li></ul>" 
+                    {% elseif task.state == "ONPROCESS" %}
+                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_todo', {id: task.id}) }}' class='btn btn-small btn-block btn-primary move'>{{"move to todo"}}</a></li> <li><a href='{{ path('move_done', {id: task.id}) }}' class='btn btn-small btn-block btn-primary move'>{{"move to done"}}</a></li><li><a href='{{ path('move_undone', {id: task.id}) }}' class='btn btn-small btn-block btn-primary move'>{{"drop from sprint"}}</a></li></ul>"
+                    {% elseif task.state == "DONE" %}
+                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_todo', {id: task.id}) }}' class='btn btn-small btn-block btn-primary move'>{{"move to todo"}}</a></li> <li><a href='{{ path('move_on_process', {id: task.id}) }}' class='btn btn-small btn-block btn-primary move'>{{"move to on process"}}</a></li></ul>"
+                    {% endif %}
+                >
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            {% elseif is_granted('ROLE_SCRUM_MASTER') and (not ended) and task.sprint.finalized is empty %}
+                <a class="delete-task" href="{{ path('delete_normal_task', {id: task.id}) }}"><i class="fa fa-trash-o"></i></a>
+            {% endif %}
+            <p class="priority">
+            {% if task.priority is not empty %}
+                {{ task.priority }}
+            {% endif %}    
+            </p>
+        </div>
+        <a class="task" id="task_{{ task.id }}" {% if ended %} href="{{ path('hours_task', {'id':task.id}) }}" {% elseif task.sprint.finalized is empty %}href="{{ path('edit_normal_task', {'id':task.id}) }}"{% endif %}>
+            <div class="bottom">
+                <div class="hours-task">
+                    <span class="spent-end">
+                        {% if task.hoursSpent is not empty and task.hoursEnd is not empty %}
+                            {{ task.hoursSpent ~ "/" ~ task.hoursEnd }}
+                        {% endif %}
+                    </span>
+                    <span class="planified-hours">
+                        {{ task.hours }}
+                    </span>
+                </div>
+                <div class="description">
+                    <h4 class="title">
+                    {{ task.title }}
+                    </h4>
+                    <p>
+                    {{ task.description }}
+                    </p>
+                </div>
+            </div> 
+        </a>   
+    </div>
+</div>

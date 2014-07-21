@@ -1,0 +1,39 @@
+show_normal_task:
+    pattern: /{id}
+    defaults: { _controller: TaskBundle:TaskNormal:taskShow }  
+    
+new_normal_task:
+    pattern: /new/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:newTask }
+    
+edit_normal_task:
+    pattern: /edit/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:editTask }
+    
+hours_task:
+    pattern: /hours/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:hoursForm }
+    
+save_hours_task:
+    pattern: /save-hours/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:saveHours }    
+
+delete_normal_task:
+    pattern: /delete/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:deleteTask }
+    
+move_on_process:
+    pattern: /to-on-process/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:moveToOnProcess }
+    
+move_todo:
+    pattern: /to-todo/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:moveToTodo }
+    
+move_done:
+    pattern: /to-done/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:moveToDone }
+    
+move_undone:
+    pattern: /to-undone/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:moveToUndone }    

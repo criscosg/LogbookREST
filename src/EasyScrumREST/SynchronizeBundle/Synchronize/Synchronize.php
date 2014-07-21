@@ -3,9 +3,10 @@ namespace EasyScrumREST\SynchronizeBundle\Synchronize;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\BrowserKit\Request;
-use EasyScrumREST\OwnerBundle\Entity\Owner;
+use EasyScrumREST\SprintBundle\Entity\Sprint;
 use EasyScrumREST\UserBundle\Entity\ApiUser;
 use EasyScrumREST\TaskBundle\Entity\Task;
+use EasyScrumREST\TaskBundle\Entity\Category;
 use EasyScrumREST\SynchronizeBundle\Util\ArrayHelper;
 
 class Synchronize
@@ -16,119 +17,122 @@ class Synchronize
     {
         $this->em = $em;
     }
-    
+
     public function synchronize($mobileDB, ApiUser $user)
     {
-        if (isset($mobileDB['owners'])) {
-            $owners=$this->compareOwners($mobileDB['owners'], $user);
+        if (isset($mobileDB['sprints'])) {
+            $sprints=$this->compareSprints($mobileDB['sprints'], $user);
         } else {
-            $owners=$this->compareOwners(array(), $user);
+            $sprints=$this->compareSprints(array(), $user);
         }
-        if (isset($mobileDB['entries'])) {
-            $entries=$this->compareEntries($mobileDB['entries'], $user);
+        if (isset($mobileDB['categories'])) {
+            $tasks=$this->compareCategories($mobileDB['categories'], $user);
         } else {
-            $entries=$this->compareEntries(array(), $user);
+            $tasks=$this->compareCategories(array(), $user);
         }
-        if (isset($mobileDB['images'])) {
-            $images=$this->compareImages($mobileDB['images'], $user);
+        if (isset($mobileDB['tasks'])) {
+            $tasks=$this->compareTasks($mobileDB['tasks'], $user);
         } else {
-            $images=$this->compareImages(array(), $user);
+            $tasks=$this->compareTasks(array(), $user);
         }
 
-        return array('owners'=>$owners, 'entries'=>ArrayHelper::flattMultilevelEntityArray($entries), 'dentals'=>ArrayHelper::flattMultilevelEntityArray($dental), 'teeth'=>ArrayHelper::flattMultilevelEntityArray($teeth), 'logs'=>ArrayHelper::flattMultilevelEntityArray($logs), 'images'=>$images);
+        return array('sprints'=>$sprints, 'tasks'=>ArrayHelper::flattMultilevelEntityArray($tasks));
     }
 
-    private function compareOwners($owners, ApiUser $user)
+    private function compareSprints($sprints, ApiUser $user)
     {
         $entities = array();
-        foreach ($owners as $ownerMobile) {
-            $ownerDB=$this->em->getRepository('OwnerBundle:Owner')->findOneBySalt($ownerMobile['salt']);
-            if (!$ownerDB) {
-                $ownerDB = new Owner();
-                $ownerDB->setCompany($user->getCompany());
-                $this->saveOwner($ownerMobile, $ownerDB);
-                $entities[] = $ownerDB->getId();
+        foreach ($sprints as $sprintMobile) {
+            $sprintDB=$this->em->getRepository('SprintBundle:Sprint')->findOneBySalt($sprintMobile['salt']);
+            if (!$sprintDB) {
+                $sprintDB = new Sprint();
+                $sprintDB->setCompany($user->getCompany());
+                $this->saveSprint($sprintMobile, $sprintDB);
+                $entities[] = $sprintDB->getId();
             } else {
-                $date=new \DateTime($ownerMobile['modified']);
-                if($ownerDB->getModified() < $date) {
-                    $this->saveOwner($ownerMobile, $ownerDB);
-                    $entities[] = $ownerDB->getId();
-                } elseif($ownerDB->getModified() == $date) {
-                    $entities[] = $ownerDB->getId();
+                $date=new \DateTime($sprintMobile['updated']);
+                if ($sprintDB->getUpdated() < $date) {
+                    $this->saveSprint($sprintMobile, $sprintDB);
+                    $entities[] = $sprintDB->getId();
+                } elseif ($sprintDB->getUpdated() == $date) {
+                    $entities[] = $sprintDB->getId();
                 }
             }
         }
 
-        return $this->em->getRepository('OwnerBundle:Owner')->findNotInEntities($entities, $user->getCompany()->getId());
+        return $this->em->getRepository('SprintBundle:Sprint')->findNotInEntities($user->getCompany()->getId(), $entities);
     }
-
-    private function compareEntries($entries, ApiUser $user)
+    
+    private function compareTasks($tasks, ApiUser $user)
     {
         $entities = array();
-        foreach ($entries as $taskMobile) {
-            $taskDB=$this->em->getRepository('EasyScrumREST:Task')->findOneBySalt($taskMobile['salt']);
+        foreach ($tasks as $taskMobile) {
+            $taskDB=$this->em->getRepository('TaskBundle:Task')->findOneBySalt($taskMobile['salt']);
             if (!$taskDB) {
                 $taskDB = new Task();
                 $this->saveTask($taskMobile, $taskDB);
                 $entities[] = $taskDB->getId();
             } else {
-                $date=new \DateTime($taskMobile['modified']);
-                if($taskDB->getModified() < $date) {
+                $date=new \DateTime($taskMobile['updated']);
+                if ($taskDB->getUpdated() < $date) {
                     $this->saveTask($taskMobile, $taskDB);
                     $entities[] = $taskDB->getId();
-                } elseif ($taskDB->getModified() == $date) {
+                } elseif ($taskDB->getUpdated() == $date) {
                     $entities[] = $taskDB->getId();
                 }
             }
         }
 
-        return $this->em->getRepository('EasyScrumREST:Task')->findNotInEntities($entities, $user->getId());
+        return $this->em->getRepository('TaskBundle:Task')->findNotInEntities($user->getCompany()->getId(), $entities);
     }
-    
-    private function compareImages($images, ApiUser $user)
+
+    private function compareCategories($categories, ApiUser $user)
     {
         $entities = array();
-        $uploads = 0;
-        foreach ($images as $imageMobile) {
-            $imageDB=$this->em->getRepository('ImageBundle:ImageTask')->findOneBySalt($imageMobile['salt']);
-            if (!$imageDB)
-                $uploads ++;
-            else 
-                $entities[]=$imageDB->getId();
+        foreach ($categories as $categoryMobile) {
+            $categoryDB=$this->em->getRepository('TaskBundle:Category')->findOneByName($categoryMobile['name']);
+            if (!$categoryDB) {
+                $categoryDB = new Category();
+                $this->saveCategory($categoryMobile, $categoryDB);
+                $entities[] = $categoryDB->getId();
+            } else {
+                $entities[] = $categoryDB->getId();
+            }
         }
-        $downloads = $this->em->getRepository('ImageBundle:ImageTask')->findCountNotInEntities($entities, $user->getCompany()->getId());
 
-        return array('uploads'=>strval($uploads), 'downloads'=>$downloads);
+        return $this->em->getRepository('TaskBundle:Category')->findNotInEntities($entities);
     }
-    
-    private function saveOwner($ownerMobile, $ownerDB)
+
+    private function saveSprint($sprintMobile, $sprintDB)
     {
-        foreach ($ownerMobile as $property => $value) {
-            if($property != 'modified' && $property != 'created' && $property != 'deleted') {
+        foreach ($sprintMobile as $property => $value) {
+            if ($property != 'updated' && $property != 'created' && $property != 'fromDate' && $property != 'toDate') {
                 $method = sprintf('set%s', ucwords($property));
-                if (method_exists($ownerDB, $method)) {
-                    $ownerDB->$method($value);
+                if (method_exists($sprintDB, $method)) {
+                    $sprintDB->$method($value);
                 }
-            }  else {
+            } else {
                 if ($value) {
                     $date=new \DateTime($value);
                     $method = sprintf('set%s', ucwords($property));
-                    if (method_exists($ownerDB, $method)) {
-                        $ownerDB->$method($date);
+                    if (method_exists($sprintDB, $method)) {
+                        $sprintDB->$method($date);
                     }
                 }
             }
         }
-        $this->em->persist($ownerDB);
+        $this->em->persist($sprintDB);
         $this->em->flush();
     }
-    
+
     private function saveTask($taskMobile, $taskDB)
     {
         foreach ($taskMobile as $property => $value) {
-            if ($property=='owner_salt') {
-                $taskDB->setOwner($this->em->getRepository('OwnerBundle:Owner')->findOneBySalt($value));
-            } elseif($property != 'modified' && $property != 'created' && $property != 'birthdate' && $property != 'deleted') {
+            if ($property=='sprint_salt') {
+                $taskDB->setSprint($this->em->getRepository('SprintBundle:Sprint')->findOneBySalt($value));
+            } elseif ($property=='category_name') {
+                $taskDB->setCategory($this->em->getRepository('TaskBundle:Category')->findOneByName($value));
+            } elseif ($property != 'updated' && $property != 'created' && $property != 'birthdate' && $property != 'deleted') {
                 $method = sprintf('set%s', ucwords($property));
                 if (method_exists($taskDB, $method)) {
                     $taskDB->$method($value);
@@ -144,6 +148,28 @@ class Synchronize
             }
         }
         $this->em->persist($taskDB);
+        $this->em->flush();
+    }
+
+    private function saveCategory($categoryMobile, $categoryDB)
+    {
+        foreach ($categoryMobile as $property => $value) {
+            if ($property != 'updated' && $property != 'created' && $property != 'deleted') {
+                $method = sprintf('set%s', ucwords($property));
+                if (method_exists($categoryDB, $method)) {
+                    $categoryDB->$method($value);
+                }
+            } else {
+                if ($value) {
+                    $date=new \DateTime($value);
+                    $method = sprintf('set%s', ucwords($property));
+                    if (method_exists($categoryDB, $method)) {
+                        $categoryDB->$method($date);
+                    }
+                }
+            }
+        }
+        $this->em->persist($categoryDB);
         $this->em->flush();
     }
 

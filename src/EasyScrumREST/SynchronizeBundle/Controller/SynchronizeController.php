@@ -31,17 +31,4 @@ class SynchronizeController extends FOSRestController
         return "No es un veterinario así que no puedes sincronizar";
     }
 
-    /**
-     * POST Route annotation.
-     * @Post("/second-synchronize")
-     * @View(serializerEnableMaxDepthChecks=true)
-     */
-    public function secondSynchronizeAction(Request $request)
-    {
-        if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_VETERINARY'))) {
-            return $this->container->get('synchronize.images')->synchronize($request->request->all(), $this->getUser());
-        }
-    
-        return "No es un veterinario así que no puedes sincronizar";
-    }
 }

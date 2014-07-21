@@ -1,6 +1,10 @@
 <?php
 
 namespace EasyScrumREST\TaskBundle\Handler;
+use EasyScrumREST\TaskBundle\Form\TaskHoursType;
+
+use EasyScrumREST\TaskBundle\Form\CreateTaskType;
+
 use Doctrine\ORM\EntityManager;
 use EasyScrumREST\TaskBundle\Entity\Task;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -20,7 +24,7 @@ class TaskHandler
 
     public function get($id)
     {
-        return $this->em->getRepository('EasyScrumREST:Task')->find($id);
+        return $this->em->getRepository('TaskBundle:Task')->find($id);
     }
 
     /**
@@ -31,7 +35,7 @@ class TaskHandler
      */
     public function all($limit = 20, $offset = 0, $orderby = null)
     {
-        return $this->em->getRepository('EasyScrumREST:Task')->findBy(array(), $orderby, $limit, $offset);
+        return $this->em->getRepository('TaskBundle:Task')->findBy(array(), $orderby, $limit, $offset);
     }
 
     /**
@@ -105,5 +109,74 @@ class TaskHandler
         }
 
         throw new \Exception('Invalid submitted data');
+    }
+    
+    /**
+     * Creates/Edit task
+     *
+     * @param Task     $task
+     * @param array         $parameters
+     * @param String        $method
+     *
+     * @return Task
+     *
+     * @throws \Exception
+     */
+    public function handleTask(Task $task, $request, $method = "POST")
+    {
+        $form = $this->factory->create(new CreateTaskType(), $task, array('method' => $method));
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $task = $form->getData();
+            $this->em->persist($task);
+            $this->em->flush($task);
+    
+            return $task;
+        }
+    
+        throw new \Exception($form->getErrorsAsString());
+    }
+    
+    /**
+     * Creates/Edit task
+     *
+     * @param Task     $task
+     * @param array         $parameters
+     * @param String        $method
+     *
+     * @return Task
+     *
+     * @throws \Exception
+     */
+    public function handleHoursTask(Task $task, $request, $method = "POST")
+    {
+        $form = $this->factory->create(new TaskHoursType(), $task, array('method' => $method));
+        $oldHoursSpent=$task->getHoursSpent();
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $task = $form->getData();
+            $task->setHoursSpent($task->getHoursSpent() + $oldHoursSpent);
+            $this->em->persist($task);
+            $this->em->flush($task);
+
+            return $task->getHoursSpent()."/".$task->getHoursEnd();
+        }
+    
+        throw new \Exception($form->getErrorsAsString());
+    }
+    
+    /**
+     * Set task state to $state.
+     *
+     * @param Task $task
+     * @param String $state
+     *
+     * @return Task
+     */
+    public function moveTo(Task $task, $state)
+    {
+        $task->setState($state);
+        $this->em->persist($task);
+        $this->em->flush($task);
     }
 }

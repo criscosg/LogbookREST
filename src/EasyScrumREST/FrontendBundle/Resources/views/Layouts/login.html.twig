@@ -1,0 +1,14 @@
+{% extends 'FrontendBundle::base.html.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/unicorn-login.css') }}" />
+{% endblock %}
+
+{% block body %}
+    <div id="container">
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('bundles/frontend/js/unicorn.login.js') }}"></script>
+{% endblock %}

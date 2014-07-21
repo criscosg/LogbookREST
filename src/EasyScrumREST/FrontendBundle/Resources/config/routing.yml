@@ -1,0 +1,7 @@
+home:
+    pattern:  /
+    defaults: { _controller: FrontendBundle:Frontend:home }
+    
+register:
+    pattern:  /register
+    defaults: { _controller: UserBundle:UserNormal:register }    

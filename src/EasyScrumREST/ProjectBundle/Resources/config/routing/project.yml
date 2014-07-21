@@ -1,0 +1,19 @@
+projects_list:
+    pattern: /
+    defaults: { _controller: ProjectBundle:Project:listProjects }
+    
+show_normal_project:
+    pattern: /see/{id}
+    defaults: { _controller: ProjectBundle:Project:projectShow }
+    
+project_creation_first:
+    pattern: /create
+    defaults: { _controller: ProjectBundle:Project:newProjectFirstStep }
+    
+project_edit:
+    pattern: /edit/{id}
+    defaults: { _controller: ProjectBundle:Project:projectEdit }
+    
+delete_normal_project:
+    pattern: /delete/{id}
+    defaults: { _controller: ProjectBundle:Project:deleteProject }

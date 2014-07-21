@@ -1,0 +1,100 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{ "Sprint" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Sprints':path('sprints_list'), (sprint.title): ''} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <a title="Add task" href="{{ path('new_normal_task', { 'id': sprint.id }) }}" class="btn btn-primary btn-s">
+            <i class="fa fa-pencil"></i> {{"Add task" | trans}}
+        </a>
+    </div>
+
+    <div class="widget-box">
+        <div class="widget-title">
+        <span class="icon">
+            <i class="fa fa-th-list"></i>
+        </span>
+            <h5>{{ "Complete sprint data"|trans }}</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <form class="form-horizontal" id="form-create-item" role="form" action="{{ path('sprint_planification', {id:sprint.id}) }}" method="post" xmlns="http://www.w3.org/1999/html">
+
+                <div class="form-group">
+                    <label id="label_name" for="sprint_name" class="col-sm-3 control-label log-active is-public"><span class="red">*</span> {{ "Title" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.title, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label id="label_description" for="sprint_description" class="col-sm-3 control-label log-active is-public"> {{ "Description" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.description, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                {{ form_rest(form) }}
+                <div class="form-actions">
+                    <button id="register" type="submit" class="btn btn-large btn-primary">
+                        {{ "End planification"|trans }}
+                    </button>
+                    <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
+                    <div class="help-block mt10">
+                        <span class="red">*</span> {{"Campos obligatorios" | trans }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h5>{{"Hours planified: " | trans}}<strong id="hours-planified">{{ sprint.getPlanificationHours() }}</strong>{{ " / hours stimated: " | trans}}<strong>{{ sprint.getHoursPlanified() }}</strong></h5>
+
+    {% if sprint.tasks | length > 0 %}
+        <div class="widget-box">
+            <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-align-justify"></i>
+            </span>
+                <h5>{{ "Tasks"|trans }}</h5>
+            </div>
+            <div class="widget-content nopadding">
+                <div class="row tasks">
+                    {% for task in sprint.tasks %}
+                        {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended:false} %}
+                    {% endfor %}
+                </div>    
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt">
+            <strong>{{"Information!" | trans }}</strong>
+            {{"There is no tasks asociated to this sprint" | trans }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">
+    $(document).ready(function(){
+    	$(".delete-task").click(function(event){
+        	var that=this;
+    	    event.preventDefault();
+    	    $.get($(this).attr('href'), function(response){
+        	    if(response.ok){
+            	    $('#hours-planified').html(response.planified.toString());
+        	    	$(that).parent().parent().parent().remove();
+        	    }
+            });
+    	});
+    });
+</script>
+{% endblock %}

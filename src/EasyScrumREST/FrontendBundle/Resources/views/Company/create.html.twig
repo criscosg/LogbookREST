@@ -1,0 +1,73 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+{%  set edit = "Edición del registro"|trans %}
+{%  set create = "Creación de nuevo registro"|trans %}
+
+{% block title_section %}
+    {% if edition is defined %}
+        {{ edit }}
+    {% else %}
+        {{ create }}
+    {% endif %}
+
+{% endblock %}
+
+{% block breadcrumb %}
+    {% if edition is defined %}
+        {% set crumbs = {'Compañia': path('companies_list'), (edit):''} %}
+    {% else %}
+        {% set crumbs = {'Compañia': path('companies_list'), (create):''} %}
+    {% endif %}
+
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <a href="#" class="btn btn-primary btn-m">
+            <i class="fa fa-plus"></i> {{ "Asignar producto" | trans }}
+        </a>
+    </div>
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-pencil"></i>
+            </span>
+            {% if edition is defined %}
+                <h5>{{ edit }}</h5>
+            {% else %}
+                <h5>{{ create }}</h5>
+            {% endif %}
+        </div>
+        <div class="widget-content nopadding">
+            <form class="form-horizontal" id="form-create-item" role="form"
+                  action="{% if edition is defined %}{{ path('put_company',{'id':id}) }} {% else %} {{ path('create_company') }} {% endif %}"
+                  method="post" {% if edition is defined %}{{ form_enctype(form) }} {% endif %} xmlns="http://www.w3.org/1999/html">
+                
+                <div class="form-group">
+                    <label id="label_name" for="company_name" class="col-sm-3 control-label company-active is-public"><span class="red">*</span> {{ "Nombre" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.name, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+
+                {{ form_rest(form) }}
+                <div class="form-actions">
+                    <button id="register" type="submit" class="btn btn-large btn-primary">
+                        {{ "Guardar cambios"|trans }}
+                    </button>
+                    <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
+                    <div class="help-block mt10">
+                        <span class="red">*</span> {{"Campos obligatorios" | trans }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

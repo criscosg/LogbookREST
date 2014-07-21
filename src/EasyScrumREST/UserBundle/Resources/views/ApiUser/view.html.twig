@@ -1,0 +1,58 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{ "Vista de usuario" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Users':path('api_users_list'), (api_user.name): ''} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <a title="Modificar" href="{{ path('edit_normal_api_user', { 'id': api_user.id }) }}" class="btn btn-primary btn-s">
+            <i class="fa fa-pencil"></i> {{"Edit" | trans}}
+        </a>
+        <a title="Borrar" href="{{ path('delete_normal_api_user', { 'id': api_user.id }) }}" class="btn btn-danger btn-s">
+            <i class="fa fa-trash-o"></i> {{"Delete" | trans}}
+        </a>
+    </div>
+
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-th-list"></i>
+            </span>
+            <h5>{{ "register data"|trans }}</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <table class="table table-bordered table-striped table-hover">
+                <tbody>
+                    <tr>
+                        <td>{{ "Name"|trans }}</td>
+                        <td>{% if api_user.name is defined %}{{ api_user.name }}{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ "Surname"|trans }}</td>
+                        <td>{% if api_user.last_name is defined %}{{ api_user.last_name }}{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ "Email"|trans }}</td>
+                        <td>{% if api_user.email is defined %}{{ api_user.email }}{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ "Created"|trans }}</td>
+                        <td>{% if api_user.created is defined %}{{ api_user.created | date()}}{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ "Rol"|trans }}</td>
+                        <td>{% if api_user.roles is defined %}{{ api_user.roles }}{% endif %}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

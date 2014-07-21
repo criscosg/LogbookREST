@@ -26,7 +26,11 @@ class AppKernel extends Kernel
             new EasyScrumREST\TaskBundle\TaskBundle(),
             new EasyScrumREST\SprintBundle\SprintBundle(),
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
-            new EasyScrumREST\OAuthBundle\OAuthBundle(),    
+            new EasyScrumREST\OAuthBundle\OAuthBundle(),
+	    new EasyScrumREST\SynchronizeBundle\SynchronizeBundle(),
+            new EasyScrumREST\MessageBundle\MessageBundle(),
+            new EasyScrumREST\FrontendBundle\FrontendBundle(),
+            new EasyScrumREST\ProjectBundle\ProjectBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

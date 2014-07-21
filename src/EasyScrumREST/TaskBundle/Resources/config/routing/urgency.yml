@@ -1,0 +1,35 @@
+new_normal_urgency:
+    pattern: /new/{id}
+    defaults: { _controller: TaskBundle:UrgencyNormal:newUrgency }
+    
+edit_normal_urgency:
+    pattern: /edit/{id}
+    defaults: { _controller: TaskBundle:UrgencyNormal:editUrgency }
+    
+hours_urgency:
+    pattern: /hours/{id}
+    defaults: { _controller: TaskBundle:UrgencyNormal:hoursForm }
+    
+save_hours_urgency:
+    pattern: /save-hours/{id}
+    defaults: { _controller: TaskBundle:UrgencyNormal:saveHours }    
+
+delete_normal_urgency:
+    pattern: /delete/{id}
+    defaults: { _controller: TaskBundle:UrgencyNormal:deleteUrgency }
+    
+move_on_process_urgency:
+    pattern: /to-on-process/{id}
+    defaults: { _controller: TaskBundle:UrgencyNormal:moveToOnProcess }
+    
+move_todo_urgency:
+    pattern: /to-todo/{id}
+    defaults: { _controller: TaskBundle:UrgencyNormal:moveToTodo }
+    
+move_done_urgency:
+    pattern: /to-done/{id}/{sprint}
+    defaults: { _controller: TaskBundle:UrgencyNormal:moveToDone }
+    
+move_undone_urgency:
+    pattern: /to-undone/{id}
+    defaults: { _controller: TaskBundle:UrgencyNormal:moveToUndone }    

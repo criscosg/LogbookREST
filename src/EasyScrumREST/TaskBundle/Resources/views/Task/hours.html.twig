@@ -1,0 +1,24 @@
+<form class="form-horizontal" id="form-hours" role="form" action="{{ path('save_hours_task',{'id':task.id})}}"
+      method="post" xmlns="http://www.w3.org/1999/html">
+    
+    <div class="form-group">
+        <label id="label_name" for="task_name" class="col-sm-3 control-label log-active is-public"> {{ "Hours spent" |trans}}</label>
+        <div class="col-sm-4">
+            {{ form_widget(form.hoursSpent, { 'attr': { 'class': 'form-control'} }) }}
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label id="label_hours" for="task_hours" class="col-sm-3 control-label user-active">{{ "Hours to end" |trans}}</label>
+        <div class="col-sm-4">
+            {{ form_widget(form.hoursEnd, { 'attr': { 'class': 'form-control'} }) }}
+        </div>
+    </div>
+    
+    {{ form_rest(form) }}
+    <div class="form-actions">
+        <button id="register" type="submit" class="btn btn-large btn-primary">
+            {{ "Save"|trans }}
+        </button>
+        <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
+</form>

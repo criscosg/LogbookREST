@@ -1,0 +1,75 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{ "Sprints" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Sprints':''} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        {% if is_granted('ROLE_SCRUM_MASTER') %}
+            <a href="{{ path('sprint_creation_first') }}" class="btn btn-primary btn-m">
+                <i class="fa fa-plus"></i> {{ "New Sprint" | trans }}
+            </a>
+        {% endif %}
+    </div>
+
+    {% if sprints | length > 0 %}
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-align-justify"></i>
+            </span>
+            <h5>{{ "Lists of sprints"|trans }}</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>{{ "Title" | trans }}</th>
+                    <th>{{ "Description" | trans }}</th>
+                    <th>{{ "Created" | trans }}</th>
+                    <th>{{ "Actions" | trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for sprint in sprints %}
+                    <tr>
+                        <td>{% if sprint.title is defined %}{{ sprint.title }}{% endif %}</td>
+                        <td>{% if sprint.description is defined %}
+                                {{ sprint.description }}
+                            {% endif %}
+                        </td>
+                        <td>{% if sprint.created is defined %}{{ sprint.created |date('d/m/Y') }}{% endif %}</td>
+                        <td class="taskOptions">
+                            {% if sprint.finalized is empty %}
+                                <a title="See" href="{{ path('show_normal_sprint', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>
+                            {% else %}
+                                <a title="Finalize" href="{{ path('sprint_finalize', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>
+                            {% endif %}
+                            {% if is_granted('ROLE_SCRUM_MASTER') %}
+                                {% if sprint.finalized is empty %}
+                                    <a title="Planify" href="{{ path('sprint_planification', { 'id': sprint.id }) }}"><i class="fa fa-pencil"></i></a>
+                                {% endif %}
+                                <a title="Delete" href="{{ path('delete_normal_sprint', { 'id': sprint.id }) }}"><i class="fa fa-trash-o"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+        <div class="alert alert-info mt">
+            <strong>{{"Information!" | trans }}</strong>
+            {{"No sprints created" | trans }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,7 @@
+parameters:
+    message.handler.class: EasyScrumREST\MessageBundle\Handler\MessageHandler
+
+services:
+    message.handler:
+        class: %message.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory]

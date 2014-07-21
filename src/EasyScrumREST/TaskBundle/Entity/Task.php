@@ -25,9 +25,9 @@ class Task
 
     /**
      * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="modified", type="datetime", nullable=true)
+     * @ORM\Column(name="updated", type="datetime", nullable=true)
      */
-    protected $modified;
+    protected $updated;
 
     /**
      * @ORM\Column(type="string", length=250)
@@ -48,10 +48,10 @@ class Task
     private $sprint;
 
     /**
-     * @ORM\ManyToMany(targetEntity="EasyScrumREST\TaskBundle\Entity\Tag", mappedBy="tasks")
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\TaskBundle\Entity\Category", inversedBy="tasks")
      * @Expose
      */
-    private $tags;
+    private $category;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -62,7 +62,7 @@ class Task
     protected $created;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=true)
      * @Expose
      */
     protected $priority;
@@ -81,6 +81,18 @@ class Task
      */
     protected $hoursEnd;
 
+    /**
+     * @ORM\Column(name="salt", type="string", length=255, nullable=true)
+     * @Expose
+     */
+    protected $salt;
+    
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     * @Expose
+     */
+    protected $state = "TODO";
+
     public function __construct()
     {
     }
@@ -90,14 +102,14 @@ class Task
         return $this->id;
     }
 
-    public function getModified()
+    public function getUpdated()
     {
-        return $this->modified;
+        return $this->updated;
     }
 
-    public function setModified($modified)
+    public function setUpdated($updated)
     {
-        $this->modified = $modified;
+        $this->updated = $updated;
     }
 
     public function getCreated()
@@ -112,7 +124,7 @@ class Task
 
     public function __toString()
     {
-        return $this->name;
+        return $this->title;
     }
 
     public function getSprint()
@@ -125,19 +137,14 @@ class Task
         $this->sprint = $sprint;
     }
 
-    public function getTags()
+    public function getCategory()
     {
-        return $this->tags;
+        return $this->category;
     }
 
-    public function setTags(ArrayCollection $tags)
+    public function setCategory(Category $category)
     {
-        $this->tags = $tags;
-    }
-
-    public function addTag(Task $tag)
-    {
-        $this->tags->add($tag);
+        $this->category = $category;
     }
 
     public function getTitle()
@@ -198,6 +205,34 @@ class Task
     public function setHoursEnd($hoursEnd)
     {
         $this->hoursEnd = $hoursEnd;
+    }
+    
+    public function getState()
+    {
+        return $this->state;
+    }
+    
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setSalt($salt = null)
+    {
+        if (!$this->salt) {
+            if (!$salt) {
+                $salt = md5(time());
+            }
+            $this->salt = $salt;
+        }
     }
 
 }

@@ -1,0 +1,23 @@
+sprints_list:
+    pattern: /
+    defaults: { _controller: SprintBundle:SprintNormal:listSprints }
+    
+show_normal_sprint:
+    pattern: /see/{id}
+    defaults: { _controller: SprintBundle:SprintNormal:sprintShow }
+    
+sprint_creation_first:
+    pattern: /first-step
+    defaults: { _controller: SprintBundle:SprintNormal:newSprintFirstStep }
+    
+sprint_planification:
+    pattern: /planification/{id}
+    defaults: { _controller: SprintBundle:SprintNormal:sprintPlanification }
+    
+sprint_finalize:
+    pattern: /finalize/{id}
+    defaults: { _controller: SprintBundle:SprintNormal:sprintFinalize }      
+    
+delete_normal_sprint:
+    pattern: /delete/{id}
+    defaults: { _controller: SprintBundle:SprintNormal:deleteSprint }

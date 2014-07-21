@@ -5,7 +5,7 @@ parameters:
     user.class: EasyScrumREST\UserBundle\Entity\User
     user.provider.class: EasyScrumREST\UserBundle\Provider\UserProvider
     user.repository.class: EasyScrumREST\UserBundle\Entity\UserRepository
-    company.handler.class: IHorseREST\VeterinaryBundle\Handler\CompanyHandler
+    company.handler.class: EasyScrumREST\UserBundle\Handler\CompanyHandler
     
 
 services:

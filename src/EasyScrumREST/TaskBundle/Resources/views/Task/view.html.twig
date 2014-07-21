@@ -1,0 +1,82 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{ "Entradas" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Entradas':path('entries_list'), (entry.name): ''} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+    {% if entry %}
+        <div class="row">
+            <a title="Modificar" href="{{ path('edit_entry', { 'id': entry.id }) }}" class="btn btn-primary btn-s">
+                <i class="fa fa-pencil"></i> {{"Editar" | trans}}
+            </a>
+            <a title="Borrar" href="{{ path('delete_entry', { 'id': entry.id }) }}" class="btn btn-danger btn-s">
+                <i class="fa fa-trash-o"></i> {{"Borrar" | trans}}
+            </a>
+
+            <a title="Añadir imagen" href="{{ path('new_image', { 'entryId': entry.id }) }}" class="btn btn-primary btn-s">
+                <i class="fa fa-picture-o"></i> {{"Añadir imagen" | trans}}
+            </a>
+
+        </div>
+
+        <div class="widget-box">
+            <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-th-list"></i>
+            </span>
+                <h5>{{ "Entrada"|trans }}</h5>
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table table-bordered table-striped table-hover">
+                    <tbody>
+                        <tr>
+                            <td>{{ "Nombre"|trans }}</td>
+                            <td>{% if entry.name is defined %}{{ entry.name }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ "Usuario"|trans }}</td>
+                            <td>{% if entry.log is defined %}
+
+                                    {% if entry.log.name is defined %}{{ entry.log.name }}{% endif %} 
+
+                                    &nbsp;
+                                    <a title="{{ "Ver"|trans }}" href="{{ path('show_log', { 'id': entry.log.id }) }}" class="btn btn-info btn-xs"><i class="fa fa-eye"></i></a>
+                                    <a title="{{ "Editar"|trans }}" href="{{ path('edit_log', { 'id': entry.log.id }) }}" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>
+
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{{ "Creación"|trans }}</td>
+                            <td>{% if entry.created is defined %}{{ entry.created |date('d/m/Y') }}{% endif %}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        {% if images | length > 0 %}
+            <h5>{{"Imágenes asociadas al registro" | trans}}</h5>
+
+            {% for image in images %}
+                <img src={{ "http://rest.logbook.me/" ~ image }}>
+            {% endfor %}
+        {% endif %}
+
+    {% else %}
+        <div class="alert alert-info mt">
+            <strong>{{"Información!" | trans }}</strong>
+            {{"No se ha encontrado ningún registro" | trans }}
+        </div>
+    {% endif %}
+{% endblock %}
