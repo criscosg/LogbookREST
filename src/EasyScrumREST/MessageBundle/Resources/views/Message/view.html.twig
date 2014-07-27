@@ -1,0 +1,72 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+    {{ "Messages" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Messages':''} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+   <div class="widget-box">
+        <div class="widget-title">
+        <span class="icon">
+            <i class="fa fa-th-list"></i>
+        </span>
+            <h5>{{ "Messages"|trans }}</h5>
+        </div>
+        <div class="widget-content nopadding">
+            {% if messages | length > 0 %}
+                <div class="messages clearfix row">
+                    {% include "MessageBundle:Message:messages.html.twig" %}
+                </div>
+             {% endif %}
+             <form class="asynchronous" action="{{ path('send_message') }}" method="POST"  name="write-message" {{ form_enctype(form)}}>
+                 <div class="container">
+                     <div class="row">       
+                         {{ form_widget(form.text, { 'attr': { 'class': 'col-md-9', 'placeholder': 'Escribe tu mensaje aquí...'} }) }}
+                         {{ form_rest(form) }}
+                         <div class="col-md-3">
+                             <button type="submit" class="btn btn-small btn-info">{{"Escribir mensaje" | trans }}</button>
+                         </div>   
+                     </div>
+                 </div>    
+             </form>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.asynchronous').submit(function(event){
+            event.preventDefault();
+            var frm = $('.asynchronous');
+        	var data = frm.serializeArray();
+        	var myjson = {}; 
+        	var url = $(this).attr('action');
+        	$.when($(data).each(function() {
+        		myjson[this.name] = this.value;
+        	})).then(function(){
+        		$.post(url, myjson, function(response){
+            		if(response.ok){
+            			$('.messages').append(response.message);
+            		}
+                });
+    	    });
+        });
+    });
+
+    (function poll() {
+	   setTimeout(function() {
+		   $.get("{{ path('messages_async') }}", function(response){
+       			$('.messages').append(response);
+           }).done(poll);
+	    }, 30000);
+	})();
+</script>
+
+{% endblock %}

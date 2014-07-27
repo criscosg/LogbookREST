@@ -1,0 +1,13 @@
+{% for message in messages %}
+    <div class="message clearfix {% if app.user.isEqualTo(message.user) %}right{% else %}left{% endif %}">
+        <div class="photo visible-desktop">
+            
+        </div>
+        <div class="date">{{ message.user.name ~ " " ~ message.user.lastName }}</div>
+        <div class="date">{{ message.created | date('d/m/Y H:i') }}</div>
+        <div class="text">
+            <i class="icon-caret-{% if app.user.isEqualTo(message.user) %}right{% else %}left{% endif %}"></i>
+            {{ message.text }}
+        </div>
+    </div>
+{% endfor %}

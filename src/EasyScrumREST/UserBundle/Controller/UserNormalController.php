@@ -1,6 +1,8 @@
 <?php
 namespace EasyScrumREST\UserBundle\Controller;
 
+use EasyScrumREST\UserBundle\Form\ProfileType;
+
 use EasyScrumREST\UserBundle\Form\NormalUserType;
 
 use EasyScrumREST\UserBundle\Form\ApiUserType;
@@ -54,10 +56,11 @@ class UserNormalController extends EasyScrumController
     
     public function newApiUserAction()
     {
+        $company=$this->getUser()->getCompany();
         $form = $this->createForm(new NormalUserType());
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
-            $newApiUser = $this->get('api.user.handler')->create($request);
+            $newApiUser = $this->get('api.user.handler')->create($request, $company);
             if($newApiUser) {
                 return $this->redirect($this->generateUrl('api_users_list'));
             }
@@ -81,6 +84,21 @@ class UserNormalController extends EasyScrumController
         }
     
         return $this->render('UserBundle:ApiUser:create.html.twig', array('form' => $form->createView(),'edition' => true, 'user' => $user));
+    }
+    
+    public function editProfileAction()
+    {
+        $user=$this->getUser();
+        $form = $form = $this->createForm(new ProfileType(), $user);
+        $request=$this->getRequest();
+        if($request->getMethod()=='POST'){
+            $apiUser = $this->container->get('api.user.handler')->editProfile($request, $user);
+            if($apiUser) {
+                return $this->redirect($this->generateUrl('api_users_list'));
+            }
+        }
+    
+        return $this->render('UserBundle:ApiUser:profile.html.twig', array('form' => $form->createView(),'edition' => true, 'user' => $user));
     }
     
     /**

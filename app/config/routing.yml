@@ -1,7 +1,3 @@
-project:
-    resource: "@ProjectBundle/Resources/config/routing.yml"
-    prefix:   /
-
 frontend:
     resource: "@FrontendBundle/Resources/config/routing.yml"
     prefix:   /
@@ -30,6 +26,10 @@ task_normal:
     resource: "@TaskBundle/Resources/config/routing/task.yml"
     prefix:   /task
     
+messages_normal:
+    resource: "@MessageBundle/Resources/config/routing/message.yml"
+    prefix:   /message    
+    
 urgencies_normal:
     resource: "@TaskBundle/Resources/config/routing/urgency.yml"
     prefix:   /urgency
@@ -52,6 +52,9 @@ o_auth:
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
     prefix:   /api/doc
+    
+_liip_imagine:
+    resource: "@LiipImagineBundle/Resources/config/routing.xml"
 
 login:
     pattern: /login

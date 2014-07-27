@@ -13,10 +13,12 @@ use Symfony\Component\Security\Core\SecurityContext;
 
 class SprintNormalController extends EasyScrumController
 {
-    public function listSprintsAction()
+    public function listSprintsAction(Request $request)
     {
         $user = $this->getUser();
         $search['company'] = $user->getCompany()->getId();
+        $project=$request->query->get('project');
+        $search['project'] = $project;
         $sprints=$this->container->get('sprint.handler')->all(20, 0, null, $search);
 
         return $this->render('SprintBundle:Sprint:index.html.twig', array('sprints'=>$sprints));
@@ -35,7 +37,9 @@ class SprintNormalController extends EasyScrumController
 
     public function newSprintFirstStepAction()
     {
-        $form = $this->createForm(new SprintCreationFirstType());
+        $type=new SprintCreationFirstType();
+        $type->setCompany($this->getUser()->getCompany());
+        $form = $this->createForm($type);
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
             $newSprint = $this->get('sprint.handler')->firstStep($request, $this->getUser()->getCompany());

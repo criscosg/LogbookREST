@@ -6,6 +6,10 @@ show_normal_api_user:
     pattern: /api_user/{id}
     defaults: { _controller: UserBundle:UserNormal:apiUserShow }  
     
+edit_profile:
+    pattern: /profile
+    defaults: { _controller: UserBundle:UserNormal:editProfile }    
+    
 new_normal_api_user:
     pattern: /new
     defaults: { _controller: UserBundle:UserNormal:newApiUser }

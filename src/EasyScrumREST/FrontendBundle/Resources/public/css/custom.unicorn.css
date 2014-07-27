@@ -117,6 +117,7 @@ span.error{
 	color: #686868;
 	margin-bottom: 10px;
 	margin-top: 10px;
+	height: 190px;
 }
 
 .task-box a {
@@ -209,4 +210,78 @@ span.error{
     display: block;
     height: 2px;
     width: 12px;
+}
+
+/* Mensajes */
+
+.messages{
+    margin-top: 15px;
+    margin-bottom: 10px;
+    padding: 0 7%;
+}
+.messages .message{
+    margin-bottom: 5px;
+}
+.messages .message .photo{
+    width: 8%;
+}
+.message .text{
+    line-height: 18px;
+    font-size: 12px;
+    border-radius: 4px;
+    color:#666;
+    width: auto;
+    padding: 6px 10px;
+    position: relative;
+}
+.message .date{
+    font-style: italic;
+    color:#666;
+    font-size: 11px;
+    margin: 5px 0;
+}
+.messages .left .photo{
+    float: left;
+    margin-right: 25px;
+}
+.messages .left .text{
+    float: left;
+    background: #f5f5f5;
+    -webkit-box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.1);
+    text-align:left;
+}
+i.icon-caret-left{
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    font-size: 28px;
+    margin-top: -14px;
+    color: #f5f5f5;
+}
+.messages .left .date{
+    text-align: left;
+ }
+
+.messages .right .photo{
+    float: right;
+    margin-left: 15px;
+}
+.messages .right .text{
+    float: right;
+    background: #F6EFFF;
+    -webkit-box-shadow: 1px 1px 2px 0 rgba(234, 217, 255, 1);
+    box-shadow: 1px 1px 2px 0 rgba(234, 217, 255, 1);
+    text-align:right;
+}
+i.icon-caret-right{
+    color: #F6EFFF;
+    top: 50%;
+    font-size: 28px;
+    margin-top: -14px;
+    position: absolute;
+    right: -10px;
+}
+.messages .right .date{
+    text-align: right;
 }

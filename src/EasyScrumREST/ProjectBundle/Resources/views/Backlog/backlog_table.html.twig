@@ -1,0 +1,50 @@
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+    <tr>
+        <th>{{ "Title" | trans }}</th>
+        <th>{{ "Description" | trans }}</th>
+        <th>{{ "Created" | trans }}</th>
+        <th>{{ "Priority" | trans }}</th>
+        <th>{{ "Actions" | trans }}</th>
+    </tr>
+    </thead>
+    <tbody id="todo">
+    {% for task in project.backlogs if task.state == "TODO" %}
+        <tr>
+            <td>{% if task.title is defined %}{{ task.title }}{% endif %}</td>
+            <td>{% if task.description is defined %}
+                    {{ task.description }}
+                {% endif %}
+            </td>
+            <td>{% if task.created is defined %}{{ task.created |date('d/m/Y') }}{% endif %}</td>
+            <td>{{ task.priority }}
+            <td class="taskOptions">
+                {% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
+                    <a title="Mark task as done" class="finalize" href="{{ path('finalize_backlog', { 'id': task.id }) }}"><i class="fa fa-check"></i></a> 
+                    <a title="Edit" href="{{ path('edit_backlog', { 'id': task.id }) }}"><i class="fa fa-pencil"></i></a>
+                    <a title="Delete" href="{{ path('delete_backlog', { 'id': task.id }) }}"><i class="fa fa-trash-o"></i></a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    <tbody id="done" style="display: none;">
+    {% for task in project.backlogs if task.state == "DONE" %}
+        <tr>
+            <td>{% if task.title is defined %}{{ task.title }}{% endif %}</td>
+            <td>{% if task.description is defined %}
+                    {{ task.description }}
+                {% endif %}
+            </td>
+            <td>{% if task.created is defined %}{{ task.created |date('d/m/Y') }}{% endif %}</td>
+            <td>{{ task.priority }}
+            <td class="taskOptions">
+                {% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
+                    <a title="Edit" href="{{ path('edit_backlog', { 'id': task.id }) }}"><i class="fa fa-pencil"></i></a>
+                    <a title="Delete" href="{{ path('delete_backlog', { 'id': task.id }) }}"><i class="fa fa-trash-o"></i></a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

@@ -61,7 +61,6 @@ abstract class User implements UserInterface, \Serializable, EquatableInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Assert\Length(min = 6)
      * */
     protected $password;

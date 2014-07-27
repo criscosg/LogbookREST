@@ -1,20 +1,19 @@
 <?php
 
 namespace EasyScrumREST\UserBundle\Handler;
+
+use Symfony\Component\HttpFoundation\Request;
+
+use EasyScrumREST\UserBundle\Form\ProfileType;
 use EasyScrumREST\UserBundle\Form\NormalUserType;
-
 use EasyScrumREST\UserBundle\Form\RegisterType;
-
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
-
 use EasyScrumREST\UserBundle\Form\ApiUserType;
-
 use EasyScrumREST\UserBundle\Handler\ApiUserHandlerInterface;
 use Doctrine\ORM\EntityManager;
 use EasyScrumREST\UserBundle\Entity\ApiUser;
 use Symfony\Component\Form\FormFactoryInterface;
 use EasyScrumREST\UserBundle\Form\AdminApiUserType;
-use Symfony\Component\BrowserKit\Request;
 
 class ApiUserHandler
 {
@@ -77,11 +76,11 @@ class ApiUserHandler
      *
      * @return ApiUser
      */
-    public function create($request)
+    public function create($request, $company)
     {
         $user = new ApiUser();
-    
-        $form = $this->factory->create(new NormalUserType(), $user, array('method' => $method));
+        $user->setCompany($company);
+        $form = $this->factory->create(new NormalUserType(), $user);
         $form->handleRequest($request);
         if ($form->isValid()) {
             $this->em->persist($user);
@@ -90,6 +89,46 @@ class ApiUserHandler
             return $user;
         }
     
+        throw new \Exception('Invalid submitted data');
+    }
+
+    /**
+     * Edit a profile.
+     *
+     * @param $request
+     *
+     * @return ApiUser
+     */
+    public function editProfile(Request $request,ApiUser $user)
+    {
+        $form = $this->factory->create(new ProfileType(), $user);
+        $oldPass=$user->getPassword();
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $req = $request->request->get('profile');
+            if($req['password']){
+                $encoder = $this->encoderFactory->getEncoder($user);
+                $passwordEncoded = $encoder->encodePassword($user->getPassword(), $user->getSalt());
+                $user->setPassword($passwordEncoded);
+            } else {
+                $user->setPassword($oldPass);
+            }
+            
+            $this->em->persist($user);
+            $this->em->flush($user);
+
+            $files=$request->files->get('profile');
+            if($files['profileImage']['file']){
+                $image=$user->getProfileImage();
+                $image->setUser($user);
+                $image->uploadImage();
+                $this->em->persist($image);
+                $this->em->flush($image);
+            }
+
+            return $user;
+        }
+
         throw new \Exception('Invalid submitted data');
     }
     
@@ -174,21 +213,16 @@ class ApiUserHandler
     private function processNormalForm(ApiUser $user, $request, $method = "POST")
     {
         $form = $this->factory->create(new NormalUserType(), $user, array('method' => $method));
-        $req = $request->request->get('api_user');
-        if(!$req['password']){
-            $req['password']=$user->getPassword();
-            $request->request->set('api_user', $req);
-            $req['password']=null;
-        }
+        $oldPass=$user->getPassword();
         $form->handleRequest($request);
         if ($form->isValid()) {
-            if ($method!='POST') {
-                $req = $request->request->get('api_user');
-                if($req['password']){
-                    $encoder = $this->encoderFactory->getEncoder($user);
-                    $passwordEncoded = $encoder->encodePassword($user->getPassword(), $user->getSalt());
-                    $user->setPassword($passwordEncoded);
-                }
+            $req = $request->request->get('api_user');
+            if($req['password']){
+                $encoder = $this->encoderFactory->getEncoder($user);
+                $passwordEncoded = $encoder->encodePassword($user->getPassword(), $user->getSalt());
+                $user->setPassword($passwordEncoded);
+            } else {
+                $user->setPassword($oldPass);
             }
             $this->em->persist($user);
             $this->em->flush($user);

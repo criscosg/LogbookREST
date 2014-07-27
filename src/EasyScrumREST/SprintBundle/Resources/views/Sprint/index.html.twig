@@ -34,7 +34,7 @@
                 <tr>
                     <th>{{ "Title" | trans }}</th>
                     <th>{{ "Description" | trans }}</th>
-                    <th>{{ "Created" | trans }}</th>
+                    <th>{{ "Project" | trans }}</th>
                     <th>{{ "Actions" | trans }}</th>
                 </tr>
                 </thead>
@@ -46,7 +46,7 @@
                                 {{ sprint.description }}
                             {% endif %}
                         </td>
-                        <td>{% if sprint.created is defined %}{{ sprint.created |date('d/m/Y') }}{% endif %}</td>
+                        <td>{% if sprint.project is not empty %}<a href="{{ path('show_normal_project', {id:sprint.project.id}) }}">{{ sprint.project.title }}</a>{% endif %}</td>
                         <td class="taskOptions">
                             {% if sprint.finalized is empty %}
                                 <a title="See" href="{{ path('show_normal_sprint', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>

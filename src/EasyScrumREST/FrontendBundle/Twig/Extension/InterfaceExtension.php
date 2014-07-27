@@ -18,7 +18,8 @@ class InterfaceExtension extends EasyScrumExtension
     public function getFunctions()
     {
         return array('staticCall' => new \Twig_Function_Method($this, 'staticCall'),
-                     'getBrowser' => new \Twig_Function_Method($this, 'getUserAgent')
+                     'getBrowser' => new \Twig_Function_Method($this, 'getUserAgent'),
+                     'getLastMessages' => new \Twig_Function_Method($this, 'getLastMessages')
         );
     }
 
@@ -50,6 +51,14 @@ class InterfaceExtension extends EasyScrumExtension
         }
 
         return null;
+    }
+    
+    public function getLastMessages()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $messages=$this->container->get('doctrine.orm.entity_manager')->getRepository('MessageBundle:Message')->findLastMessages($user);
+
+        return $messages;
     }
 
     public function getName()

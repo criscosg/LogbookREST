@@ -1,6 +1,6 @@
 {% extends "FrontendBundle:Layouts:2column.html.twig" %}
-{%  set edit = "Edit a project"|trans %}
-{%  set create = "Create new project"|trans %}
+{%  set edit = "Edit task for product backlog"|trans %}
+{%  set create = "Create new task for product backlog"|trans %}
 
 {% block title_section %}
     {% if edition is defined %}
@@ -13,9 +13,9 @@
 
 {% block breadcrumb %}
     {% if edition is defined %}
-        {% set crumbs = {'Projects': path('projects_list'),(edit):''} %}
+        {% set crumbs = {'Projects': path('projects_list'), 'project': path('show_normal_project', {id:project.id}),(edit):''} %}
     {% else %}
-        {% set crumbs = {'Projects': path('projects_list'),(create):''} %}
+        {% set crumbs = {'Projects': path('projects_list'), 'project': path('show_normal_project', {id:project.id}),(create):''} %}
     {% endif %}
 
     {{ setCrumbs(crumbs) }}
@@ -36,8 +36,8 @@
         </div>
         <div class="widget-content nopadding">
             <form class="form-horizontal" id="form-create-item" role="form"
-                  action="{% if edition is defined %}{{ path('project_edit',{'id':id}) }} {% else %} {{ path('project_creation') }} {% endif %}"
-                  method="post" {% if edition is defined %}{{ form_enctype(form) }} {% endif %} xmlns="http://www.w3.org/1999/html">
+                  action="{% if edition is defined %}{{ path('edit_backlog',{'id':backlog.id}) }} {% else %} {{ path('create_backlog',{'id':project.id}) }} {% endif %}"
+                  method="post" xmlns="http://www.w3.org/1999/html">
                 
                 <div class="form-group">
                     <label id="label_name" for="sprint_name" class="col-sm-3 control-label log-active is-public"><span class="red">*</span> {{ "Title" |trans}}</label>
@@ -52,9 +52,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label id="label_company" for="sprint_company" class="col-sm-3 control-label user-active"> {{ "Product owner" |trans}}</label>
+                    <label id="label_company" for="sprint_company" class="col-sm-3 control-label user-active"> {{ "Priority" |trans}}</label>
                     <div class="col-sm-4">
-                        {{ form_widget(form.owner, { 'attr': { 'class': 'form-control'} }) }}
+                        {{ form_widget(form.priority, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
                 </div>
                 

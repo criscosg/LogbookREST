@@ -1,5 +1,7 @@
 <?php
 namespace EasyScrumREST\UserBundle\Entity;
+use EasyScrumREST\ImageBundle\Entity\ImageProfile;
+
 use Doctrine\Common\Collections\ArrayCollection;
 
 use EasyScrumREST\SprintBundle\Entity\Log;
@@ -29,6 +31,13 @@ class ApiUser extends User
      * @ORM\OneToMany(targetEntity="EasyScrumREST\MessageBundle\Entity\Message", mappedBy="user", cascade={"persist", "merge", "remove"})
      */
     private $messages;
+    
+    /**
+     * @var ImageProfile
+     * @ORM\OneToOne(targetEntity="EasyScrumREST\ImageBundle\Entity\ImageProfile", mappedBy="user", cascade={"persist", "merge", "remove"})
+     */
+    private $profileImage;
+    
 
     /**
      * @ORM\Column(type="string", length=250, nullable=true)
@@ -59,6 +68,16 @@ class ApiUser extends User
     public function setMessages(ArrayCollection $messages)
     {
         $this->messages = $messages;
+    }
+    
+    public function getProfileImage()
+    {
+        return $this->profileImage;
+    }
+    
+    public function setProfileImage(ImageProfile $profileImage)
+    {
+        $this->profileImage = $profileImage;
     }
 
     public function addMessage(Message $message)

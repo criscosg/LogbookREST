@@ -15,13 +15,13 @@ use JMS\Serializer\Annotation\Expose;
  * @ORM\HasLifecycleCallbacks
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"task"="ImageTask"})
+ * @ORM\DiscriminatorMap({"profile"="ImageProfile"})
  * @ExclusionPolicy("all")
  */
 abstract class Image
 {
     const WEB_PATH = 'bundles/frontend/img/';
-    const UPLOAD_PATH = '/var/www/EasyScrumREST/web/uploads/';
+    const UPLOAD_PATH = '/var/www/easyscrumrest/web/uploads/';
     const ERROR_MESSAGE = "Ha ocurrido un error. Asegúrate de subir imágenes JPG o PNG y con menos de 2 megas.";
     const INFO_MESSAGE = "El formato de las imágenes ha de ser JPG o PNG y deben pesar menos de 2 megas.";
     const AJAX_LOADER = 'bundles/frontend/img/ajax-loader.gif';
@@ -74,11 +74,6 @@ abstract class Image
      */
     protected $description;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ImageCopy", mappedBy="image", cascade={"persist", "merge", "remove"})
-     */
-    protected $imageCopies;
-
     protected $maxWidth = 1024;
 
     protected $maxHeight = 768;
@@ -86,11 +81,6 @@ abstract class Image
     protected $quality = 70;
 
     protected $type;
-
-    public function __construct()
-    {
-        $this->imageCopies = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
     public function getId()
     {
@@ -213,91 +203,6 @@ abstract class Image
     public function setUpdateDate()
     {
         $this->updateDate = new \DateTime('today');
-    }
-
-    public function getImageThumbnail()
-    {
-        return $this->getImageCopyFromType('ImageThumbnail');
-    }
-
-    public function setImageThumbnail(ImageThumbnail $thumbnail)
-    {
-        $this->setUniqueImageCopy($thumbnail);
-    }
-
-    public function getImageNav()
-    {
-        return $this->getImageCopyFromType('ImageNav');
-    }
-
-    public function setImageNav(ImageNav $nav)
-    {
-        $this->setUniqueImageCopy($nav);
-    }
-
-    public function setUniqueImageCopy($imageCopy)
-    {
-        foreach ($this->imageCopies as $imgc) {
-            if (get_class($imgc) == get_class($imageCopy)) {
-                $this->imageCopies->removeElement($imgc);
-                break;
-            }
-        }
-
-        $this->imageCopies->add($imageCopy);
-    }
-
-    public function getImageCopies()
-    {
-        return $this->imageCopies;
-    }
-
-    private function getImageCopyFromType($type)
-    {
-        $class = "EasyScrumREST\\ImageBundle\\Entity\\$type";
-        foreach ($this->imageCopies as $img) {
-            if (get_class($img) == $class) {
-                return $img;
-            }
-        }
-
-        return null;
-    }
-
-    public function createCopies()
-    {
-        $oldRoute = null;
-        if ($this->getImage()) {
-            $oldRoute = $this->getImage();
-            $thumb = $this->getImageThumbnail();
-            if (!$thumb) {
-                $thumb = new ImageThumbnail();
-            }
-        } else {
-            $thumb = new ImageThumbnail();
-        }
-        $copies = array($thumb);
-
-        return array($oldRoute, $copies);
-    }
-
-    public function createNav()
-    {
-        $nav = $this->getImageNav();
-        if (!$nav) {
-            $nav = new ImageNav();
-        }
-
-        return $nav;
-    }
-
-    public function uploadNewCopies($copies)
-    {
-        foreach ($copies as $copy) {
-            $copy->setImage($this);
-            $copy->uploadCopy();
-            $this->setUniqueImageCopy($copy);
-        }
     }
 
     public function getSubclase()

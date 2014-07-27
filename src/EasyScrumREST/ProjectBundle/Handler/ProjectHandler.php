@@ -2,6 +2,10 @@
 
 namespace EasyScrumREST\ProjectBundle\Handler;
 
+use EasyScrumREST\ProjectBundle\Entity\Backlog;
+
+use Symfony\Component\Form\FormInterface;
+
 use EasyScrumREST\ProjectBundle\Form\ProjectType;
 
 use EasyScrumREST\ProjectBundle\Entity\Project;
@@ -36,10 +40,10 @@ class ProjectHandler
      *
      * @return array
      */
-    public function all($limit = 20, $offset = 0, $orderby = null, $search=null)
+    public function all($company, $limit = 20, $offset = 0, $orderby = null)
     {
 
-        return $this->em->getRepository('ProjectBundle:Project')->findProjectBySearch($limit, $offset, $search, $orderby);
+        return $this->em->getRepository('ProjectBundle:Project')->findByCompany($company);
     }
 
     /**
@@ -113,6 +117,76 @@ class ProjectHandler
         }
 
         throw new \Exception('Invalid submitted data');
+    }
+    
+    /**
+     * Creates project.
+     *
+     * @param Project     $project
+     * @param array         $parameters
+     * @param String        $method
+     *
+     * @return Project
+     *
+     * @throws \Exception
+     */
+    public function createProject(FormInterface $form, $request)
+    {
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $project = $form->getData();
+            $this->em->persist($project);
+            $this->em->flush($project);
+
+            return $project;
+        }
+
+        throw new \Exception('Invalid submitted data');
+    }
+    
+    /**
+     * Creates Backlog.
+     *
+     * @param FormInterface $form
+     * @param Request        $request
+     *
+     * @return Backlog
+     *
+     * @throws \Exception
+     */
+    public function createBacklog(FormInterface $form, $request)
+    {
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $backlog = $form->getData();
+            $this->em->persist($backlog);
+            $this->em->flush($backlog);
+    
+            return $backlog;
+        }
+    
+        throw new \Exception('Invalid submitted data');
+    }
+    
+    /**
+     * @param Backlog $backlog
+     *
+     */
+    public function deleteBacklog(Backlog $entity)
+    {
+        $this->em->remove($entity);
+        $this->em->flush($entity);
+    }
+    
+    /**
+     * @param Backlog $backlog
+     *
+     */
+    public function finalizeBacklogTask(Backlog $entity)
+    {
+        $entity->setState('DONE');
+        $this->em->persist($entity);
+        $this->em->flush($entity);
     }
     
 }

@@ -6,14 +6,30 @@ show_normal_project:
     pattern: /see/{id}
     defaults: { _controller: ProjectBundle:Project:projectShow }
     
-project_creation_first:
+project_creation:
     pattern: /create
-    defaults: { _controller: ProjectBundle:Project:newProjectFirstStep }
+    defaults: { _controller: ProjectBundle:Project:newProject }
     
 project_edit:
     pattern: /edit/{id}
-    defaults: { _controller: ProjectBundle:Project:projectEdit }
+    defaults: { _controller: ProjectBundle:Project:editProject }
     
 delete_normal_project:
     pattern: /delete/{id}
     defaults: { _controller: ProjectBundle:Project:deleteProject }
+    
+create_backlog:
+    pattern: /backlog-task/create/{id}
+    defaults: { _controller: ProjectBundle:Project:newBacklog }
+    
+edit_backlog:
+    pattern: /backlog-task/edit/{id}
+    defaults: { _controller: ProjectBundle:Project:editBacklog }
+    
+delete_backlog:
+    pattern: /backlog-task/delete/{id}
+    defaults: { _controller: ProjectBundle:Project:deleteBacklog }
+
+finalize_backlog:
+    pattern: /backlog-task/finalize/{id}
+    defaults: { _controller: ProjectBundle:Project:finalizeBacklog }

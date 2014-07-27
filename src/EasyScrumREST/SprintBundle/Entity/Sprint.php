@@ -1,5 +1,7 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Entity;
+use EasyScrumREST\ProjectBundle\Entity\Project;
+
 use EasyScrumREST\TaskBundle\Entity\Urgency;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -73,6 +75,12 @@ class Sprint
      * @Expose
      */
     private $company;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\ProjectBundle\Entity\Project", inversedBy="sprints")
+     * @Expose
+     */
+    private $project;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -227,6 +235,16 @@ class Sprint
     public function setCompany(Company $company)
     {
         $this->company = $company;
+    }
+
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    public function setProject(Project $project)
+    {
+        $this->project = $project;
     }
 
     public function getDeleted()

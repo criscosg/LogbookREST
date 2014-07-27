@@ -32,8 +32,18 @@ class MessageHandler
      */
     public function all($limit = 20, $offset = 0, $company=null)
     {
-
         return $this->em->getRepository('MessageBundle:Message')->findMessageBySearch($limit, $offset, $company);
+    }
+    
+    /**
+     * @param int $limit  the limit of the result
+     * @param int $offset starting from the offset
+     *
+     * @return array
+     */
+    public function lastSecondsMessages($company)
+    {
+        return $this->em->getRepository('MessageBundle:Message')->findMessageInLastSeconds($company);
     }
 
     /**
@@ -107,11 +117,10 @@ class MessageHandler
         $form = $this->factory->create(new MessageType(), $entity, array('method' => $method));
         $form->handleRequest($request);
         if (!$form->getErrors()) {
-            $message = $form->getData();
-            $this->em->persist($message);
-            $this->em->flush($message);
+            $this->em->persist($entity);
+            $this->em->flush($entity);
 
-            return $message;
+            return $entity;
         }
 
         throw new \Exception('Invalid submitted data');

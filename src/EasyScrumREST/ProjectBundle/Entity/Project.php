@@ -1,6 +1,8 @@
 <?php
 namespace EasyScrumREST\ProjectBundle\Entity;
 
+use EasyScrumREST\UserBundle\Entity\ApiUser;
+
 use EasyScrumREST\SprintBundle\Entity\Sprint;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -58,12 +60,26 @@ class Project
      * @MaxDepth(0)
      */
     private $sprints;
+    
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\ProjectBundle\Entity\Backlog", mappedBy="project", cascade={"persist", "merge", "remove"})
+     * @Expose
+     * @MaxDepth(0)
+     */
+    private $backlogs;
 
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\Company", inversedBy="projects")
      * @Expose
      */
     private $company;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser", inversedBy="projects")
+     * @Expose
+     */
+    private $owner;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -83,6 +99,7 @@ class Project
     public function __construct()
     {
         $this->sprints = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->backlogs = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     public function getId()
@@ -145,6 +162,21 @@ class Project
         $this->sprints->add($sprint);
     }
     
+    public function getBacklogs()
+    {
+        return $this->backlogs;
+    }
+    
+    public function setBacklogs(ArrayCollection $backlogs)
+    {
+        $this->backlogs = $backlogs;
+    }
+    
+    public function addBacklog(Backlog $backlog)
+    {
+        $this->backlogs->add($backlog);
+    }
+    
     public function getCompany()
     {
         return $this->company;
@@ -163,6 +195,16 @@ class Project
     public function setDeleted($deleted)
     {
         $this->deleted = $deleted;
+    }
+    
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+    
+    public function setOwner(ApiUser $owner)
+    {
+        $this->owner = $owner;
     }
     
     public function getSalt()

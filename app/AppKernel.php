@@ -23,14 +23,16 @@ class AppKernel extends Kernel
             new RaulFraile\Bundle\LadybugBundle\RaulFraileLadybugBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
+            new Liip\ImagineBundle\LiipImagineBundle(),
             new EasyScrumREST\TaskBundle\TaskBundle(),
             new EasyScrumREST\SprintBundle\SprintBundle(),
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
             new EasyScrumREST\OAuthBundle\OAuthBundle(),
-	    new EasyScrumREST\SynchronizeBundle\SynchronizeBundle(),
+	        new EasyScrumREST\SynchronizeBundle\SynchronizeBundle(),
             new EasyScrumREST\MessageBundle\MessageBundle(),
             new EasyScrumREST\FrontendBundle\FrontendBundle(),
             new EasyScrumREST\ProjectBundle\ProjectBundle(),
+            new EasyScrumREST\ImageBundle\ImageBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

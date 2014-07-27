@@ -131,4 +131,23 @@ fos_oauth_server:
     service:
         user_provider: user.provider
         options:
-            supported_scopes: user            
+            supported_scopes: user
+            
+liip_imagine:
+    driver:               gd
+    #web_root:             %kernel.root_dir%/../web
+    #data_root:            %kernel.root_dir%/../web
+    #cache_prefix:         /media/cache
+    cache:                default
+    #cache_clearer:        true
+    data_loader:          default
+    #formats:              []
+    filter_sets:
+        thumbnail:
+            quality: 100
+            filters:
+                thumbnail: { size: [150, 150], mode: outbound }
+        nav:
+            quality: 100
+            filters:
+                thumbnail: { size: [32, 32], mode: outbound }        

@@ -128,7 +128,9 @@ class SprintHandler
     {
         $sprint = new Sprint();
         $sprint->setCompany($company);
-        $form = $this->factory->create(new SprintCreationFirstType(), $sprint, array('method' => 'POST'));
+        $type=new SprintCreationFirstType();
+        $type->setCompany($company->getId());
+        $form = $this->factory->create($type, $sprint, array('method' => 'POST'));
         $form->handleRequest($request);
         if (!$form->getErrors()) {
             $sprint = $form->getData();

@@ -1,0 +1,11 @@
+messages_list:
+    pattern: /
+    defaults: { _controller: MessageBundle:MessageNormal:getMessages }
+    
+messages_async:
+    pattern: /async
+    defaults: { _controller: MessageBundle:MessageNormal:getMessagesAsync }
+    
+send_message:
+    pattern: /send
+    defaults: { _controller: MessageBundle:MessageNormal:sendMessage }    

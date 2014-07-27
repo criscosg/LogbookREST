@@ -2,7 +2,6 @@
 namespace EasyScrumREST\TaskBundle\Controller;
 
 use EasyScrumREST\TaskBundle\Form\TaskHoursType;
-
 use EasyScrumREST\SprintBundle\Entity\Sprint;
 use EasyScrumREST\TaskBundle\Form\CreateTaskType;
 use EasyScrumREST\TaskBundle\Entity\Task;

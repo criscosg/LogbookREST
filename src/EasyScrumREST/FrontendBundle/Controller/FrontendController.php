@@ -12,7 +12,7 @@ class FrontendController extends EasyScrumController
     {
         $request=$this->getRequest();
         $session = $request->getSession();
-    
+
         return $this->render('FrontendBundle:Frontend:example.html.twig');
     }
     
