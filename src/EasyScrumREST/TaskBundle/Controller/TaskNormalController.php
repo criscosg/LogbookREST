@@ -89,7 +89,7 @@ class TaskNormalController extends EasyScrumController
      */
     public function hoursFormAction(Task $task)
     {
-        $form = $this->createForm(new TaskHoursType(), $task);
+        $form = $this->createForm(new TaskHoursType());
         
         return array('task'=>$task, 'form'=>$form->createView());
     }
@@ -101,10 +101,9 @@ class TaskNormalController extends EasyScrumController
      */
     public function saveHoursAction(Task $task)
     {
-        $form = $this->createForm(new TaskHoursType(), $task);
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
-            $text = $this->container->get('task.handler')->handleHoursTask($task, $request);
+            $text = $this->container->get('task.handler')->handleHoursTask($task, $this->getUser(), $request);
         }
 
         $jsonResponse = json_encode(array('text' => $text, 'task'=>$task->getId()));

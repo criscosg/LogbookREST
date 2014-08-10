@@ -1,6 +1,10 @@
 <?php
 namespace EasyScrumREST\ProjectBundle\Controller;
 
+use EasyScrumREST\ProjectBundle\Form\IssueType;
+
+use EasyScrumREST\ProjectBundle\Entity\Issue;
+
 use EasyScrumREST\ProjectBundle\Form\BacklogType;
 use EasyScrumREST\ProjectBundle\Entity\Backlog;
 use EasyScrumREST\ProjectBundle\Form\ProjectWithOwnerType;
@@ -138,7 +142,7 @@ class ProjectController extends EasyScrumController
     
         return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$backlog->getProject()->getId())));
     }
-    
+
     /**
      * @Template("ProjectBundle:Backlog:backlog_table.html.twig")
      *
@@ -151,5 +155,59 @@ class ProjectController extends EasyScrumController
         $this->container->get('project.handler')->finalizeBacklogTask($backlog);
     
         return array('project'=> $backlog->getProject());
+    }
+
+    /**
+     * @ParamConverter("backlog", class="ProjectBundle:Backlog")
+     */
+    public function newIssueAction(Backlog $backlog)
+    {
+        $issue = new Issue();
+        $issue->setBacklog($backlog);
+        $form = $this->createForm(new IssueType(), $issue);
+        $request=$this->getRequest();
+        if ($request->getMethod()=='POST') {
+            $newBacklog = $this->get('project.handler')->createIssue($form, $request);
+            if($newBacklog) {
+    
+                return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$issue->getBacklog()->getProject()->getId())));
+            }
+        }
+    
+        return $this->render('ProjectBundle:Issue:create.html.twig', array('form' => $form->createView(), 'backlog'=>$backlog));
+    }
+
+    /**
+     * @ParamConverter("issue", class="ProjectBundle:Issue")
+     */
+    public function editIssueAction(Issue $issue)
+    {
+        $form = $this->createForm(new IssueType(), $issue);
+        $request=$this->getRequest();
+        if($request->getMethod()=='POST'){
+            $newProject = $this->get('project.handler')->createIssue($form, $request);
+            if($newProject) {
+    
+                return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$issue->getBacklog()->getProject()->getId())));
+            }
+        }
+
+        return $this->render('ProjectBundle:Issue:create.html.twig', array('form' => $form->createView(), 'backlog'=>$issue->getBacklog(), 'issue'=>$issue, 'edition'=>true));
+    }
+
+    /**
+     * @ParamConverter("issue", class="ProjectBundle:Issue")
+     *
+     * @return array
+     */
+    public function finalizeIssueAction(Request $request, Issue $issue)
+    {
+        $jsonResponse = json_encode(array('ok' => false));
+        if ($request->isXmlHttpRequest()) {
+            $this->container->get('project.handler')->finalizeIssue($issue);
+            $jsonResponse = json_encode(array('ok' => true));
+        }
+        
+        return $this->getHttpJsonResponse($jsonResponse);
     }
 }

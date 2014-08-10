@@ -31,6 +31,11 @@ class SprintHandler
     {
         return $this->em->getRepository('SprintBundle:Sprint')->find($id);
     }
+    
+    public function getActiveSprints($company)
+    {
+        return $this->em->getRepository('SprintBundle:Sprint')->findActiveSprints($company);
+    }
 
     /**
      * @param int $limit  the limit of the result

@@ -1,6 +1,8 @@
 <?php
 
 namespace EasyScrumREST\TaskBundle\Handler;
+use EasyScrumREST\TaskBundle\Entity\HoursSpent;
+
 use EasyScrumREST\TaskBundle\Form\TaskHoursType;
 
 use EasyScrumREST\TaskBundle\Form\CreateTaskType;
@@ -148,16 +150,16 @@ class TaskHandler
      *
      * @throws \Exception
      */
-    public function handleHoursTask(Task $task, $request, $method = "POST")
+    public function handleHoursTask(Task $task, $user, $request)
     {
-        $form = $this->factory->create(new TaskHoursType(), $task, array('method' => $method));
-        $oldHoursSpent=$task->getHoursSpent();
+        $hours = new HoursSpent();
+        $hours->setTask($task);
+        $hours->setUser($user);
+        $form = $this->factory->create(new TaskHoursType(), $hours);
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $task = $form->getData();
-            $task->setHoursSpent($task->getHoursSpent() + $oldHoursSpent);
-            $this->em->persist($task);
-            $this->em->flush($task);
+            $this->em->persist($hours);
+            $this->em->flush($hours);
 
             return $task->getHoursSpent()."/".$task->getHoursEnd();
         }

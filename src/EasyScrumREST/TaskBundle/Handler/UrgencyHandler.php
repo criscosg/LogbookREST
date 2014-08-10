@@ -1,6 +1,10 @@
 <?php
 
 namespace EasyScrumREST\TaskBundle\Handler;
+use EasyScrumREST\TaskBundle\Form\TaskHoursType;
+
+use EasyScrumREST\TaskBundle\Entity\HoursSpent;
+
 use EasyScrumREST\TaskBundle\Form\UrgencyHoursType;
 use EasyScrumREST\TaskBundle\Form\CreateUrgencyType;
 use EasyScrumREST\TaskBundle\Form\UrgencyType;
@@ -146,20 +150,20 @@ class UrgencyHandler
      *
      * @throws \Exception
      */
-    public function handleHoursUrgency(Urgency $urgency, $request, $method = "POST")
+    public function handleHoursUrgency(Urgency $urgency, $user, $request)
     {
-        $form = $this->factory->create(new UrgencyHoursType(), $urgency, array('method' => $method));
-        $oldHoursSpent=$urgency->getHoursSpent();
+        $hours = new HoursSpent();
+        $hours->setUrgency($urgency);
+        $hours->setUser($user);
+        $form = $this->factory->create(new TaskHoursType(), $hours);
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $urgency = $form->getData();
-            $urgency->setHoursSpent($urgency->getHoursSpent() + $oldHoursSpent);
-            $this->em->persist($urgency);
-            $this->em->flush($urgency);
+            $this->em->persist($hours);
+            $this->em->flush($hours);
 
             return $urgency->getHoursSpent()."/".$urgency->getHoursEnd();
         }
-    
+
         throw new \Exception($form->getErrorsAsString());
     }
     
@@ -174,9 +178,7 @@ class UrgencyHandler
     public function moveTo(Urgency $urgency, $state, $sprint=null)
     {
         $urgency->setState($state);
-        if($sprint){
-            $urgency->setSprint($sprint);
-        }
+        $urgency->setSprint($sprint);
         $this->em->persist($urgency);
         $this->em->flush($urgency);
     }

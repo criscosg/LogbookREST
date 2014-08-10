@@ -1,0 +1,80 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+	Título de la página
+{% endblock %}
+
+{% block breadcrumb %}
+  {% set crumbs = {'Título de la página':'#'} %}
+  {{ setCrumbs(crumbs) }}
+  {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {% for sprint in sprints %}
+    	<div class="widget-box">
+    		<div class="widget-title">
+    			<span class="icon">
+    				<i class="fa fa-th"></i>
+    			</span>
+    			<h5>{{ sprint.title }}</h5>
+    		</div>
+    		<div class="widget-content">
+    			<div class="row">
+    				<div class="col-xs-12 col-sm-4">
+    					<ul class="site-stats">
+    						<li><div class="cc"><i class="fa fa-tasks"></i> <strong>{{ sprint.tasks.count() }}</strong> <small>Tasks planified</small></div></li>
+    						<li><div class="cc"><i class="fa fa-arrow-right"></i> <strong>{{ sprint.getTaskDone() | length }}</strong> <small>Tasks done</small></div></li>
+    						<li class="divider"></li>
+    						<li><div class="cc"><i class="fa fa-calendar"></i> <strong>{{ sprint.hoursPlanified }}</strong> <small>Planified Hours</small></div></li>
+    						<li><div class="cc"><i class="fa fa-tag"></i> <strong>{{ sprint.getSpentHours() }}</strong> <small>Spent hours</small></div></li>
+    						<li><div class="cc"><i class="fa fa-repeat"></i> <strong>{{ sprint.getHoursUndone() }}</strong> <small>Hours left</small></div></li>
+    					</ul>
+    				</div>
+    				<div class="col-xs-12 col-sm-8">
+    					<div class="chart" id="chart-{{ sprint.id }}"></div>
+    				</div>	
+    			</div>							
+    		</div>
+    	</div>
+    {% else %}
+        <div class="alert alert-info mt">
+            <strong>{{"Information!" | trans }}</strong>
+            {{"No sprints active in this moment" | trans }}
+        </div>	
+        <div class="row">
+        {% if is_granted('ROLE_SCRUM_MASTER') %}
+            <a href="{{ path('sprint_creation_first') }}" class="btn btn-primary btn-m">
+                <i class="fa fa-plus"></i> {{ "New Sprint" | trans }}
+            </a>
+        {% endif %}
+        </div>
+	{% endfor %}
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+<script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+    	{% for sprint in sprints %}
+            var plot = $.plot($("#chart-{{ sprint.id }}"),
+        		[ { data: [{% for key, value in sprint.getChartArray() %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Normal progression", color: "#4fabd2"}
+        		 , { data: [["{{ today }}", {{ sprint.getHoursUndone() }}]], label: "Actual state", color: "#459D1C"}], {
+        		series: {
+            		lines: { show: true },
+            		points: { show: true }
+        		},
+        		grid: { hoverable: true, clickable: true, borderColor: "#eeeeee", borderWidth: 1, color: "#AAAAAA" },
+        		xaxis: {
+        			mode: "categories",
+        			tickLength: 10
+        		}
+        	}); 
+        {% endfor %}
+        
+    });
+</script>    
+{% endblock %}
+    

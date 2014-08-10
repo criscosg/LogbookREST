@@ -1,5 +1,7 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Entity;
+use EasyScrumREST\SprintBundle\Util\DateHelper;
+
 use EasyScrumREST\ProjectBundle\Entity\Project;
 
 use EasyScrumREST\TaskBundle\Entity\Urgency;
@@ -123,14 +125,14 @@ class Sprint
     protected $finalFocus;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(name="fromDate", type="date", nullable=true)
      * @Assert\Date()
      * @Expose
      */
     protected $fromDate;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(name="toDate",type="date", nullable=true)
      * @Assert\Date()
      * @Expose
      */
@@ -378,7 +380,7 @@ class Sprint
     public function getPlanificationHours()
     {
         $total=0;
-        foreach ($this->getTasks() as $Urgency) {
+        foreach ($this->getTasks() as $task) {
             $total += $task->getHours();
         }
     
@@ -463,5 +465,24 @@ class Sprint
         }
 
         return $done;
+    }
+    
+    public function getChartArray()
+    {
+        $date=new \DateTime($this->fromDate->format('Y-m-d'));
+        $days=DateHelper::numberLaborableDays($this->fromDate, $this->toDate);
+        $hoursDay=$this->hoursPlanified / $days;
+        $cont=0;
+        $chartData= array();
+        while ($date <= $this->toDate) {
+            $day=$date->format('l');
+            if ($day!="Sunday" && $day!="Saturday" ) {
+                $chartData[$date->format('d/m')] = $this->hoursPlanified - ($cont * $hoursDay);
+                $cont++;
+            }
+            $date->modify('+1 day');
+        }
+
+        return $chartData;
     }
 }

@@ -7,6 +7,7 @@ use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
+use JMS\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass="TaskRepository")
@@ -73,15 +74,6 @@ class Task
     protected $hours;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     * */
-    protected $hoursSpent;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    protected $hoursEnd;
-
-    /**
      * @ORM\Column(name="salt", type="string", length=255, nullable=true)
      * @Expose
      */
@@ -92,9 +84,18 @@ class Task
      * @Expose
      */
     protected $state = "TODO";
+    
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\TaskBundle\Entity\HoursSpent", mappedBy="task", cascade={"persist", "merge", "remove"})
+     * @Expose
+     * @MaxDepth(0)
+     */
+    private $listHours;
 
     public function __construct()
     {
+        $this->listHours = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -189,22 +190,22 @@ class Task
 
     public function getHoursSpent()
     {
-        return $this->hoursSpent;
-    }
+        $totalHours = 0;
+        for ($i=0; $i < $this->getListHours()->count(); $i++) {
+            $elem=$this->getListHours()->get($i);
+            $totalHours+=$elem->getHoursSpent();
+        }
 
-    public function setHoursSpent($hoursSpent)
-    {
-        $this->hoursSpent = $hoursSpent;
+        return $totalHours;
     }
 
     public function getHoursEnd()
     {
-        return $this->hoursEnd;
-    }
-
-    public function setHoursEnd($hoursEnd)
-    {
-        $this->hoursEnd = $hoursEnd;
+        if($this->getListHours()->count()>0){
+            return $this->getListHours()->last()->getHoursEnd();
+        }
+        
+        return null;
     }
     
     public function getState()
@@ -215,6 +216,24 @@ class Task
     public function setState($state)
     {
         $this->state = $state;
+    }
+    /**
+     * 
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getListHours()
+    {
+        return $this->listHours;
+    }
+    
+    public function setListHours(ArrayCollection $hours)
+    {
+        $this->listHours = $hours;
+    }
+    
+    public function addListHour(HoursSpent $spent)
+    {
+        $this->listHours->add($spent);
     }
 
     public function getSalt()

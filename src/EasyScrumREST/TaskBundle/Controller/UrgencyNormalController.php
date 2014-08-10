@@ -2,6 +2,8 @@
 
 namespace EasyScrumREST\TaskBundle\Controller;
 
+use EasyScrumREST\TaskBundle\Form\TaskHoursType;
+
 use EasyScrumREST\TaskBundle\Entity\Urgency;
 
 use EasyScrumREST\TaskBundle\Form\CreateUrgencyType;
@@ -81,7 +83,7 @@ class UrgencyNormalController extends EasyScrumController
      */
     public function hoursFormAction(Urgency $urgency)
     {
-        $form = $this->createForm(new UrgencyHoursType(), $urgency);
+        $form = $this->createForm(new TaskHoursType());
 
         return array('urgency'=>$urgency, 'form'=>$form->createView());
     }
@@ -93,10 +95,9 @@ class UrgencyNormalController extends EasyScrumController
      */
     public function saveHoursAction(Urgency $urgency)
     {
-        $form = $this->createForm(new UrgencyHoursType(), $urgency);
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
-            $text = $this->container->get('urgency.handler')->handleHoursUrgency($urgency, $request);
+            $text = $this->container->get('urgency.handler')->handleHoursUrgency($urgency, $this->getUser(), $request);
         }
 
         $jsonResponse = json_encode(array('text' => $text, 'urgency'=>$urgency->getId()));
@@ -115,7 +116,7 @@ class UrgencyNormalController extends EasyScrumController
     public function moveToOnProcessAction(Urgency $urgency, Sprint $sprint)
     {
         $this->container->get('urgency.handler')->moveTo($urgency, 'ONPROCESS');
-        $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findAll();
+        $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('project'=>$sprint->getProject()->getId(),'sprint'=>null));
         $doneUrgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
 
         return array('urgencies'=> $urgencies, 'sprint'=>$sprint, 'doneUrgencies'=>$doneUrgencies);
@@ -132,9 +133,9 @@ class UrgencyNormalController extends EasyScrumController
     public function moveToTodoAction(Urgency $urgency, Sprint $sprint)
     {
         $this->container->get('urgency.handler')->moveTo($urgency, 'TODO');
-        $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findAll();
+        $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('project'=>$sprint->getProject()->getId(),'sprint'=>null));
         $doneUrgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
-        
+
         return array('urgencies'=> $urgencies, 'sprint'=>$sprint, 'doneUrgencies'=>$doneUrgencies);
     }
 
@@ -149,9 +150,9 @@ class UrgencyNormalController extends EasyScrumController
     public function moveToDoneAction(Urgency $urgency, Sprint $sprint)
     {
         $this->container->get('urgency.handler')->moveTo($urgency, 'DONE', $sprint);
-        $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findAll();
+        $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('project'=>$sprint->getProject()->getId(),'sprint'=>null));
         $doneUrgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
-        
+
         return array('urgencies'=> $urgencies, 'sprint'=>$sprint, 'doneUrgencies'=>$doneUrgencies);
     }
 
@@ -166,7 +167,7 @@ class UrgencyNormalController extends EasyScrumController
     {
         $this->container->get('urgency.handler')->moveTo($urgency, 'UNDONE');
         $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findAll();
-        
+
         return array('urgencies'=> $urgencies);
     }
 

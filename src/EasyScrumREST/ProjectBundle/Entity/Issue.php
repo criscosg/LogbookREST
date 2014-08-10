@@ -8,14 +8,13 @@ use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
-use JMS\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity()
  * @ExclusionPolicy("all")
  */
 
-class Backlog
+class Issue
 {
     /**
      * @ORM\Id
@@ -44,10 +43,10 @@ class Backlog
     protected $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity="EasyScrumREST\ProjectBundle\Entity\Project", inversedBy="backlogs")
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\ProjectBundle\Entity\Backlog", inversedBy="issues")
      * @Expose
      */
-    private $project;
+    private $backlog;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -62,36 +61,18 @@ class Backlog
      * @Expose
      */
     protected $priority;
-
+    
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Expose
      */
-    protected $hours;
+    protected $completed;
 
     /**
      * @ORM\Column(name="salt", type="string", length=255, nullable=true)
      * @Expose
      */
     protected $salt;
-
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     * @Expose
-     */
-    protected $state = "TODO";
-
-    /**
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="EasyScrumREST\ProjectBundle\Entity\Issue", mappedBy="backlog", cascade={"persist", "merge", "remove"})
-     * @Expose
-     * @MaxDepth(0)
-     */
-    private $issues;
-
-    public function __construct()
-    {
-        $this->issues = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
     public function getId()
     {
@@ -123,14 +104,14 @@ class Backlog
         return $this->title;
     }
 
-    public function getProject()
+    public function getBacklog()
     {
-        return $this->project;
+        return $this->backlog;
     }
 
-    public function setProject(Project $project)
+    public function setBacklog(Backlog $backlog)
     {
-        $this->project = $project;
+        $this->backlog = $backlog;
     }
 
     public function getTitle()
@@ -147,7 +128,7 @@ class Backlog
     {
         return $this->description;
     }
-    
+
     public function setDescription($description)
     {
         $this->description=$description;
@@ -162,25 +143,15 @@ class Backlog
     {
         $this->priority = $priority;
     }
-
-    public function getHours()
+    
+    public function getCompleted()
     {
-        return $this->hours;
+        return $this->completed;
     }
-
-    public function setHours($hours)
+    
+    public function setCompleted($completed)
     {
-        $this->hours = $hours;
-    }
-
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    public function setState($state)
-    {
-        $this->state = $state;
+        $this->completed = $completed;
     }
 
     public function getSalt()
@@ -199,21 +170,6 @@ class Backlog
             }
             $this->salt = $salt;
         }
-    }
-    
-    public function getIssues()
-    {
-        return $this->issues;
-    }
-    
-    public function setIssues(ArrayCollection $issues)
-    {
-        $this->issues = $issues;
-    }
-    
-    public function addIssue(Issue $issue)
-    {
-        $this->issues->add($issue);
     }
 
 }

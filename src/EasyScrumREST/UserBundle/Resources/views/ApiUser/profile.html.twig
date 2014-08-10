@@ -35,16 +35,17 @@
         </div>
         <div class="widget-content nopadding">
             <form class="form-horizontal" id="form-create-item" role="form" action="{{ path('edit_profile') }}" method="post" {{ form_enctype(form) }} xmlns="http://www.w3.org/1999/html">
-                <div>
+                <div class="form-group">
                     {% if user.profileImage is not null %}
-                        {% set imagePath= user.profileImage.getWebFilePath ~ '?' ~ random() %}
-                        <img src="{{ asset(imagePath) | imagine_filter('thumbnail', true) }}" alt="Imagen perfil" class="img-thumbnail">
+                        {% set imagePath= user.profileImage.getWebFilePath %}
+                        <label id="label_email" for="api_user_email" class="col-sm-3 control-label user-active is-public"> {{ "Profile image" |trans}}</label>
+                        <img src="{{ asset(imagePath) | imagine_filter('thumbnail') }}" alt="Imagen perfil" class="img-thumbnail">
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    <label id="label_email" for="api_user_email" class="col-sm-3 control-label user-active is-public"><span class="red">*</span> {{ "Profile image" |trans}}</label>
+                    <label id="label_email" for="api_user_email" class="col-sm-3 control-label user-active is-public"> {{ "File" |trans}}</label>
                     <div class="col-sm-4">
-                        {{ form_widget(form.profileImage) }}
+                        {{ form_widget(form.profileImage.file) }}
                     </div>
                 </div>
                 <div class="form-group">

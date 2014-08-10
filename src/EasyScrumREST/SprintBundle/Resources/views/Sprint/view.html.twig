@@ -60,6 +60,24 @@
                 </table>
             </div>
         </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon">
+                            <i class="fa fa-bar-chart-o"></i>
+                        </span>
+                        <h5>Line chart</h5>
+                    </div>
+                    <div class="widget-content">
+                        <div class="chart" style="padding: 0px; position: relative;">
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         {% if is_granted('ROLE_SCRUM_MASTER') %}
         <div class="row">
             <a title="Add task" href="{{ path('new_normal_task', { 'id': sprint.id }) }}" class="btn btn-primary btn-s">
@@ -211,6 +229,8 @@
 
 {% block javascripts %}
 {{ parent() }}
+<script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+<script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
     	$("body").on('click', '.task', function(event){
@@ -311,6 +331,16 @@
         	event.preventDefault();
     	    $.get($(this).attr('href'), function(response){
                 $('#sprint-tasks').html(response);
+                $('.steps li').each(function(key, element){
+                    var target = $(element).attr('data-target');
+                    if($(element).hasClass('active')){
+                        $(target).show("fast");
+                        $(element).addClass('active');
+                    }else{
+                        $(target).hide("fast");
+                        $(element).removeClass('active');
+                    }
+                });
             });
         });
 
@@ -318,8 +348,32 @@
         	event.preventDefault();
     	    $.get($(this).attr('href'), function(response){
                 $('#sprint-urgencies').html(response);
+                $('.steps-urgency li').each(function(key, element){
+                    var target = $(element).attr('data-target');
+                    if($(element).hasClass('active')){
+                        $(target).show("fast");
+                        $(element).addClass('active');
+                    }else{
+                        $(target).hide("fast");
+                        $(element).removeClass('active');
+                    }
+                });
             });
         });
+
+        var plot = $.plot($(".chart"),
+            		[ { data: [{% for key, value in sprint.getChartArray() %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Normal progression", color: "#4fabd2"}
+            		 , { data: [["{{ today }}", {{ sprint.getHoursUndone() }}]], label: "Actual state", color: "#459D1C"}], {
+            		series: {
+                		lines: { show: true },
+                		points: { show: true }
+            		},
+            		grid: { hoverable: true, clickable: true, borderColor: "#eeeeee", borderWidth: 1, color: "#AAAAAA" },
+            		xaxis: {
+            			mode: "categories",
+            			tickLength: 10
+            		}
+        		}); 
         
     });
 

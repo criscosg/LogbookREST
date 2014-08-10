@@ -29,10 +29,12 @@ class SprintNormalController extends EasyScrumController
      */
     public function sprintShowAction(Sprint $sprint)
     {
-        $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>null));
+        $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('project'=>$sprint->getProject()->getId(),'sprint'=>null));
         $doneUrgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
+        $today=new \DateTime('today');
 
-        return $this->render('SprintBundle:Sprint:view.html.twig', array('sprint' => $sprint, 'urgencies'=>$urgencies, 'doneUrgencies'=>$doneUrgencies));
+        return $this->render('SprintBundle:Sprint:view.html.twig', array('sprint' => $sprint, 'urgencies'=>$urgencies, 
+                                            'doneUrgencies'=>$doneUrgencies, 'today'=>$today->format('d/m')));
     }
 
     public function newSprintFirstStepAction()
@@ -78,8 +80,22 @@ class SprintNormalController extends EasyScrumController
             $this->get('sprint.handler')->finalizeSprint($sprint);
         }
         $doneUrgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
+        $charts=$this->get('sprint.focus_member')->getChartFocusMember($sprint);
+        $users=array();
+        $generalChart=array();
+        foreach ($charts as $key=>$value){
+            $users[$key]=$this->getDoctrine()->getRepository('UserBundle:ApiUser')->findOneById($key);
+            foreach ($value as $subkey=>$subvalue) {
+                if(isset($generalChart[$subkey])){
+                    $generalChart[$subkey] = $generalChart[$subkey] + ($subvalue/count($charts));
+                } else {
+                    $generalChart[$subkey] = $subvalue/count($charts);
+                }
+            }
+        }
 
-        return $this->render('SprintBundle:Sprint:finalized.html.twig', array('sprint' => $sprint));
+        return $this->render('SprintBundle:Sprint:finalized.html.twig', array('sprint' => $sprint, 'charts'=>$charts,
+                                                                             'users'=> $users, 'generalChart'=>$generalChart));
     }
 
     /**

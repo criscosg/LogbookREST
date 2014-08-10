@@ -1,7 +1,11 @@
 parameters:
     sprint.handler.class: EasyScrumREST\SprintBundle\Handler\SprintHandler
+    sprint.member_focus.class: EasyScrumREST\SprintBundle\Stadistics\FocusFactorMembers
 
 services:
     sprint.handler:
         class: %sprint.handler.class%
         arguments: [@doctrine.orm.entity_manager, @form.factory]
+    sprint.focus_member:
+        class: %sprint.member_focus.class%
+        arguments: [@doctrine.orm.entity_manager]

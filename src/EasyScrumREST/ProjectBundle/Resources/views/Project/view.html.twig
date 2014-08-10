@@ -122,6 +122,25 @@
                 });
             });
 
+            $("body").on('click', '.finalize-issue', function(event){
+            	event.preventDefault();
+            	var that=$(this);
+        	    $.get($(this).attr('href'), function(response){
+            	    if(response.ok){
+            	    	var id=that.attr('id');
+            	    	that.html('');
+            	    	$('#issue-state-'+id).html("<i class='fa fa-check'></i>");
+            	    }
+                });
+            });
+
+        });
+
+        $('.show-issue').click(function(){
+        	var target = $(this).attr('data-target');
+        	$(target).slideToggle();
+        	$(this).find('.fa-plus').toggle();
+        	$(this).find('.fa-minus').toggle();
         });
     });
 </script>    

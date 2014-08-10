@@ -12,7 +12,12 @@
                 {% for message in getLastMessages() %}
                     <li class="message-item">
                     	<a href="{{ path('messages_list') }}">
-                            <img alt="User Icon" src="img/demo/av1.jpg" />
+                    	    {% if message.user.profileImage is not null %}
+                                {% set imagePath= message.user.profileImage.getWebFilePath %}
+                                <img src="{{ asset(imagePath) | imagine_filter('nav') }}" alt="User Icon">
+                            {% else %}
+                                <img alt="User Icon" src="{{ asset('bundles/frontend/img/no_image.png') | imagine_filter('nav') }}" />
+                            {% endif %}
                             <div class="message-content">
                             	<span class="message-time">
                                     {{ message.created|date() }}

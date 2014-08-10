@@ -266,6 +266,7 @@ i.icon-caret-left{
 .messages .right .photo{
     float: right;
     margin-left: 15px;
+    text-align: right;
 }
 .messages .right .text{
     float: right;

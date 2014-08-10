@@ -2,6 +2,8 @@
 
 namespace EasyScrumREST\TaskBundle\Entity;
 
+use EasyScrumREST\ProjectBundle\Entity\Project;
+
 use EasyScrumREST\SprintBundle\Entity\Sprint;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +12,7 @@ use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
+use JMS\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity()
@@ -23,7 +26,7 @@ class Urgency
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      * @Expose
-     * */
+     */
     protected $id;
 
     /**
@@ -49,6 +52,12 @@ class Urgency
      * @Expose
      */
     private $sprint;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\ProjectBundle\Entity\Project", inversedBy="urgencies")
+     * @Expose
+     */
+    private $project;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -65,19 +74,18 @@ class Urgency
     protected $priority;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     * */
-    protected $hoursSpent;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    protected $hoursEnd;
-
-    /**
      * @ORM\Column(name="salt", type="string", length=255, nullable=true)
      * @Expose
      */
     protected $salt;
+    
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\TaskBundle\Entity\HoursSpent", mappedBy="urgency", cascade={"persist", "merge", "remove"})
+     * @Expose
+     * @MaxDepth(0)
+     */
+    private $listHours;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
@@ -124,9 +132,19 @@ class Urgency
         return $this->sprint;
     }
 
-    public function setSprint(Sprint $sprint)
+    public function setSprint($sprint)
     {
         $this->sprint = $sprint;
+    }
+
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    public function setProject(Project $project)
+    {
+        $this->project = $project;
     }
 
     public function getTitle()
@@ -161,22 +179,22 @@ class Urgency
 
     public function getHoursSpent()
     {
-        return $this->hoursSpent;
-    }
+        $totalHours = 0;
+        for ($i=0; $i < $this->getListHours()->count(); $i++) {
+            $elem=$this->getListHours()->get($i);
+            $totalHours+=$elem->getHoursSpent();
+        }
 
-    public function setHoursSpent($hoursSpent)
-    {
-        $this->hoursSpent = $hoursSpent;
+        return $totalHours;
     }
 
     public function getHoursEnd()
     {
-        return $this->hoursEnd;
-    }
-
-    public function setHoursEnd($hoursEnd)
-    {
-        $this->hoursEnd = $hoursEnd;
+        if($this->getListHours()->count()>0){
+            return $this->getListHours()->last()->getHoursEnd();
+        }
+        
+        return null;
     }
 
     public function getState()
@@ -187,6 +205,25 @@ class Urgency
     public function setState($state)
     {
         $this->state = $state;
+    }
+    
+    /**
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getListHours()
+    {
+        return $this->listHours;
+    }
+    
+    public function setListHours(ArrayCollection $hours)
+    {
+        $this->listHours = $hours;
+    }
+    
+    public function addListHour(HoursSpent $spent)
+    {
+        $this->listHours->add($spent);
     }
 
     public function getSalt()

@@ -2,6 +2,8 @@
 
 namespace EasyScrumREST\ProjectBundle\Handler;
 
+use EasyScrumREST\ProjectBundle\Entity\Issue;
+
 use EasyScrumREST\ProjectBundle\Entity\Backlog;
 
 use Symfony\Component\Form\FormInterface;
@@ -185,6 +187,41 @@ class ProjectHandler
     public function finalizeBacklogTask(Backlog $entity)
     {
         $entity->setState('DONE');
+        $this->em->persist($entity);
+        $this->em->flush($entity);
+    }
+
+    /**
+     * Creates Issue.
+     *
+     * @param FormInterface $form
+     * @param Request        $request
+     *
+     * @return Issue
+     *
+     * @throws \Exception
+     */
+    public function createIssue(FormInterface $form, $request)
+    {
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $issue = $form->getData();
+            $this->em->persist($issue);
+            $this->em->flush($issue);
+    
+            return $issue;
+        }
+    
+        throw new \Exception('Invalid submitted data');
+    }
+    
+    /**
+     * @param Issue $entity
+     *
+     */
+    public function finalizeIssue(Issue $entity)
+    {
+        $entity->setCompleted(true);
         $this->em->persist($entity);
         $this->em->flush($entity);
     }

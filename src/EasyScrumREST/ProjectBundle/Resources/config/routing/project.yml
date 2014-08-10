@@ -33,3 +33,15 @@ delete_backlog:
 finalize_backlog:
     pattern: /backlog-task/finalize/{id}
     defaults: { _controller: ProjectBundle:Project:finalizeBacklog }
+    
+create_issue:
+    pattern: /issue/create/{id}
+    defaults: { _controller: ProjectBundle:Project:newIssue }
+    
+edit_issue:
+    pattern: /issue/edit/{id}
+    defaults: { _controller: ProjectBundle:Project:editIssue }
+    
+finalize_issue:
+    pattern: /issue/finalize/{id}
+    defaults: { _controller: ProjectBundle:Project:finalizeIssue }    

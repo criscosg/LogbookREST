@@ -1,5 +1,7 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Entity;
+use EasyScrumREST\UserBundle\Entity\ApiUser;
+
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
@@ -49,6 +51,20 @@ class SprintRepository extends EntityRepository
         $qb->andWhere($qb->expr()->isNull('s.deleted'));
 
         return $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
+    }
+    
+    public function findActiveSprints($company)
+    {
+        $date=new \DateTime('today');
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('s');
+        $qb->join('s.company', 'c');
+        $qb->andWhere($qb->expr()->eq('s.company', $company));
+        $qb->andWhere($qb->expr()->isNull('s.finalized'));
+        $qb->andWhere($qb->expr()->lte('s.fromDate', '\''.$date->format('Y-m-d').'\''));
+        $qb->andWhere($qb->expr()->gte('s.toDate', '\''.$date->format('Y-m-d').'\''));
+
+        return $qb->getQuery()->getResult();
     }
 
 }

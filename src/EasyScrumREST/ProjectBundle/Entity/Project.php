@@ -101,17 +101,17 @@ class Project
         $this->sprints = new \Doctrine\Common\Collections\ArrayCollection();
         $this->backlogs = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
+
     public function getId()
     {
         return $this->id;
     }
-    
+
     public function getUpdated()
     {
         return $this->updated;
     }
-    
+
     public function setUpdated($updated)
     {
         $this->updated = $updated;
