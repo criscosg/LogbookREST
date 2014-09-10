@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\MaxDepth;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="BacklogRepository")
  * @ExclusionPolicy("all")
  */
 

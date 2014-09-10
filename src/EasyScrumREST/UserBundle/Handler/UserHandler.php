@@ -101,7 +101,8 @@ class UserHandler
     {
         $form = $this->factory->create(new AdminUserType(), $entity, array('method' => $method));
         $form->handleRequest($request);
-        if ($form->isValid()) {
+
+        if (count($form->getErrors())==0) {
             if ($method!='POST') {
                 $req = $request->request->get('api_user');
                 if($req['password']){

@@ -1,7 +1,6 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Entity;
 use EasyScrumREST\UserBundle\Entity\ApiUser;
-
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
@@ -36,7 +35,8 @@ class SprintRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('s');
 
-        $qb->select('s');
+        $qb->select('s, p.salt as project_salt');
+        $qb->join('s.project', 'p');
         $qb->join('s.company', 'c');
 
         $qb->andWhere($qb->expr()->eq('s.company', $company));

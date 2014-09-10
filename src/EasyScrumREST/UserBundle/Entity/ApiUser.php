@@ -14,7 +14,7 @@ use JMS\Serializer\Annotation\Expose;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="UserRepository")
  * @ExclusionPolicy("all")
  */
 

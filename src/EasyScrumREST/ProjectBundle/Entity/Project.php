@@ -15,7 +15,7 @@ use JMS\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\HasLifecycleCallbacks()
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="ProjectRepository")
  * @ExclusionPolicy("all")
  */
 

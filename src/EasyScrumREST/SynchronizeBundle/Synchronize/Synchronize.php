@@ -1,6 +1,8 @@
 <?php
 namespace EasyScrumREST\SynchronizeBundle\Synchronize;
 
+use EasyScrumREST\ProjectBundle\Entity\Backlog;
+
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\BrowserKit\Request;
 use EasyScrumREST\SprintBundle\Entity\Sprint;
@@ -20,6 +22,16 @@ class Synchronize
 
     public function synchronize($mobileDB, ApiUser $user)
     {
+        if (isset($mobileDB['projects'])) {
+            $projects=$this->compareProjects($mobileDB['projects'], $user);
+        } else {
+            $projects=$this->compareProjects(array(), $user);
+        }
+        if (isset($mobileDB['backlogs'])) {
+            $backlogs=$this->compareBacklog($mobileDB['backlogs'], $user);
+        } else {
+            $backlogs=$this->compareBacklog(array(), $user);
+        }
         if (isset($mobileDB['sprints'])) {
             $sprints=$this->compareSprints($mobileDB['sprints'], $user);
         } else {
@@ -36,7 +48,55 @@ class Synchronize
             $tasks=$this->compareTasks(array(), $user);
         }
 
-        return array('sprints'=>$sprints, 'tasks'=>ArrayHelper::flattMultilevelEntityArray($tasks));
+        return array('users'=>$this->em->getRepository('UserBundle:ApiUser')->findCompanyUsers($user->getCompany()->getId()),
+                 'projects'=>ArrayHelper::flattMultilevelEntityArray($projects), 'backlogs'=>ArrayHelper::flattMultilevelEntityArray($backlogs), 'sprints'=>ArrayHelper::flattMultilevelEntityArray($sprints), 'tasks'=>ArrayHelper::flattMultilevelEntityArray($tasks));
+    }
+    
+    private function compareProjects($projects, ApiUser $user)
+    {
+        $entities = array();
+        foreach ($projects as $projectMobile) {
+            $projectDB=$this->em->getRepository('ProjectBundle:Project')->findOneBySalt($projectMobile['salt']);
+            if (!$projectDB) {
+                $projectDB = new Project();
+                $projectDB->setCompany($user->getCompany());
+                $this->saveProject($projectMobile, $projectDB);
+                $entities[] = $projectDB->getId();
+            } else {
+                $date=new \DateTime($projectMobile['updated']);
+                if ($projectDB->getUpdated() < $date) {
+                    $this->saveProject($projectMobile, $projectDB);
+                    $entities[] = $projectDB->getId();
+                } elseif ($projectDB->getUpdated() == $date) {
+                    $entities[] = $projectDB->getId();
+                }
+            }
+        }
+
+        return $this->em->getRepository('ProjectBundle:Project')->findNotInEntities($user->getCompany()->getId(), $entities);
+    }
+
+    private function compareBacklog($tasks, ApiUser $user)
+    {
+        $entities = array();
+        foreach ($tasks as $taskMobile) {
+            $taskDB=$this->em->getRepository('ProjectBundle:Backlog')->findOneBySalt($taskMobile['salt']);
+            if (!$taskDB) {
+                $taskDB = new Backlog();
+                $this->saveBacklog($taskMobile, $taskDB);
+                $entities[] = $taskDB->getId();
+            } else {
+                $date=new \DateTime($taskMobile['updated']);
+                if ($taskDB->getUpdated() < $date) {
+                    $this->saveTask($taskMobile, $taskDB);
+                    $entities[] = $taskDB->getId();
+                } elseif ($taskDB->getUpdated() == $date) {
+                    $entities[] = $taskDB->getId();
+                }
+            }
+        }
+
+        return $this->em->getRepository('ProjectBundle:Backlog')->findNotInEntities($user->getCompany()->getId(), $entities);
     }
 
     private function compareSprints($sprints, ApiUser $user)
@@ -62,7 +122,7 @@ class Synchronize
 
         return $this->em->getRepository('SprintBundle:Sprint')->findNotInEntities($user->getCompany()->getId(), $entities);
     }
-    
+
     private function compareTasks($tasks, ApiUser $user)
     {
         $entities = array();
@@ -102,11 +162,61 @@ class Synchronize
 
         return $this->em->getRepository('TaskBundle:Category')->findNotInEntities($entities);
     }
-
+    
+    private function saveProject($projectMobile, $projectDB)
+    {
+        foreach ($projectMobile as $property => $value) {
+            if ($property=='owner_salt') {
+                $projectDB->setOwner($this->em->getRepository('UserBundle:ApiUser')->findOneBySalt($value));
+            } elseif ($property != 'updated' && $property != 'created' && $property != 'fromDate' && $property != 'toDate') {
+                $method = sprintf('set%s', ucwords($property));
+                if (method_exists($projectDB, $method)) {
+                    $projectDB->$method($value);
+                }
+            } else {
+                if ($value) {
+                    $date=new \DateTime($value);
+                    $method = sprintf('set%s', ucwords($property));
+                    if (method_exists($sprintDB, $method)) {
+                        $sprintDB->$method($date);
+                    }
+                }
+            }
+        }
+        $this->em->persist($projectDB);
+        $this->em->flush();
+    }
+    
+    private function saveBacklog($taskMobile, $taskDB)
+    {
+        foreach ($taskMobile as $property => $value) {
+            if ($property=='project_salt') {
+                $taskDB->setProject($this->em->getRepository('ProjectBundle:Project')->findOneBySalt($value));
+            } elseif ($property != 'updated' && $property != 'created' && $property != 'birthdate' && $property != 'deleted') {
+                $method = sprintf('set%s', ucwords($property));
+                if (method_exists($taskDB, $method)) {
+                    $taskDB->$method($value);
+                }
+            } else {
+                if ($value) {
+                    $date=new \DateTime($value);
+                    $method = sprintf('set%s', ucwords($property));
+                    if (method_exists($taskDB, $method)) {
+                        $taskDB->$method($date);
+                    }
+                }
+            }
+        }
+        $this->em->persist($taskDB);
+        $this->em->flush();
+    }
+    
     private function saveSprint($sprintMobile, $sprintDB)
     {
         foreach ($sprintMobile as $property => $value) {
-            if ($property != 'updated' && $property != 'created' && $property != 'fromDate' && $property != 'toDate') {
+            if ($property=='project_salt') {
+                $sprintDB->setProject($this->em->getRepository('ProjectBundle:Project')->findOneBySalt($value));
+            } else if ($property != 'updated' && $property != 'created' && $property != 'fromDate' && $property != 'toDate') {
                 $method = sprintf('set%s', ucwords($property));
                 if (method_exists($sprintDB, $method)) {
                     $sprintDB->$method($value);
