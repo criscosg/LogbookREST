@@ -26,7 +26,7 @@
              {% endif %}
              <form class="asynchronous" action="{{ path('send_message') }}" method="POST"  name="write-message" {{ form_enctype(form)}}>
                  <div class="container">
-                     <div class="row">       
+                     <div class="row form-group">
                          {{ form_widget(form.text, { 'attr': { 'class': 'col-md-9', 'placeholder': 'Escribe tu mensaje aquí...'} }) }}
                          {{ form_rest(form) }}
                          <div class="col-md-3">

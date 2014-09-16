@@ -14,21 +14,21 @@
                 {% endif %}
             </ul>
         </li>
-        <li class="submenu {%  if action == 'sprints_list' or action == 'sprint_creation_first' or action == 'sprint_planification' or action == 'show_normal_sprint' %}active open{% endif %}">
-            <a href="#"><i class="fa fa-book"></i> <span>{{ "Sprints"|trans }}</span> <i class="arrow fa fa-chevron-right"></i></a>
-            <ul>
-                <li {% if action == 'sprints_list' %}class="active"{% endif %}><a href="{{ path('sprints_list') }}">{{ "List"|trans }}</a></li>
-                {% if is_granted('ROLE_SCRUM_MASTER') %}    
-                    <li {% if action == 'sprint_creation_first' %}class="active"{% endif %}><a href="{{ path('sprint_creation_first') }}">{{ "New sprint"|trans }}</a></li>
-                {% endif %}
-            </ul>
-        </li>
         <li class="submenu {%  if action == 'projects_list' or action == 'show_normal_project' or action == 'project_creation' or action == 'project_edit' %}active open{% endif %}">
-            <a href="#"><i class="fa fa-book"></i> <span>{{ "Projects"|trans }}</span> <i class="arrow fa fa-chevron-right"></i></a>
+            <a href="#"><i class="fa fa-suitcase"></i> <span>{{ "Projects"|trans }}</span> <i class="arrow fa fa-chevron-right"></i></a>
             <ul>
                 <li {% if action == 'projects_list' %}class="active"{% endif %}><a href="{{ path('projects_list') }}">{{ "List"|trans }}</a></li>
                 {% if is_granted('ROLE_SCRUM_MASTER') or is_granted('ROLE_PRODUCT_OWNER') %}    
                     <li {% if action == 'project_creation' %}class="active"{% endif %}><a href="{{ path('project_creation') }}">{{ "New project"|trans }}</a></li>
+                {% endif %}
+            </ul>
+        </li>
+        <li class="submenu {%  if action == 'sprints_list' or action == 'sprint_creation_first' or action == 'sprint_planification' or action == 'show_normal_sprint' %}active open{% endif %}">
+            <a href="#"><i class="fa fa-tasks"></i> <span>{{ "Sprints"|trans }}</span> <i class="arrow fa fa-chevron-right"></i></a>
+            <ul>
+                <li {% if action == 'sprints_list' %}class="active"{% endif %}><a href="{{ path('sprints_list') }}">{{ "List"|trans }}</a></li>
+                {% if is_granted('ROLE_SCRUM_MASTER') %}    
+                    <li {% if action == 'sprint_creation_first' %}class="active"{% endif %}><a href="{{ path('sprint_creation_first') }}">{{ "New sprint"|trans }}</a></li>
                 {% endif %}
             </ul>
         </li>
