@@ -2,11 +2,11 @@
 namespace EasyScrumREST\SynchronizeBundle\Synchronize;
 
 use EasyScrumREST\ProjectBundle\Entity\Backlog;
-
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\BrowserKit\Request;
 use EasyScrumREST\SprintBundle\Entity\Sprint;
 use EasyScrumREST\UserBundle\Entity\ApiUser;
+use EasyScrumREST\ProjectBundle\Entity\Project;
 use EasyScrumREST\TaskBundle\Entity\Task;
 use EasyScrumREST\TaskBundle\Entity\Category;
 use EasyScrumREST\SynchronizeBundle\Util\ArrayHelper;
@@ -63,7 +63,8 @@ class Synchronize
                 $this->saveProject($projectMobile, $projectDB);
                 $entities[] = $projectDB->getId();
             } else {
-                $date=new \DateTime($projectMobile['updated']);
+                $value=str_replace("/", "-", $projectMobile['updated']);
+                $date=new \DateTime($value);
                 if ($projectDB->getUpdated() < $date) {
                     $this->saveProject($projectMobile, $projectDB);
                     $entities[] = $projectDB->getId();
@@ -86,7 +87,8 @@ class Synchronize
                 $this->saveBacklog($taskMobile, $taskDB);
                 $entities[] = $taskDB->getId();
             } else {
-                $date=new \DateTime($taskMobile['updated']);
+                $value=str_replace("/", "-", $projectMobile['updated']);
+                $date=new \DateTime($value);
                 if ($taskDB->getUpdated() < $date) {
                     $this->saveTask($taskMobile, $taskDB);
                     $entities[] = $taskDB->getId();
@@ -110,7 +112,8 @@ class Synchronize
                 $this->saveSprint($sprintMobile, $sprintDB);
                 $entities[] = $sprintDB->getId();
             } else {
-                $date=new \DateTime($sprintMobile['updated']);
+                $value=str_replace("/", "-", $projectMobile['updated']);
+                $date=new \DateTime($value);
                 if ($sprintDB->getUpdated() < $date) {
                     $this->saveSprint($sprintMobile, $sprintDB);
                     $entities[] = $sprintDB->getId();
@@ -133,7 +136,8 @@ class Synchronize
                 $this->saveTask($taskMobile, $taskDB);
                 $entities[] = $taskDB->getId();
             } else {
-                $date=new \DateTime($taskMobile['updated']);
+                $value=str_replace("/", "-", $projectMobile['updated']);
+                $date=new \DateTime($value);
                 if ($taskDB->getUpdated() < $date) {
                     $this->saveTask($taskMobile, $taskDB);
                     $entities[] = $taskDB->getId();
@@ -175,10 +179,11 @@ class Synchronize
                 }
             } else {
                 if ($value) {
+                    $value=str_replace("/", "-", $value);
                     $date=new \DateTime($value);
                     $method = sprintf('set%s', ucwords($property));
-                    if (method_exists($sprintDB, $method)) {
-                        $sprintDB->$method($date);
+                    if (method_exists($projectDB, $method)) {
+                        $projectDB->$method($date);
                     }
                 }
             }
@@ -199,6 +204,7 @@ class Synchronize
                 }
             } else {
                 if ($value) {
+                    $value=str_replace("/", "-", $value);
                     $date=new \DateTime($value);
                     $method = sprintf('set%s', ucwords($property));
                     if (method_exists($taskDB, $method)) {
@@ -223,6 +229,7 @@ class Synchronize
                 }
             } else {
                 if ($value) {
+                    $value=str_replace("/", "-", $value);
                     $date=new \DateTime($value);
                     $method = sprintf('set%s', ucwords($property));
                     if (method_exists($sprintDB, $method)) {
@@ -249,6 +256,7 @@ class Synchronize
                 }
             } else {
                 if ($value) {
+                    $value=str_replace("/", "-", $value);
                     $date=new \DateTime($value);
                     $method = sprintf('set%s', ucwords($property));
                     if (method_exists($taskDB, $method)) {

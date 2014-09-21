@@ -125,18 +125,18 @@ class Sprint
     protected $finalFocus;
 
     /**
-     * @ORM\Column(name="fromDate", type="date", nullable=true)
+     * @ORM\Column(name="dateFrom", type="date", nullable=true)
      * @Assert\Date()
      * @Expose
      */
-    protected $fromDate;
+    protected $dateFrom;
 
     /**
-     * @ORM\Column(name="toDate",type="date", nullable=true)
+     * @ORM\Column(name="dateTo",type="date", nullable=true)
      * @Assert\Date()
      * @Expose
      */
-    protected $toDate;
+    protected $dateTo;
     
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -337,24 +337,24 @@ class Sprint
         $this->finalFocus = $finalFocus;
     }
 
-    public function getFromDate()
+    public function getDateFrom()
     {
-        return $this->fromDate;
+        return $this->dateFrom;
     }
 
-    public function setFromDate($fromDate)
+    public function setDateFrom($fromDate)
     {
-        $this->fromDate = $fromDate;
+        $this->dateFrom = $fromDate;
     }
 
-    public function getToDate()
+    public function getDateTo()
     {
-        return $this->toDate;
+        return $this->dateTo;
     }
 
-    public function setToDate($toDate)
+    public function setDateTo($toDate)
     {
-        $this->toDate = $toDate;
+        $this->dateTo = $toDate;
     }
     
     public function getFinalized()

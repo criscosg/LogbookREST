@@ -14,6 +14,7 @@ use EasyScrumREST\UserBundle\Form\AdminUserType;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use EasyScrumREST\UserBundle\Form\ApiUserType;
+use FOS\RestBundle\Controller\Annotations\Get;
 
 class ApiUserController extends FOSRestController{
     
@@ -48,6 +49,19 @@ class ApiUserController extends FOSRestController{
         $apiUser=$this->getOr404($id);
 
         return $apiUser;
+    }
+
+    /**
+     * @Get("/user-mobile")
+     * @View(serializerEnableMaxDepthChecks=true)
+     */
+    public function userMovileAction(Request $request)
+    {
+        if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_USER'))) {
+            return $this->getUser();
+        }
+
+        return "Error";
     }
 
     /**
