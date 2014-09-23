@@ -132,11 +132,13 @@ class ProjectHandler
      *
      * @throws \Exception
      */
-    public function createProject(FormInterface $form, $request)
+    public function createProject(FormInterface $form, $request, $owner=null)
     {
         $form->handleRequest($request);
         if ($form->isValid()) {
             $project = $form->getData();
+            if($owner)
+                $project->setOwner($owner);
             $this->em->persist($project);
             $this->em->flush($project);
 

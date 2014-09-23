@@ -51,13 +51,14 @@
                         {{ form_widget(form.description, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
                 </div>
+                {% if is_granted('ROLE_SCRUM_MASTER') %}
                 <div class="form-group">
                     <label id="label_company" for="sprint_company" class="col-sm-3 control-label user-active"> {{ "Product owner" |trans}}</label>
                     <div class="col-sm-4">
                         {{ form_widget(form.owner, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
                 </div>
-                
+                {% endif %}
                 {{ form_rest(form) }}
                 <div class="form-actions">
                     <button id="register" type="submit" class="btn btn-large btn-primary">

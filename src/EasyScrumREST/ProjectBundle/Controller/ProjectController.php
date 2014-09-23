@@ -41,7 +41,7 @@ class ProjectController extends EasyScrumController
         $project = new Project();
         $project->setCompany($this->getUser()->getCompany());
         if($this->container->get('security.context')->isGranted('ROLE_SCRUM_MASTER')){
-            $type=new ProjectWithOwnerType();
+            $type = new ProjectWithOwnerType();
             $type->setCompany($this->getUser()->getCompany());
             $form = $this->createForm($type, $project);
         } elseif($this->container->get('security.context')->isGranted('ROLE_PRODUCT_OWNER')) {

@@ -49,7 +49,7 @@
                         <td>{% if project.created is defined %}{{ project.created |date('d/m/Y') }}{% endif %}</td>
                         <td class="taskOptions">
                             <a title="See" href="{{ path('show_normal_project', { 'id': project.id }) }}"><i class="fa fa-eye"></i></a>
-                            {% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
+                            {% if is_granted('ROLE_SCRUM_MASTER') or ( project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
                                 <a title="Edit" href="{{ path('project_edit', { 'id': project.id }) }}"><i class="fa fa-pencil"></i></a>
                                 <a title="Delete" href="{{ path('delete_normal_project', { 'id': project.id }) }}"><i class="fa fa-trash-o"></i></a>
                             {% endif %}
