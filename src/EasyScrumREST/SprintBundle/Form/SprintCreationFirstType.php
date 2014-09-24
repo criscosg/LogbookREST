@@ -22,8 +22,8 @@ class SprintCreationFirstType extends AbstractType
                                                             ->add('where', "p.company =:company")
                                                             ->setParameter('company', $company);
                                                     }, 'required'=>false, 'empty_value'=>'Choose a project'))
-            ->add('fromDate', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => true, 'format' => 'dd/MM/yyyy'))
-            ->add('toDate', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => true, 'format' => 'dd/MM/yyyy'))
+            ->add('dateFrom', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => true, 'format' => 'dd/MM/yyyy'))
+            ->add('dateTo', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => true, 'format' => 'dd/MM/yyyy'))
             ->add('hoursAvailable', 'number', array('required'=>true))
             ->add('focus', 'number', array('required'=>true));
     }

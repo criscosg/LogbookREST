@@ -46,7 +46,7 @@
                         </tr>
                         <tr>
                             <td style="width:20%;">{{ "From - To"|trans }}</td>
-                            <td>{% if sprint.fromDate is not empty %}{{ sprint.fromDate |date('d/m/Y') }} - {{ sprint.toDate |date('d/m/Y') }}{% endif %}</td>
+                            <td>{% if sprint.dateFrom is not empty %}{{ sprint.dateFrom |date('d/m/Y') }} - {{ sprint.dateTo |date('d/m/Y') }}{% endif %}</td>
                         </tr>
                         <tr>
                             <td style="width:20%;">{{ "Hours planified"|trans }}</td>

@@ -469,8 +469,8 @@ class Sprint
     
     public function getChartArray()
     {
-        $date=new \DateTime($this->fromDate->format('Y-m-d'));
-        $days=DateHelper::numberLaborableDays($this->fromDate, $this->toDate);
+        $date=new \DateTime($this->dateFrom->format('Y-m-d'));
+        $days=DateHelper::numberLaborableDays($this->dateFrom, $this->dateTo);
         $hoursDay=$this->hoursPlanified / $days;
         $cont=0;
         $chartData= array();

@@ -172,7 +172,7 @@ class Synchronize
         foreach ($projectMobile as $property => $value) {
             if ($property=='owner_salt') {
                 $projectDB->setOwner($this->em->getRepository('UserBundle:ApiUser')->findOneBySalt($value));
-            } elseif ($property != 'updated' && $property != 'created' && $property != 'fromDate' && $property != 'toDate') {
+            } elseif ($property != 'updated' && $property != 'created' && $property != 'dateFrom' && $property != 'dateTo') {
                 $method = sprintf('set%s', ucwords($property));
                 if (method_exists($projectDB, $method)) {
                     $projectDB->$method($value);
@@ -222,7 +222,7 @@ class Synchronize
         foreach ($sprintMobile as $property => $value) {
             if ($property=='project_salt') {
                 $sprintDB->setProject($this->em->getRepository('ProjectBundle:Project')->findOneBySalt($value));
-            } else if ($property != 'updated' && $property != 'created' && $property != 'fromDate' && $property != 'toDate') {
+            } else if ($property != 'updated' && $property != 'created' && $property != 'dateFrom' && $property != 'dateTo') {
                 $method = sprintf('set%s', ucwords($property));
                 if (method_exists($sprintDB, $method)) {
                     $sprintDB->$method($value);

@@ -41,24 +41,24 @@
             <form class="form-horizontal" id="form-create-item" role="form"
                   action="{{ path('sprint_creation_first') }}" method="post" xmlns="http://www.w3.org/1999/html">
                 <div class="form-group">
-                    <label for="sprint_fromDate" class="col-sm-3 control-label"><span class="red">*</span>{{ "Project"|trans }}</label>
+                    <label for="sprint_project" class="col-sm-3 control-label"><span class="red">*</span>{{ "Project"|trans }}</label>
                     <div class="col-sm-4 input-group">
                         {{ form_widget(form.project, { 'attr':{ 'class':'form-control'} }) }}
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="sprint_fromDate" class="col-sm-3 control-label"><span class="red">*</span>{{ "From"|trans }}</label>
+                    <label for="sprint_dateFrom" class="col-sm-3 control-label"><span class="red">*</span>{{ "From"|trans }}</label>
                     <div class="col-sm-4 input-group">
-                        {{ form_widget(form.fromDate, { 'attr':{ 'class':'form-control datepicker-from', 'autocomplete':'off'} }) }}
+                        {{ form_widget(form.dateFrom, { 'attr':{ 'class':'form-control datepicker-from', 'autocomplete':'off'} }) }}
                         <span class="input-group-addon input-group-addon-click">
                             <i class="fa fa-calendar"></i>
                         </span>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="sprint_toDate" class="col-sm-3 control-label"><span class="red">*</span>{{ "To"|trans }}</label>
+                    <label for="sprint_dateTo" class="col-sm-3 control-label"><span class="red">*</span>{{ "To"|trans }}</label>
                     <div class="col-sm-4 input-group">
-                        {{ form_widget(form.toDate, { 'attr':{ 'class':'form-control datepicker-to','autocomplete':'off'} }) }}
+                        {{ form_widget(form.dateTo, { 'attr':{ 'class':'form-control datepicker-to','autocomplete':'off'} }) }}
                         <span class="input-group-addon input-group-addon-click">
                             <i class="fa fa-calendar"></i>
                         </span>
