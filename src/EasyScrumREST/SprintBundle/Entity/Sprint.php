@@ -471,18 +471,21 @@ class Sprint
     {
         $date=new \DateTime($this->dateFrom->format('Y-m-d'));
         $days=DateHelper::numberLaborableDays($this->dateFrom, $this->dateTo);
-        $hoursDay=$this->hoursPlanified / $days;
-        $cont=0;
         $chartData= array();
-        while ($date <= $this->toDate) {
-            $day=$date->format('l');
-            if ($day!="Sunday" && $day!="Saturday" ) {
-                $chartData[$date->format('d/m')] = $this->hoursPlanified - ($cont * $hoursDay);
-                $cont++;
-            }
-            $date->modify('+1 day');
-        }
+        if($days>0){
+            $hoursDay=$this->hoursPlanified / $days;
+            $cont=0;
 
+            while ($date <= $this->dateTo) {
+                $day=$date->format('l');
+                if ($day!="Sunday" && $day!="Saturday" ) {
+                    $chartData[$date->format('d/m')] = $this->hoursPlanified - ($cont * $hoursDay);
+                    $cont++;
+                }
+                $date->modify('+1 day');
+            }
+        }
+        
         return $chartData;
     }
 }
