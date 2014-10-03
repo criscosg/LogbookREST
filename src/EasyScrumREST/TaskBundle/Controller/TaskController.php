@@ -13,6 +13,8 @@ use FOS\RestBundle\Util\Codes;
 use EasyScrumREST\TaskBundle\Form\TaskType;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Get;
 
 class TaskController extends FOSRestController{
 
@@ -150,6 +152,70 @@ class TaskController extends FOSRestController{
     /**
      *
      * @View()
+     * @Post("/task-hours/{salt}")
+     *
+     * @param Request $request
+     * @param int     $id
+     *
+     *
+     * @throws NotFoundHttpException when task not exist
+     */
+    public function taskHoursAction(Request $request, $salt)
+    {
+        try {
+            if (($task = $this->getOr404BySalt($salt))) {
+                if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_USER'))) {
+                    $statusCode = Codes::HTTP_ACCEPTED;
+                    $this->container->get('task.handler')->handleHoursTask($task, $this->getUser(), $request);
+                } else {
+                    $statusCode = Codes::HTTP_NO_CONTENT;
+                }
+            } else {
+                $statusCode = Codes::HTTP_NO_CONTENT;
+            }
+
+            return "ok";
+        } catch (NotFoundHttpException $exception) {
+
+            return $exception->getMessage();
+        }
+    }
+
+    /**
+     *
+     * @View()
+     * @Get("/task-move/{salt}/{state}")
+     *
+     * @param Request $request
+     * @param int     $salt
+     *
+     * @throws NotFoundHttpException when task not exist
+     */
+    public function taskMoveAction(Request $request, $salt, $state)
+    {
+        try {
+            $task = $this->getOr404BySalt($salt);
+            if ($task) {
+                if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_USER'))) {
+                    $statusCode = Codes::HTTP_ACCEPTED;
+                    $this->container->get('task.handler')->moveTo($task, $state);
+                } else {
+                    $statusCode = Codes::HTTP_NO_CONTENT;
+                }
+            } else {
+                $statusCode = Codes::HTTP_NO_CONTENT;
+            }
+
+            return 'ok';
+        } catch (NotFoundHttpException $exception) {
+
+            return $exception->getMessage();
+        }
+    }
+
+    /**
+     *
+     * @View()
      *
      * @param Request $request
      * @param int     $id
@@ -188,6 +254,24 @@ class TaskController extends FOSRestController{
         }
 
         return $page;
+    }
+
+    /**
+     * Fetch the Page or throw a 404 exception.
+     *
+     * @param mixed $salt
+     *
+     * @return PageInterface
+     *
+     * @throws NotFoundHttpException
+     */
+    protected function getOr404BySalt($salt)
+    {
+        if (!($task = $this->container->get('task.handler')->getSalt($salt))) {
+            throw new NotFoundHttpException(sprintf('The Task \'%s\' was not found.',$salt));
+        }
+
+        return $task;
     }
 
 }

@@ -29,6 +29,11 @@ class TaskHandler
         return $this->em->getRepository('TaskBundle:Task')->find($id);
     }
 
+    public function getSalt($salt)
+    {
+        return $this->em->getRepository('TaskBundle:Task')->findOneBySalt($salt);
+    }
+
     /**
      * @param int $limit  the limit of the result
      * @param int $offset starting from the offset
@@ -130,6 +135,7 @@ class TaskHandler
         $form->handleRequest($request);
         if ($form->isValid()) {
             $task = $form->getData();
+            $task->setSalt();
             $this->em->persist($task);
             $this->em->flush($task);
     

@@ -48,13 +48,13 @@ class Urgency
     protected $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity="EasyScrumREST\SprintBundle\Entity\Sprint", inversedBy="tasks")
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\SprintBundle\Entity\Sprint", inversedBy="urgencies")
      * @Expose
      */
     private $sprint;
     
     /**
-     * @ORM\ManyToOne(targetEntity="EasyScrumREST\ProjectBundle\Entity\Project", inversedBy="urgencies")
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\ProjectBundle\Entity\Project")
      * @Expose
      */
     private $project;

@@ -70,13 +70,13 @@ class Project
     private $backlogs;
 
     /**
-     * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\Company", inversedBy="projects")
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\Company")
      * @Expose
      */
     private $company;
     
     /**
-     * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser", inversedBy="projects")
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser")
      * @Expose
      */
     private $owner;
