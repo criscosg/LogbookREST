@@ -11,6 +11,16 @@ imports:
 #        result_cache_driver: apc
 #        query_cache_driver: apc
 
+doctrine:
+    dbal:
+        driver:   %database_driver%
+        host:     %database_host_prod%
+        port:     %database_port%
+        dbname:   %database_name%
+        user:     %database_user_prod%
+        password: %database_password_prod%
+        charset:  UTF8
+
 monolog:
     handlers:
         main:
