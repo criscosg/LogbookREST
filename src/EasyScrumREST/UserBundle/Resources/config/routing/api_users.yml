@@ -21,3 +21,7 @@ edit_normal_api_user:
 delete_normal_api_user:
     pattern: /delete/{id}
     defaults: { _controller: UserBundle:UserNormal:deleteApiUser }
+    
+settings:
+    pattern: /settings
+    defaults: { _controller: UserBundle:UserNormal:settings }  

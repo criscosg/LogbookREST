@@ -1,6 +1,8 @@
 <?php
 namespace EasyScrumREST\UserBundle\Controller;
 
+use EasyScrumREST\UserBundle\Form\SettingsType;
+
 use EasyScrumREST\UserBundle\Form\ProfileType;
 
 use EasyScrumREST\UserBundle\Form\NormalUserType;
@@ -101,6 +103,22 @@ class UserNormalController extends EasyScrumController
         return $this->render('UserBundle:ApiUser:profile.html.twig', array('form' => $form->createView(),'edition' => true, 'user' => $user));
     }
     
+    public function settingsAction()
+    {
+        $user=$this->getUser();
+        $company=$user->getCompany();
+        $form = $form = $this->createForm(new SettingsType(), $company);
+        $request=$this->getRequest();
+        if($request->getMethod()=='POST'){
+            $apiUser = $this->container->get('company.handler')->settings($company, $request);
+            if($apiUser) {
+                return $this->redirect($this->generateUrl('api_users_list'));
+            }
+        }
+    
+        return $this->render('UserBundle:ApiUser:settings.html.twig', array('form' => $form->createView(), 'user' => $user));
+    }
+
     /**
      * @ParamConverter("user", class="UserBundle:ApiUser")
      */

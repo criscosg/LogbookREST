@@ -1,0 +1,53 @@
+{% set cpage = paginator.currentPage %}
+{% if cpage > 1 %}
+    {% set rParams =  routeParams | merge({'page': 1} ) %}
+    <li title="{{ "first page" | trans }}"><a href="{{ path(direccion, rParams)}}">(1)</a></li>
+    {% set rParams = routeParams | merge({'page': paginator.previousPage}) %}
+    <li title="{{ "previous page" | trans }}"><a href="{{ path(direccion, rParams) }}"><i class="fa fa-step-backward"></i></a></li>
+{% endif %}
+{% set numpages = 9 %}
+{% if paginator.lastPage <= numpages %}
+    {% for i in 1..paginator.lastPage %}
+        {% set rParams = routeParams | merge({'page': i}) %}
+        {% if i == cpage %}
+            <li class="active"> <a href="{{ path(direccion, rParams) }}">{{ i }}</a></li>
+        {% else %}
+            <li> <a href="{{ path(direccion, rParams)}}">{{ i }}</a></li>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {% if cpage < 5 %}
+        {% for i in 1..numpages%}
+            {% set rParams = routeParams | merge({'page': i}) %}
+            {% if i == cpage %}
+                <li class="active"><a href="{{ path(direccion, rParams) }}">{{ i }}</a></li>
+            {% else %}
+                <li><a href="{{ path(direccion, rParams) }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+     {% elseif cpage > (paginator.lastPage - 5) %}
+         {% for i in (paginator.lastPage - 8)..paginator.lastPage%}
+            {% set rParams = routeParams | merge({'page': i}) %}
+            {% if i == cpage %}
+                <li class="active"><a href="{{ path(direccion, rParams) }}">{{ i }}</a></li>
+            {% else %}
+                <li><a href="{{ path(direccion, rParams) }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+     {% else %}
+         {% for i in (cpage - 4)..(cpage + 4) %}
+            {% set rParams = routeParams | merge({'page': i}) %}
+            {% if i == cpage %}
+                <li class="active"><a href="{{ path(direccion, rParams) }}">{{ i }}</a></li>
+            {% else %}
+                <li><a href="{{ path(direccion, rParams) }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endif %}
+{% if paginator.currentPage < paginator.lastPage %}
+    {% set rParams = routeParams | merge({'page': paginator.nextPage}) %}
+    <li title="{{ "Next page" | trans }}"><a href="{{ path(direccion, rParams) }}"><i class="fa fa-step-forward"></i></a></li>
+    {% set rParams = routeParams | merge({'page': paginator.lastPage}) %}
+    <li title="{{ "Last page" | trans }}"><a href="{{ path(direccion, rParams) }}">({{ paginator.lastPage }})</a></li>
+{% endif %}

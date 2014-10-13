@@ -1,6 +1,8 @@
 <?php
 
 namespace EasyScrumREST\UserBundle\Handler;
+use EasyScrumREST\UserBundle\Form\SettingsType;
+
 use Doctrine\ORM\EntityManager;
 use EasyScrumREST\UserBundle\Entity\Company;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -104,6 +106,31 @@ class CompanyHandler
             return $company;
         }
 
+        throw new \Exception('Invalid submitted data');
+    }
+    
+    /**
+     * Processes the settings.
+     *
+     * @param Company     $company
+     * @param array         $parameters
+     *
+     * @return Company
+     *
+     * @throws \Exception
+     */
+    public function settings(Company $company, $request)
+    {
+        $form = $this->factory->create(new SettingsType(), $company);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $company = $form->getData();
+            $this->em->persist($company);
+            $this->em->flush($company);
+    
+            return $company;
+        }
+    
         throw new \Exception('Invalid submitted data');
     }
 }

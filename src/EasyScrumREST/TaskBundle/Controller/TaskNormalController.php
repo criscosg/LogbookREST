@@ -1,6 +1,7 @@
 <?php
 namespace EasyScrumREST\TaskBundle\Controller;
 
+use EasyScrumREST\TaskBundle\Form\SearchTaskType;
 use EasyScrumREST\TaskBundle\Form\TaskHoursType;
 use EasyScrumREST\SprintBundle\Entity\Sprint;
 use EasyScrumREST\TaskBundle\Form\CreateTaskType;
@@ -167,4 +168,15 @@ class TaskNormalController extends EasyScrumController
         return array('sprint'=> $task->getSprint());
     }
 
+    public function facturationAction(Request $request)
+    {
+        $paginator = $this->get('ideup.simple_paginator');
+        $form = $this->createForm(new SearchTaskType());
+        $search = $this->get('task.handler')->search($form, $request);
+        $tasks = $this->get('task.handler')->paginate($search, $paginator);
+        $totals = $this->get('task.handler')->totals($search);
+        $company = $this->getUser()->getCompany();
+
+        return $this->render('TaskBundle:Task:facturation.html.twig', array('form' => $form->createView(), 'paginator'=>$paginator , 'tasks' => $tasks, 'company'=>$company, 'totals'=>$totals));
+    }
 }

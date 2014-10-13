@@ -18,7 +18,6 @@ class TaskRepository extends EntityRepository
             $qb->andWhere($qb->expr()->eq('t.sprint', $search['sprint']));
         }
 
-        $qb->andWhere($qb->expr()->isNull('t.deleted'));
         $qb->setFirstResult($offset);
         $qb->setMaxResults($limit);
         $qb->orderBy('t.id', 'DESC');
@@ -43,6 +42,32 @@ class TaskRepository extends EntityRepository
         }
 
         return $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
+    }
+    
+    public function findBySearch($search = null)
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb->select('t, s');
+        $qb->join('t.sprint', 's');
+
+        $qb->andWhere($qb->expr()->like('t.state', '\''."DONE".'\''));
+
+        if (isset($search['project'])) {
+            $qb->andWhere($qb->expr()->eq('s.project', $search['project']->getId()));
+        }
+
+        if (isset($search['sprint'])) {
+            $qb->andWhere($qb->expr()->eq('s.id', $search['sprint']->getId()));
+        }
+        
+        if (isset($search['from']) && isset($search['to'])) {
+            $qb->andWhere($qb->expr()->gte('t.updated', '\''.$search['from']->format('Y-m-d').'\''));
+            $qb->andWhere($qb->expr()->lte('t.updated', '\''.$search['to']->format('Y-m-d').'\''));
+        }
+    
+        $qb->orderBy('t.id', 'DESC');
+
+        return $qb->getQuery();
     }
 
 }

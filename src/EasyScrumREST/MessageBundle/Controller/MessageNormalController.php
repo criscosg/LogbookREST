@@ -36,7 +36,7 @@ class MessageNormalController extends EasyScrumController
     {
         $company=$this->getUser()->getCompany()->getId();
         $messages = $this->container->get('message.handler')->lastSecondsMessages($company);
-        
+
         return array('messages' => array_reverse($messages));
     }
 

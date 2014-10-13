@@ -19,11 +19,11 @@
             <h5>{{ "Messages"|trans }}</h5>
         </div>
         <div class="widget-content nopadding">
-            {% if messages | length > 0 %}
-                <div class="messages clearfix row">
-                    {% include "MessageBundle:Message:messages.html.twig" %}
-                </div>
-             {% endif %}
+
+            <div class="messages clearfix row">
+                {% include "MessageBundle:Message:messages.html.twig" %}
+            </div>
+
              <form class="asynchronous" action="{{ path('send_message') }}" method="POST"  name="write-message" {{ form_enctype(form)}}>
                  <div class="container">
                      <div class="row form-group">
@@ -55,6 +55,7 @@
             		if(response.ok){
             			$('.messages').append(response.message);
             		}
+            		$('#message_text').val("");
                 });
     	    });
         });
@@ -64,6 +65,10 @@
 	   setTimeout(function() {
 		   $.get("{{ path('messages_async') }}", function(response){
        			$('.messages').append(response);
+       			$('[id]').each(function (i) {
+       			    var ids = $('[id="' + this.id + '"]');
+       			    if (ids.length > 1) $('[id="' + this.id + '"]:gt(0)').remove();
+       			});
            }).done(poll);
 	    }, 30000);
 	})();

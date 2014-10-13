@@ -1,5 +1,5 @@
 {% for message in messages %}
-    <div class="message clearfix {% if app.user.isEqualTo(message.user) %}right{% else %}left{% endif %}">
+    <div id="{{ message.id }}" class="message clearfix {% if app.user.isEqualTo(message.user) %}right{% else %}left{% endif %}">
         <div class="photo visible-desktop">
             {% if message.user.profileImage is not null %}
                 {% set imagePath= message.user.profileImage.getWebFilePath %}

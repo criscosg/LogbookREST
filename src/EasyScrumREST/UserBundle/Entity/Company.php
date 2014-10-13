@@ -55,6 +55,16 @@ class Company
      * @Expose
      */
     private $sprints;
+    
+    /**
+     * @ORM\Column(type="float", precision=2, nullable=true)
+     */
+    private $pricePerHour;
+    
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $hoursPerDay=8;
 
     public function __construct()
     {
@@ -130,5 +140,25 @@ class Company
     public function addSprint(Sprint $sprint)
     {
         $this->sprints->add($sprint);
+    }
+    
+    public function getPricePerHour()
+    {
+        return $this->pricePerHour;
+    }
+    
+    public function setPricePerHour($pricePerHour)
+    {
+        $this->pricePerHour = $pricePerHour;
+    }
+    
+    public function getHoursPerDay()
+    {
+        return $this->hoursPerDay;
+    }
+    
+    public function setHoursPerDay($hoursPerDay)
+    {
+        $this->hoursPerDay = $hoursPerDay;
     }
 }

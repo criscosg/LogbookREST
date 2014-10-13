@@ -26,7 +26,8 @@
         "raulfraile/ladybug-bundle": "v0.7",
         "nelmio/api-doc-bundle": "@dev",
         "friendsofsymfony/oauth-server-bundle": "dev-master",
-        "liip/imagine-bundle": "dev-master"
+        "liip/imagine-bundle": "dev-master",
+        "ideup/simple-paginator-bundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

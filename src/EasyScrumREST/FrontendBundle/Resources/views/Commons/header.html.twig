@@ -34,7 +34,15 @@
                 {% endfor %}    
             </ul>
         </li>
-        <li class="btn"><a title="" href="{{ path('edit_profile') }}"><i class="fa fa-cog"></i> <span class="text">Settings</span></a></li>
+        <li class="btn">
+            <a href="{{ path('edit_profile') }}" title="">
+                <i class="fa fa-user"></i>
+                <span class="text">Profile</span>
+            </a>
+        </li>
+        {% if is_granted('ROLE_SCRUM_MASTER') %}
+            <li class="btn"><a title="" href="{{ path('settings') }}"><i class="fa fa-cog"></i> <span class="text">Settings</span></a></li>
+        {% endif %}
         <li class="btn"><a title="" href="{{ path('logout') }}"><i class="fa fa-share"></i> <span class="text">Logout</span></a></li>
     </ul>
 </div>

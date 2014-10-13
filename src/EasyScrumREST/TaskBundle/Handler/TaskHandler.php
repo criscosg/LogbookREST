@@ -1,17 +1,15 @@
 <?php
 
 namespace EasyScrumREST\TaskBundle\Handler;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\FormInterface;
 use EasyScrumREST\TaskBundle\Entity\HoursSpent;
-
 use EasyScrumREST\TaskBundle\Form\TaskHoursType;
-
 use EasyScrumREST\TaskBundle\Form\CreateTaskType;
-
 use Doctrine\ORM\EntityManager;
 use EasyScrumREST\TaskBundle\Entity\Task;
 use Symfony\Component\Form\FormFactoryInterface;
 use EasyScrumREST\TaskBundle\Form\TaskType;
-use Symfony\Component\BrowserKit\Request;
 
 class TaskHandler
 {
@@ -43,6 +41,36 @@ class TaskHandler
     public function all($limit = 20, $offset = 0, $orderby = null)
     {
         return $this->em->getRepository('TaskBundle:Task')->findBy(array(), $orderby, $limit, $offset);
+    }
+    
+    public function search(FormInterface $form, Request $request)
+    {
+        $criteria = array();
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $criteria = $form->getData();
+        }
+        $search = $this->em->getRepository('TaskBundle:Task')->findBySearch($criteria);
+
+        return $search;
+    }
+    
+    public function paginate($search, $paginator)
+    {
+        $tasks = $paginator->setItemsPerPage(20)->paginate($search)->getResult();
+    
+        return $tasks;
+    }
+    
+    public function totals($tasks)
+    {
+        $tasks = $tasks->getResult();
+        $hours=0;
+        foreach ($tasks as $task) {
+            $hours += $task->getHoursSpent();
+        }
+    
+        return array('count' => count($tasks), 'hours' => $hours);
     }
 
     /**

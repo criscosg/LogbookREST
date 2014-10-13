@@ -19,9 +19,9 @@ class FocusFactorMembers
 
     public function getChartFocusMember(Sprint $sprint)
     {
-        $from = new \DateTime($sprint->getFromDate()->format('Y/m/d'));
-        $date = $sprint->getFromDate();
-        $to = $sprint->getToDate();
+        $from = new \DateTime($sprint->getDateFrom()->format('Y/m/d'));
+        $date = $sprint->getDateFrom();
+        $to = $sprint->getDateTo();
         $focusChart = array();
         $chartData = array();
         while ($date <= $to) {

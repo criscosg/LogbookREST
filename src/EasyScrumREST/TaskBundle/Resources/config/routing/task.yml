@@ -1,3 +1,7 @@
+task_facturation:
+    pattern: /facturation
+    defaults: { _controller: TaskBundle:TaskNormal:facturation }
+
 show_normal_task:
     pattern: /{id}
     defaults: { _controller: TaskBundle:TaskNormal:taskShow }  
@@ -36,4 +40,4 @@ move_done:
     
 move_undone:
     pattern: /to-undone/{id}
-    defaults: { _controller: TaskBundle:TaskNormal:moveToUndone }    
+    defaults: { _controller: TaskBundle:TaskNormal:moveToUndone }

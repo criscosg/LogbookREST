@@ -33,6 +33,7 @@ class AppKernel extends Kernel
             new EasyScrumREST\FrontendBundle\FrontendBundle(),
             new EasyScrumREST\ProjectBundle\ProjectBundle(),
             new EasyScrumREST\ImageBundle\ImageBundle(),
+            new Ideup\SimplePaginatorBundle\IdeupSimplePaginatorBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -17,7 +17,7 @@
     			<span class="icon">
     				<i class="fa fa-th"></i>
     			</span>
-    			<h5>{{ sprint.title }}</h5>
+    			<a href="{{ path('show_normal_sprint', {id: sprint.id}) }}"><h5>{{ sprint.title }}</h5></a>
     		</div>
     		<div class="widget-content">
     			<div class="row">
@@ -27,8 +27,8 @@
     						<li><div class="cc"><i class="fa fa-arrow-right"></i> <strong>{{ sprint.getTaskDone() | length }}</strong> <small>Tasks done</small></div></li>
     						<li class="divider"></li>
     						<li><div class="cc"><i class="fa fa-calendar"></i> <strong>{{ sprint.hoursPlanified }}</strong> <small>Planified Hours</small></div></li>
-    						<li><div class="cc"><i class="fa fa-tag"></i> <strong>{{ sprint.getSpentHours() }}</strong> <small>Spent hours</small></div></li>
-    						<li><div class="cc"><i class="fa fa-repeat"></i> <strong>{{ sprint.getHoursUndone() }}</strong> <small>Hours left</small></div></li>
+    						<li><div class="cc"><i class="fa fa-clock-o"></i> <strong>{{ sprint.getSpentHours() }}</strong> <small>Spent hours</small></div></li>
+    						<li><div class="cc"><i class="fa fa-fire"></i> <strong>{{ sprint.getHoursUndone() }}</strong> <small>Hours left</small></div></li>
     					</ul>
     				</div>
     				<div class="col-xs-12 col-sm-8">
