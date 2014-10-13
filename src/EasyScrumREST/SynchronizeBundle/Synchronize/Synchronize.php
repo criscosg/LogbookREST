@@ -28,9 +28,9 @@ class Synchronize
             $projects=$this->compareProjects(array(), $user);
         }
         if (isset($mobileDB['backlog'])) {
-            $backlogs=$this->compareBacklog($mobileDB['backlogs'], $user);
+            $backlog=$this->compareBacklog($mobileDB['backlog'], $user);
         } else {
-            $backlogs=$this->compareBacklog(array(), $user);
+            $backlog=$this->compareBacklog(array(), $user);
         }
         if (isset($mobileDB['sprints'])) {
             $sprints=$this->compareSprints($mobileDB['sprints'], $user);
@@ -49,7 +49,8 @@ class Synchronize
         }
 
         return array('users'=>$this->em->getRepository('UserBundle:ApiUser')->findCompanyUsers($user->getCompany()->getId()),
-                 'projects'=>ArrayHelper::flattMultilevelEntityArray($projects), 'backlog'=>ArrayHelper::flattMultilevelEntityArray($backlogs), 'sprints'=>ArrayHelper::flattMultilevelEntityArray($sprints), 'tasks'=>ArrayHelper::flattMultilevelEntityArray($tasks));
+                 'projects'=>ArrayHelper::flattMultilevelEntityArray($projects), 'backlog'=>ArrayHelper::flattMultilevelEntityArray($backlog),
+                 'sprints'=>ArrayHelper::flattMultilevelEntityArray($sprints), 'tasks'=>ArrayHelper::flattMultilevelEntityArray($tasks));
     }
     
     private function compareProjects($projects, ApiUser $user)
