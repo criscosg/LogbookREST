@@ -2,6 +2,10 @@ home:
     pattern:  /
     defaults: { _controller: FrontendBundle:Frontend:home }
     
+calendar:
+    pattern:  /calendar
+    defaults: { _controller: FrontendBundle:Frontend:calendar }    
+    
 register:
     pattern:  /register
     defaults: { _controller: UserBundle:UserNormal:register }    

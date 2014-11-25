@@ -5,7 +5,7 @@ namespace EasyScrumREST\SprintBundle\Util;
 class DateHelper
 {
     public static function numberLaborableDays($from, $to) {
-        $date = $from;
+        $date =new \DateTime($from->format('Y-m-d'));
         $cont=0;
         while ($date < $to) {
             $day=$date->format('l');

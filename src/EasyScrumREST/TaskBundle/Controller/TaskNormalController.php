@@ -90,9 +90,13 @@ class TaskNormalController extends EasyScrumController
      */
     public function hoursFormAction(Task $task)
     {
+        $message=null;
         $form = $this->createForm(new TaskHoursType());
+        if (($task->getUser() && !$task->getUser()->isEqualTo($this->getUser()))) {
+            $message = "Task blocked by another user";
+        }
         
-        return array('task'=>$task, 'form'=>$form->createView());
+        return array('task'=>$task, 'form'=>$form->createView(), 'message'=>$message);
     }
     
     /**
@@ -121,7 +125,9 @@ class TaskNormalController extends EasyScrumController
      */
     public function moveToOnProcessAction(Task $task)
     {
-        $this->container->get('task.handler')->moveTo($task, 'ONPROCESS');
+        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
+            $this->container->get('task.handler')->moveTo($task, 'ONPROCESS');
+        }
         
         return array('sprint'=> $task->getSprint());
     }
@@ -135,7 +141,9 @@ class TaskNormalController extends EasyScrumController
      */
     public function moveToTodoAction(Task $task)
     {
-        $this->container->get('task.handler')->moveTo($task, 'TODO');
+        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
+            $this->container->get('task.handler')->moveTo($task, 'TODO');
+        }
     
         return array('sprint'=> $task->getSprint());
     }
@@ -149,7 +157,9 @@ class TaskNormalController extends EasyScrumController
      */
     public function moveToDoneAction(Task $task)
     {
-        $this->container->get('task.handler')->moveTo($task, 'DONE');
+        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
+            $this->container->get('task.handler')->moveTo($task, 'DONE');
+        }
     
         return array('sprint'=> $task->getSprint());
     }
@@ -163,9 +173,45 @@ class TaskNormalController extends EasyScrumController
      */
     public function moveToUndoneAction(Task $task)
     {
-        $this->container->get('task.handler')->moveTo($task, 'UNDONE');
+        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
+            $this->container->get('task.handler')->moveTo($task, 'UNDONE');
+        }
 
         return array('sprint'=> $task->getSprint());
+    }
+    
+    /**
+     * @ParamConverter("task", class="TaskBundle:Task")
+     *
+     * @return array
+     */
+    public function taskLockAction(Task $task)
+    {
+        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
+            $this->container->get('task.handler')->lockTask($task, $this->getUser());
+            $jsonResponse = json_encode(array('ok' => true));
+        } else {
+            $jsonResponse = json_encode(array('ok' => false));
+        }
+
+        return $this->getHttpJsonResponse($jsonResponse);
+    }
+    
+    /**
+     * @ParamConverter("task", class="TaskBundle:Task")
+     *
+     * @return array
+     */
+    public function taskUnlockAction(Task $task)
+    {
+        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
+            $this->container->get('task.handler')->unlockTask($task);
+            $jsonResponse = json_encode(array('ok' => true));
+        } else {
+            $jsonResponse = json_encode(array('ok' => false));
+        }
+
+        return $this->getHttpJsonResponse($jsonResponse);
     }
 
     public function facturationAction(Request $request)

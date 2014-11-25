@@ -1,6 +1,9 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Controller;
 
+use EasyScrumREST\SprintBundle\Entity\HoursSprint;
+use EasyScrumREST\SprintBundle\Form\SprintHourType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use EasyScrumREST\SprintBundle\Form\SprintLastStepType;
 use EasyScrumREST\SprintBundle\Form\SprintCreationFirstType;
 use EasyScrumREST\SprintBundle\Entity\Sprint;
@@ -33,7 +36,7 @@ class SprintNormalController extends EasyScrumController
         $doneUrgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
         $today=new \DateTime('today');
 
-        return $this->render('SprintBundle:Sprint:view.html.twig', array('sprint' => $sprint, 'urgencies'=>$urgencies, 
+        return $this->render('SprintBundle:Sprint:view.html.twig', array('sprint' => $sprint, 'urgencies'=>$urgencies, 'chartHours'=>$sprint->getChartHoursArray(),
                                             'doneUrgencies'=>$doneUrgencies, 'today'=>$today->format('d/m')));
     }
 
@@ -106,5 +109,36 @@ class SprintNormalController extends EasyScrumController
         $this->get('sprint.handler')->delete($sprint);
 
         return $this->redirect($this->generateUrl('sprints_list'));
+    }
+    
+    /**
+     * @Template("SprintBundle:Sprint:hours.html.twig")
+     * @ParamConverter("sprint", class="SprintBundle:Sprint")
+     *
+     * @return array
+     */
+    public function hoursSprintAction(Sprint $sprint)
+    {
+        $hours = new HoursSprint();
+        $hours->setDate(new \DateTime('today'));
+        $form = $this->createForm(new SprintHourType(), $hours);
+    
+        return array('sprint'=>$sprint, 'form'=>$form->createView());
+    }
+    
+    /**
+     * @ParamConverter("sprint", class="SprintBundle:Sprint")
+     */
+    public function saveHoursSprintAction(Request $request, Sprint $sprint)
+    {
+        $form = $this->createForm(new SprintHourType());
+        if($request->getMethod()=='POST'){
+            $hour = $this->get('sprint.handler')->saveHoursSprint($request, $sprint);
+            if($hour) {
+                return $this->redirect($this->generateUrl('show_normal_sprint', array('id'=>$sprint->getId())));
+            }
+        }
+
+        return $this->redirect($this->generateUrl('show_normal_sprint', array('id'=>$sprint->getId())));
     }
 }

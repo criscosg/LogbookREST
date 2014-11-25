@@ -14,7 +14,7 @@
 		<script type="text/javascript" src="js/respond.min.js"></script>
 		<![endif]-->	
 	</head>	
-	<body data-color="blue" class="flat">
+	<body data-color="blue" class="{% block bodyClass %}flat{% endblock %}">
 		<div id="wrapper">		
 			{% block header %}{% endblock %}
 			{% block sidenav %}{% endblock %}

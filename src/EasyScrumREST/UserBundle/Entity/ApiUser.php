@@ -31,13 +31,12 @@ class ApiUser extends User
      * @ORM\OneToMany(targetEntity="EasyScrumREST\MessageBundle\Entity\Message", mappedBy="user", cascade={"persist", "merge", "remove"})
      */
     private $messages;
-    
+
     /**
      * @var ImageProfile
      * @ORM\OneToOne(targetEntity="EasyScrumREST\ImageBundle\Entity\ImageProfile", mappedBy="user", cascade={"persist", "merge", "remove"})
      */
     private $profileImage;
-    
 
     /**
      * @ORM\Column(type="string", length=250, nullable=true)
@@ -45,9 +44,27 @@ class ApiUser extends User
      */
     private $roles;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\TaskBundle\Entity\Task", mappedBy="user")
+     */
+    private $tasks;
+
+    /**
+     * @ORM\Column(type="string", length=250, nullable=true)
+     * @Expose
+     */
+    private $color;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $notification;
+
     public function __construct()
     {
         $this->messages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function setCompany(Company $company)
@@ -69,12 +86,12 @@ class ApiUser extends User
     {
         $this->messages = $messages;
     }
-    
+
     public function getProfileImage()
     {
         return $this->profileImage;
     }
-    
+
     public function setProfileImage(ImageProfile $profileImage)
     {
         $this->profileImage = $profileImage;
@@ -87,7 +104,7 @@ class ApiUser extends User
 
     public function getRoles()
     {
-        if ($this->roles){
+        if ($this->roles) {
             return array('ROLE_API_USER', $this->roles);
         }
 
@@ -97,6 +114,36 @@ class ApiUser extends User
     public function setRoles($roles)
     {
         $this->roles = $roles;
+    }
+
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
+
+    public function setTasks(ArrayCollection $tasks)
+    {
+        $this->tasks = $tasks;
+    }
+
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    public function setColor($color)
+    {
+        $this->color = $color;
+    }
+    
+    public function getNotification()
+    {
+        return $this->notification;
+    }
+    
+    public function setNotification($notification)
+    {
+        $this->notification = $notification;
     }
 
 }

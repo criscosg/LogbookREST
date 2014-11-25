@@ -215,4 +215,18 @@ class TaskHandler
         $this->em->persist($task);
         $this->em->flush($task);
     }
+    
+    public function lockTask(Task $task, $user)
+    {
+        $task->setUser($user);
+        $this->em->persist($task);
+        $this->em->flush($task);
+    }
+    
+    public function unlockTask(Task $task)
+    {
+        $task->setUser();
+        $this->em->persist($task);
+        $this->em->flush($task);
+    }
 }

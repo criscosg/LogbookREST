@@ -156,7 +156,7 @@ class ProjectController extends EasyScrumController
     {
         $this->container->get('project.handler')->finalizeBacklogTask($backlog);
     
-        return array('project'=> $backlog->getProject());
+        return array('task'=> $backlog);
     }
 
     /**
@@ -198,18 +198,14 @@ class ProjectController extends EasyScrumController
     }
 
     /**
+     * @Template("ProjectBundle:Backlog:backlog_table.html.twig")
+     * 
      * @ParamConverter("issue", class="ProjectBundle:Issue")
-     *
-     * @return array
      */
-    public function finalizeIssueAction(Request $request, Issue $issue)
+    public function finalizeIssueAction(Issue $issue)
     {
-        $jsonResponse = json_encode(array('ok' => false));
-        if ($request->isXmlHttpRequest()) {
-            $this->container->get('project.handler')->finalizeIssue($issue);
-            $jsonResponse = json_encode(array('ok' => true));
-        }
+        $this->container->get('project.handler')->finalizeIssue($issue);
         
-        return $this->getHttpJsonResponse($jsonResponse);
+        return array('task'=> $issue, 'issue'=>true);
     }
 }

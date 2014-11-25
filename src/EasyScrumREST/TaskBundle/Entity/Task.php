@@ -16,6 +16,11 @@ use JMS\Serializer\Annotation\MaxDepth;
 
 class Task
 {
+    const TODO="TODO";
+    const ONPROCESS = "ONPROCESS";
+    const DONE = "DONE";
+    const UNDONE ="UNDONE";
+    
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -79,13 +84,13 @@ class Task
      * @Expose
      */
     protected $salt;
-    
+
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
      * @Expose
      */
     protected $state = "TODO";
-    
+
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="EasyScrumREST\TaskBundle\Entity\HoursSpent", mappedBy="task", cascade={"persist", "merge", "remove"})
@@ -93,6 +98,12 @@ class Task
      * @MaxDepth(0)
      */
     private $listHours;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser", inversedBy="tasks")
+     * @Expose
+     */
+    private $user;
 
     public function __construct()
     {
@@ -192,9 +203,9 @@ class Task
     public function getHoursSpent()
     {
         $totalHours = 0;
-        for ($i=0; $i < $this->getListHours()->count(); $i++) {
-            $elem=$this->getListHours()->get($i);
-            $totalHours+=$elem->getHoursSpent();
+        for ($i = 0; $i < $this->getListHours()->count(); $i++) {
+            $elem = $this->getListHours()->get($i);
+            $totalHours += $elem->getHoursSpent();
         }
 
         return $totalHours;
@@ -202,18 +213,18 @@ class Task
 
     public function getHoursEnd()
     {
-        if($this->getListHours()->count()>0){
+        if ($this->getListHours()->count() > 0) {
             return $this->getListHours()->last()->getHoursEnd();
         }
-        
+
         return null;
     }
-    
+
     public function getState()
     {
         return $this->state;
     }
-    
+
     public function setState($state)
     {
         $this->state = $state;
@@ -222,16 +233,17 @@ class Task
      * 
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
+
     public function getListHours()
     {
         return $this->listHours;
     }
-    
+
     public function setListHours(ArrayCollection $hours)
     {
         $this->listHours = $hours;
     }
-    
+
     public function addListHour(HoursSpent $spent)
     {
         $this->listHours->add($spent);
@@ -245,6 +257,7 @@ class Task
     /**
      * @ORM\PrePersist
      */
+
     public function setSalt($salt = null)
     {
         if (!$this->salt) {
@@ -253,6 +266,60 @@ class Task
             }
             $this->salt = $salt;
         }
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function setUser($user=null)
+    {
+        $this->user = $user;
+    }
+    
+    public function getTaskNotifications()
+    {
+        $notifications=array();
+        if($this->hoursOverPlanified()) {
+            $notifications['Task is taking to much time']= 'The task "' . $this->title . '" has exceeded the planified time given.';
+        }
+        if($this->notUpdated()){
+            $notifications['Task not updated']= 'The task "' . $this->title . '" is on process and have not been updated for more than 2 days.';
+        }
+    
+        return $notifications;
+    }
+    
+    private function hoursOverPlanified()
+    {
+        if ($this->state == self::ONPROCESS || $this->state == self::TODO) {
+            if($this->getHoursSpent() > ($this->getHours() * 1.2)) {
+                return true;
+            }
+        }
+    
+        return null;
+    }
+    
+    private function notUpdated()
+    {
+        if ($this->state == self::ONPROCESS) {
+            $now=new \DateTime('today');
+            if($this->getListHours()->count() == 0){
+                $this->updated->add(new \DateInterval('P2D'));
+                if($now > $this->updated) {
+                    return true;
+                }
+            } else {
+                $this->getListHours()->last()->getCreated()->add(new \DateInterval('P2D'));
+                if ($now > $this->getListHours()->last()->getCreated()) {
+                    return true;
+                }
+            }
+        }
+
+        return null;
     }
 
 }

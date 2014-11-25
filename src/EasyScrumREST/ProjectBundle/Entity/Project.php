@@ -234,4 +234,16 @@ class Project
     {
         $this->title = $title;
     }
+    
+    public function getFinishedBacklogTasks()
+    {
+        $finished=array();
+        for ($i=0; $i < $this->backlogs->count(); $i++) {
+            if($this->backlogs->get($i)->getState() == "DONE") {
+                $finished[]=$this->backlogs->get($i);
+            }
+        }
+        
+        return $finished;
+    }
 }

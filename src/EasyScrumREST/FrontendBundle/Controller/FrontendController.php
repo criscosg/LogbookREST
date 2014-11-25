@@ -23,4 +23,10 @@ class FrontendController extends EasyScrumController
         return $this->renderLoginTemplate('FrontendBundle:Commons:login.html.twig');
     }
 
+    public function calendarAction()
+    {
+        $sprints = $this->get('sprint.handler')->getActiveSprints($this->getUser()->getCompany()->getId());
+        
+        return $this->render('FrontendBundle:Frontend:calendar.html.twig', array('sprints'=>$sprints));
+    }
 }

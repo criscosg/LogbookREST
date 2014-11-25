@@ -41,3 +41,11 @@ move_done:
 move_undone:
     pattern: /to-undone/{id}
     defaults: { _controller: TaskBundle:TaskNormal:moveToUndone }
+
+task_lock:
+    pattern: /task-lock/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:taskLock }
+    
+task_unlock:
+    pattern: /task-unlock/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:taskUnlock }      

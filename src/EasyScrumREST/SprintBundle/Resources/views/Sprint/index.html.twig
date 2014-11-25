@@ -34,6 +34,7 @@
                 <tr>
                     <th>{{ "Title" | trans }}</th>
                     <th>{{ "Description" | trans }}</th>
+                    <th>{{ "State" | trans }}</th>
                     <th>{{ "Project" | trans }}</th>
                     <th>{{ "Actions" | trans }}</th>
                 </tr>
@@ -46,6 +47,7 @@
                                 {{ sprint.description }}
                             {% endif %}
                         </td>
+                        <td>{% if sprint.finalized %}{{ "Finalized"|trans }}{% else %}{{"Active"|trans}}{% endif %}</td>
                         <td>{% if sprint.project is not empty %}<a href="{{ path('show_normal_project', {id:sprint.project.id}) }}">{{ sprint.project.title }}</a>{% endif %}</td>
                         <td class="taskOptions">
                             {% if sprint.finalized is empty %}

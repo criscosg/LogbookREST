@@ -63,24 +63,38 @@
             </div>
         </div>
         
-        <div class="widget-box">
+        <div class="widget-box hidden-xs">
             <div class="widget-title">
                 <span class="icon">
                     <i class="fa fa-align-justify"></i>
                 </span>
                 <h5>{{ "Charts"|trans }}</h5>
+                <ul class="nav nav-tabs pull-right steps">
+                    <li class="active" data-target="#bars-general-container">
+                        <a data-toggle="tab" href="#inbox-tab">
+                            <span class="text">Whole team</span>
+                        </a>
+                    </li>
+                    {% for key in charts|keys %}
+                        <li data-target="#bars-user-container-{{ key }}">
+                            <a data-toggle="tab" href="#inbox-tab">
+                                <span class="text"> {{ users[key].name ~ " " ~ users[key].lastName }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
             <div class="widget-content nopadding" id="sprint-tasks">
-                <div class="row">
+                <div class="row" id="bars-general-container">
                     <h5 class="col-md-12">All team focus factor</h5>
                     <div class="bars col-md-12" id="bars-general" style="padding: 0px; position: relative;"></div>
                 </div>
-                <div class="row">
-                    {% for key in charts|keys %}
+                {% for key in charts|keys %}
+                    <div class="row hidden-charts" id="bars-user-container-{{ key }}">
                         <h5 class="col-md-12">{{ users[key].name ~ " " ~ users[key].lastName }}</h5>
                         <div class="bars col-md-12" id="bars-user-{{ key }}" style="padding: 0px; position: relative;"></div>
-                    {% endfor %}    
-                </div>
+                    </div>
+                {% endfor %}   
             </div>
         </div>         
 
@@ -216,6 +230,10 @@
         		}
         	});
     	{% endfor %}
+
+    	$.each($('.hidden-charts'), function(index, value){
+            $(value).hide();
+        });
     });
 </script>    
 {% endblock %}

@@ -62,7 +62,7 @@ class SprintRepository extends EntityRepository
         $qb->andWhere($qb->expr()->eq('s.company', $company));
         $qb->andWhere($qb->expr()->isNull('s.finalized'));
         $qb->andWhere($qb->expr()->lte('s.dateFrom', '\''.$date->format('Y-m-d').'\''));
-        $qb->andWhere($qb->expr()->gte('s.dateTo', '\''.$date->format('Y-m-d').'\''));
+        //$qb->andWhere($qb->expr()->gte('s.dateTo', '\''.$date->format('Y-m-d').'\''));
 
         return $qb->getQuery()->getResult();
     }

@@ -3,14 +3,23 @@
 {% block title_section %}
     {{ "Sprint" | trans }}
 {% endblock %}
+{% block stylesheets %}
+   {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/datepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/jquery.gritter.css') }}" />
+{% endblock %}
 
 {% block breadcrumb %}
     {% set crumbs = {'Sprints':path('sprints_list'), (sprint.title): ''} %}
     {{ setCrumbs(crumbs) }}
     {{ parent() }}
 {% endblock %}
-
+{% block bodyClass %}
+flat sprint-view
+{% endblock %}
 {% block content %}
+    {% set params = {'title':'Register sprint state', 'text':'<div class="hours-sprint-modal"></div>', 'btn-close':false} %}
+    {{ makeModal('modalSprintHours', params) }}
     {% set params = {'title':'Introduce time spent on this task', 'text':'<div class="hours"></div>', 'btn-close':false} %}
     {{ makeModal('modalHours', params) }}
     {% set params = {'title':'Introduce time spent on this urgency', 'text':'<div class="hours-urgency"></div>', 'btn-close':false} %}
@@ -20,6 +29,10 @@
 
         <div class="row">
         {% if is_granted('ROLE_SCRUM_MASTER') %}
+            <a title="Finalize" href="{{ path('hours_sprint', { 'id': sprint.id }) }}" class="btn btn-primary hours-sprint">
+               {{"Save hour state" | trans}}
+            </a>
+            
             <a title="Finalize" href="{{ path('sprint_finalize', { 'id': sprint.id }) }}" class="btn btn-primary btn-s">
                {{"Finalize Sprint" | trans}}
             </a>
@@ -231,14 +244,29 @@
 {{ parent() }}
 <script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
 <script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
+<script src="{{ asset('bundles/frontend/js/jquery.gritter.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-    	$("body").on('click', '.task', function(event){
+    	{% if app.user.notification %}
+        	{% for task in sprint.tasks %}
+    	        {% for key, notification in task.getTaskNotifications %}
+                	$.gritter.add({
+                		title:	'{{ key }}',
+                		text:	'{{ notification }}',
+                		sticky: false
+                	});
+        	    {% endfor %}
+    	    {% endfor %}
+	    {% endif %}
+
+        $(".unlock").tooltip({trigger:'hover'});
+        
+    	$("body").on('click', '.hours-sprint', function(event){
     	    event.preventDefault();
     	    $.get($(this).attr('href'), function(response){
-                $('.hours').html(response);
+                $('.hours-sprint-modal').html(response);
             });
-    	    $('#modalHours').modal('toggle');
+    	    $('#modalSprintHours').modal('toggle');
     	});
 
     	$("body").on('click', '.urgency', function(event){
@@ -247,6 +275,14 @@
                 $('.hours-urgency').html(response);
             });
     	    $('#modalUrgencyHours').modal('toggle');
+    	});
+
+    	$("body").on('click', '.task', function(event){
+    	    event.preventDefault();
+    	    $.get($(this).attr('href'), function(response){
+                $('.hours').html(response);
+            });
+    	    $('#modalHours').modal('toggle');
     	});
 
     	$(".hours").on('submit', '#form-hours', function(event){
@@ -360,10 +396,34 @@
                 });
             });
         });
+        
+        $("body").on('click', 'a.unlock', function(event){
+        	event.preventDefault();
+        	var that=this;
+    	    $.get($(this).attr('href'), function(response){
+        	    if(response.ok) {
+                    $(that).addClass('lock');
+                    $(that).removeClass('unlock');
+                    $(that).html("<i class='fa fa-unlock' style='font-size: 20px;'></i>")
+        	    }
+            });
+        });
+
+        $("body").on('click', 'a.lock', function(event){
+        	event.preventDefault();
+        	var that=this;
+    	    $.get($(this).attr('href'), function(response){
+        	    if(response.ok) {
+                    $(that).addClass('unlock');
+                    $(that).removeClass('lock');
+                    $(that).html("<i class='fa fa-lock' style='font-size: 20px;'></i>")
+        	    }
+            });
+        });
 
         var plot = $.plot($(".chart"),
             		[ { data: [{% for key, value in sprint.getChartArray() %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Normal progression", color: "#4fabd2"}
-            		 , { data: [["{{ today }}", {{ sprint.getHoursUndone() }}]], label: "Actual state", color: "#459D1C"}], {
+            		 , { data: [{% for key, value in chartHours %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Actual state", color: "#459D1C"}], {
             		series: {
                 		lines: { show: true },
                 		points: { show: true }

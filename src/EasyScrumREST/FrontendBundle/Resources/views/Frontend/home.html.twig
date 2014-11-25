@@ -4,6 +4,11 @@
 	Título de la página
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/jquery.gritter.css') }}" />
+{% endblock %}
+
 {% block breadcrumb %}
   {% set crumbs = {'Título de la página':'#'} %}
   {{ setCrumbs(crumbs) }}
@@ -17,7 +22,10 @@
     			<span class="icon">
     				<i class="fa fa-th"></i>
     			</span>
-    			<a href="{{ path('show_normal_sprint', {id: sprint.id}) }}"><h5>{{ sprint.title }}</h5></a>
+    			<div>
+        			<a href="{{ path('show_normal_sprint', {id: sprint.id}) }}"><h5>{{ sprint.title }}</h5></a>
+        			<a href="{{ path('show_normal_project', {id: sprint.project.id}) }}"><h5> ({{ sprint.project.title }})</h5></a>
+    			</div>
     		</div>
     		<div class="widget-content">
     			<div class="row">
@@ -56,12 +64,26 @@
 {{ parent() }}
 <script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
 <script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
+<script src="{{ asset('bundles/frontend/js/jquery.gritter.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){
+    	{% if app.user.notification %}
+        	{% for sprint in sprints %}
+        	    {% for key, notification in sprint.getSprintNotifications %}
+                	$.gritter.add({
+                		title:	'{{ key }}',
+                		text:	'{{ notification }}',
+                		sticky: false
+                	});
+            	{% endfor %}
+        	{% endfor %}
+    	{% endif %}
+        
     	{% for sprint in sprints %}
+    	    {% set chartHours = sprint.getChartHoursArray() %}
             var plot = $.plot($("#chart-{{ sprint.id }}"),
         		[ { data: [{% for key, value in sprint.getChartArray() %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Normal progression", color: "#4fabd2"}
-        		 , { data: [["{{ today }}", {{ sprint.getHoursUndone() }}]], label: "Actual state", color: "#459D1C"}], {
+        		 , { data: [{% for key, value in chartHours %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Actual state", color: "#459D1C"}], {
         		series: {
             		lines: { show: true },
             		points: { show: true }

@@ -1,20 +1,20 @@
 <?php
 
 namespace EasyScrumREST\SprintBundle\Handler;
+use EasyScrumREST\SprintBundle\Entity\HoursSprint;
+
+use Symfony\Component\HttpFoundation\Request;
+
+use EasyScrumREST\SprintBundle\Form\SprintHourType;
 use EasyScrumREST\SprintBundle\Form\SprintLastStepType;
-
 use EasyScrumREST\UserBundle\Entity\Company;
-
 use EasyScrumREST\SprintBundle\Form\SprintCreationFirstType;
-
 use EasyScrumREST\SprintBundle\Entity\Sprint;
 use EasyScrumREST\SprintBundle\Form\SprintType;
 use EasyScrumREST\UserBundle\Handler\UserHandlerInterface;
 use Doctrine\ORM\EntityManager;
 use EasyScrumREST\UserBundle\Entity\AdminUser;
 use Symfony\Component\Form\FormFactoryInterface;
-use EasyScrumREST\UserBundle\Form\AdminUserType;
-use Symfony\Component\BrowserKit\Request;
 
 class SprintHandler
 {
@@ -92,15 +92,11 @@ class SprintHandler
      */
     public function delete(Sprint $entity)
     {
-        $time = new \DateTime('now');
-        $entity->setDeleted($time);
         foreach ($entity->getTasks() as $task) {
-            $task->setDeleted($time);
-            $this->em->persist($task);
-            $this->em->flush($task);
+            $this->em->remove($task);
         }
-        $this->em->persist($entity);
-        $this->em->flush($entity);
+        $this->em->remove($entity);
+        $this->em->flush();
     }
     
     /**
@@ -178,5 +174,26 @@ class SprintHandler
         $sprint->setFinalized(true);
         $this->em->persist($sprint);
         $this->em->flush();
+    }
+    
+    public function saveHoursSprint(Request $request, Sprint $sprint)
+    {
+        $hours=$request->request->get('sprint_hours');
+        $date = new \DateTime(str_replace('/', '-', $hours['date']));
+        $hour=$sprint->getSprintHourbyDate($date);
+        if(!$hour) {
+            $hour = new HoursSprint();
+            $hour->setSprint($sprint);
+        }
+        $form = $this->factory->create(new SprintHourType(), $hour, array('method' => 'POST'));
+        $form->handleRequest($request);
+        if (!$form->getErrors()) {
+            $this->em->persist($hour);
+            $this->em->flush($hour);
+        
+            return $hour;
+        }
+        
+        throw new \Exception($form->getErrorsAsString());
     }
 }

@@ -1,0 +1,63 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+	Título de la página
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/fullcalendar.css')}}" />
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/jquery.gritter.css') }}" />
+{% endblock %}
+
+{% block breadcrumb %}
+  {% set crumbs = {'Título de la página':'#'} %}
+  {{ setCrumbs(crumbs) }}
+  {{ parent() }}
+{% endblock %}
+
+{% block content %}<div class="row">
+		<div class="col-xs-12">
+			<div class="widget-box widget-calendar">
+				<div class="widget-title"><span class="icon"><i class="fa fa-calendar"></i></span><h5>Calendar</h5></div>
+				<div class="widget-content nopadding">
+					<div class="calendar"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+<script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
+<script src="{{ asset('bundles/frontend/js/jquery.gritter.min.js') }}"></script>
+<script src="{{ asset('bundles/frontend/js/fullcalendar.min.js') }}"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+    	var date = new Date();
+    	var d = date.getDate();
+    	var m = date.getMonth();
+    	var y = date.getFullYear();
+    	
+    	$('.calendar').fullCalendar({
+    		header: {
+    			left: 'prev,next',
+    			center: 'title',
+    			right: 'month,basicWeek,basicDay'
+    		},
+    		editable: true,
+    		events: [
+	         {% for sprint in sprints %}
+    	         {
+     				title: '{{ sprint.title }}',
+     				start: new Date("{{ sprint.dateFrom | date('Y') }}", "{{ sprint.dateFrom | date('m') -1 }}", "{{ sprint.dateFrom | date('d') }}"),
+     				end: new Date("{{ sprint.dateTo | date('Y') }}", "{{ sprint.dateTo | date('m') - 1 }}", "{{ sprint.dateTo | date('d') }}")
+     			 },
+	         {% endfor %}
+    		]
+    	});
+    });
+</script>
+{% endblock %}

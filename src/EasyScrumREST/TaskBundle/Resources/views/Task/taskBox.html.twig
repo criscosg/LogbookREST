@@ -1,7 +1,7 @@
 <div class="col-sm-4 col-md-4 col-lg-3">
     <div class="task-box">
         <div class="top">
-            {% if (is_granted('ROLE_SCRUM_MASTER') or is_granted('ROLE_TEAM')) and ended %}
+            {% if (is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_TEAM') and (task.user is not empty and (app.user.isEqualTo(task.user)) or task.user is empty))) and ended %}
                 <button class="actions-task" data-toggle="popover" data-shown="false" data-placement="left" data-html="true" type="button"
                     {% if task.state == "TODO" %}
                     data-content="<ul class='list-unstyled'><li><a href='{{ path('move_on_process', {id: task.id}) }}' class='btn btn-block btn-info move'>{{"to on process"}}</a></li> <li><a href='{{ path('move_done', {id: task.id}) }}' class='btn btn-block btn-info move'>{{"move to done"}}</a></li><li><a href='{{ path('move_undone', {id: task.id}) }}' class='btn btn-danger move'>{{"drop from sprint"}}</a></li></ul>" 
@@ -18,13 +18,26 @@
             {% elseif is_granted('ROLE_SCRUM_MASTER') and (not ended) and task.sprint.finalized is empty %}
                 <a class="delete-task" href="{{ path('delete_normal_task', {id: task.id}) }}"><i class="fa fa-trash-o"></i></a>
             {% endif %}
+            {% if ended %}
+                {% if task.user is not empty and (is_granted('ROLE_SCRUM_MASTER') or app.user.isEqualTo(task.user)) %}
+                    <a href="{{ path('task_unlock', {id:task.id}) }}" class="unlock" data-toggle="tooltip" data-placement="top" title="{{ 'Task blocked by ' ~ task.user.name }}"><i class="fa fa-lock" {% if task.user.color is not empty %}style="font-size: 20px;color:{{ task.user.color }}"{% else %}style="font-size: 20px;"{% endif %}></i></a>
+                {% elseif task.user is empty %}
+                    <a href="{{ path('task_lock', {id:task.id}) }}" class="lock"><i class="fa fa-unlock" style="font-size: 20px;"></i></a>
+                {% else %}
+                    <i class="unlock fa fa-lock" data-toggle="tooltip" data-placement="top" title="{{ 'Task blocked by ' ~ task.user.name }}" {% if task.user.color is not empty %}style="font-size: 20px;color:{{ task.user.color }}"{% else %}style="font-size: 20px;"{% endif %}></i>
+                {% endif %}
+            {% endif %}
             <p class="priority">
             {% if task.priority is not empty %}
                 {{ task.priority }}
             {% endif %}    
             </p>
         </div>
-        <a class="task" id="task_{{ task.id }}" {% if ended %} href="{{ path('hours_task', {'id':task.id}) }}" {% elseif task.sprint.finalized is empty %}href="{{ path('edit_normal_task', {'id':task.id}) }}"{% endif %}>
+        {% if ended %}
+            <a id="task_{{ task.id }}" {% if (is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_TEAM') and (task.user is not empty and (app.user.isEqualTo(task.user)) or task.user is empty))) %} class="task" href="{{ path('hours_task', {'id':task.id}) }}"{% endif %}>
+        {% elseif task.sprint.finalized is empty %}
+            <a class="task" id="task_{{ task.id }}" href="{{ path('edit_normal_task', {'id':task.id}) }}">        
+        {% endif %}    
             <div class="bottom">
                 <div class="hours-task">
                     <p class="spent-end">

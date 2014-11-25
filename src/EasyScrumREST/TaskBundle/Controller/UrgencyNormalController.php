@@ -28,6 +28,7 @@ class UrgencyNormalController extends EasyScrumController
     public function newUrgencyAction(Sprint $sprint)
     {
         $urgency=new Urgency();
+        $urgency->setProject($sprint->getProject());
         $form = $this->createForm(new CreateUrgencyType(), $urgency);
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){

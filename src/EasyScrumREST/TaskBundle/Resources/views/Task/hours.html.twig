@@ -1,3 +1,4 @@
+{% if message is empty %}
 <form class="form-horizontal" id="form-hours" role="form" action="{{ path('save_hours_task',{'id':task.id})}}"
       method="post" xmlns="http://www.w3.org/1999/html">
     
@@ -22,3 +23,9 @@
         </button>
         <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
 </form>
+{% else %}
+    <div class="alert alert-info mt">
+        <strong>Information</strong> 
+        {{ message }}
+    </div>
+{% endif %}

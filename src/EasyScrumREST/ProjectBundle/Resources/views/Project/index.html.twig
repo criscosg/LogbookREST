@@ -35,6 +35,7 @@
                     <th>{{ "Title" | trans }}</th>
                     <th>{{ "Description" | trans }}</th>
                     <th>{{ "Created" | trans }}</th>
+                    <th>{{ "Progression" | trans }}
                     <th>{{ "Actions" | trans }}</th>
                 </tr>
                 </thead>
@@ -47,6 +48,16 @@
                             {% endif %}
                         </td>
                         <td>{% if project.created is defined %}{{ project.created |date('d/m/Y') }}{% endif %}</td>
+                        <td>
+                            {% if project.backlogs.count > 0 %}
+                                {% set percentaje = ((project.getFinishedBacklogTasks|length) /project.backlogs.count) *100 %}
+                            {% else %}
+                                 {% set percentaje = 0 %}
+                            {% endif %}
+                            <div class="progress progress-sm">
+                            <div class="progress-bar" style="width: {{ percentaje }}%;"></div>
+                            </div>
+                        </td>
                         <td class="taskOptions">
                             <a title="See" href="{{ path('show_normal_project', { 'id': project.id }) }}"><i class="fa fa-eye"></i></a>
                             {% if is_granted('ROLE_SCRUM_MASTER') or ( project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}

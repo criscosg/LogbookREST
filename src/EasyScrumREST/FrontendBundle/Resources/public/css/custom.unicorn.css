@@ -138,8 +138,21 @@ span.error{
     padding: 4px 10px;  
 }
 
+.top .lock{
+	float: right;
+	margin-top:5px;
+	margin-right: 10px;
+}
+
+.top .unlock{
+    float: right;
+    margin-top:5px;
+    margin-right: 10px;
+}
+
 .top p {
-	text-align: right;
+	margin-top: 3px;
+    text-align: left;
 }
 
 .medium {
@@ -171,7 +184,7 @@ span.error{
     font-size: 13px;
     font-weight: normal;
     line-height: 18px;
-    padding: 0 0 0 10px;
+    padding: 0 8px 0 5px;
     text-align: left;
     vertical-align: middle;
     width: 70%;
@@ -308,4 +321,36 @@ i.icon-caret-right{
 
 .sparkline_bar_blue {
     color: #4672e0;
+}
+
+.sprint-view .dropdown-menu {
+	z-index: 10000;
+}
+
+.backlog-priority {
+    float: left;
+    margin-right: 10px;
+    margin-top: 5px;
+    overflow: hidden;
+    padding-top: 10px;
+    width: 46px;
+    color: #4672e0;
+    text-align: center;
+}
+
+.backlog-tasks-view {
+    margin: 0;
+    padding: 0;
+}
+.backlog-tasks-view li:last-child {
+	border-bottom: medium none !important;
+}
+
+.backlog-tasks-view li {
+    order-bottom: 1px dotted #AEBDC8;
+    list-style: none outside none;
+    padding: 10px;
+}
+.backlog-tasks-view .backlog-data {
+    margin-left: 60px;
 }

@@ -15,7 +15,9 @@ class ProfileType extends AbstractType
             ->add('email', 'email', array('required'=>false))
             ->add('password', 'password', array('required'=>false))
             ->add('name', 'text', array('required'=>false))
-            ->add('lastName', 'text', array('required'=>false));
+            ->add('lastName', 'text', array('required'=>false))
+            ->add('color', 'text', array('required'=>false))
+            ->add('notification', 'checkbox', array('required'=>false));
     }
 
     public function getDefaultOptions(array $options)

@@ -93,7 +93,7 @@ $(document).ready(function(){
 			},
 			{
 				title: 'Lunch',
-				start: new Date(y, m, 14, 12, 0),
+				seurotart: new Date(y, m, 14, 12, 0),
 				end: new Date(y, m, 15, 14, 0),
 				allDay: false
 			},

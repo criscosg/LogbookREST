@@ -1,74 +1,22 @@
-<table class="table table-bordered table-striped table-hover">
-    <thead>
-    <tr>
-        <th></th>
-        <th>{{ "Title" | trans }}</th>
-        <th>{{ "Description" | trans }}</th>
-        <th>{{ "Created" | trans }}</th>
-        <th>{{ "Priority" | trans }}</th>
-        <th>{{ "Actions" | trans }}</th>
-    </tr>
-    </thead>
-    <tbody id="todo">
-    {% for task in project.backlogs if task.state == "TODO" %}
-        <tr>
-            <td></td>
-            <td>{% if task.title is defined %}{{ task.title }}{% endif %}</td>
-            <td>{% if task.description is defined %}
-                    {{ task.description }}
-                {% endif %}
-            </td>
-            <td>{% if task.created is defined %}{{ task.created |date('d/m/Y') }}{% endif %}</td>
-            <td>{{ task.priority }}
-            <td class="taskOptions">
-                {% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
-                    <a title="Mark task as done" class="finalize" href="{{ path('finalize_backlog', { 'id': task.id }) }}"><i class="fa fa-check"></i></a> 
-                    <a title="Edit" href="{{ path('edit_backlog', { 'id': task.id }) }}"><i class="fa fa-pencil"></i></a>
-                    <a title="Delete" href="{{ path('delete_backlog', { 'id': task.id }) }}"><i class="fa fa-trash-o"></i></a>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-    <tbody id="done" style="display: none;">
-    {% for task in project.backlogs if task.state == "DONE" %}
-        <tr>
-            <td class="show-issue" style="text-align: center;" data-target=".issue-{{ task.id }}"><i class="fa fa-plus"></i><i class="fa fa-minus" style="display: none;"></i></td>
-            <td>{% if task.title is defined %}{{ task.title }}{% endif %}</td>
-            <td>{% if task.description is defined %}
-                    {{ task.description }}
-                {% endif %}
-            </td>
-            <td>{% if task.created is defined %}{{ task.created |date('d/m/Y') }}{% endif %}</td>
-            <td>{{ task.priority }}
-            <td class="taskOptions">
-                {% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
-                    <a title="Add issue" href="{{ path('create_issue', { 'id': task.id }) }}"><i class="fa fa-asterisk"></i></a>
-                    <a title="Edit" href="{{ path('edit_backlog', { 'id': task.id }) }}"><i class="fa fa-pencil"></i></a>
-                    <a title="Delete" href="{{ path('delete_backlog', { 'id': task.id }) }}"><i class="fa fa-trash-o"></i></a>
-                {% endif %}
-            </td>
-        </tr>
-        {% for issue in task.issues %}
-            <tr class="issue-{{ task.id }}" style="display: none;">
-                <td id="issue-state-{{ issue.id }}">Issue</td>
-                <td>{% if issue.title is defined %}{{ issue.title }}{% endif %}</td>
-                <td>{% if issue.description is defined %}
-                        {{ issue.description }}
-                    {% endif %}
-                </td>
-                <td>{% if issue.created is defined %}{{ issue.created |date('d/m/Y') }}{% endif %}</td>
-                <td>{{ issue.priority }}
-                <td class="taskOptions">
-                    {% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
-                        {% if not issue.completed %}
-                            <a title="Mark task as done" id="{{ issue.id }}" class="finalize-issue" href="{{ path('finalize_issue', { 'id': issue.id }) }}"><i class="fa fa-check"></i></a> 
-                        {% endif %}
-                        <a title="Edit" href="{{ path('edit_issue', { 'id': issue.id }) }}"><i class="fa fa-pencil"></i></a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    {% endfor %}
-    </tbody>
-</table>
+<li id="{% if issue is defined %}issue-{{ task.id }}{% else%}{{ task.id }}{% endif %}">
+	<div class="backlog-priority">
+	    <h2 title="priority">{{ task.priority }}</h2>
+	</div>
+	<div class="backlog-data">
+		<span class="user-info">{% if issue is defined %}Issue from task: {{ task.title }}, {% endif %}{{ task.updated | date }}</span>
+		<h4>{{ task.title }}</h4>
+		<p>
+			{{ task.description }}
+		</p>
+		{% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
+			{% if issue is defined %}
+			    <a title="Add issue" href="{{ path('create_issue', { 'id': task.id }) }}" class="btn btn-success btn-xs">Add issue</a>
+        		<a title="Edit" href="{{ path('edit_backlog', { 'id': task.id }) }}" class="btn btn-primary btn-xs">Edit</a>
+        		<a title="Delete" href="{{ path('delete_backlog', { 'id': task.id }) }}" class="btn btn-danger btn-xs">Delete</a>
+			{% else %}
+			    <a title="Edit" href="{{ path('edit_issue', { 'id': issue.id }) }}" class="btn btn-primary btn-xs">Edit</a>
+			{% endif %}
+	    {% endif %}
+		
+	</div>
+</li>

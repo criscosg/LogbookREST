@@ -21,3 +21,11 @@ sprint_finalize:
 delete_normal_sprint:
     pattern: /delete/{id}
     defaults: { _controller: SprintBundle:SprintNormal:deleteSprint }
+    
+hours_sprint:
+    pattern: /hours/{id}
+    defaults: { _controller: SprintBundle:SprintNormal:hoursSprint }       
+    
+save_hours_sprint:
+    pattern: /save-hours/{id}
+    defaults: { _controller: SprintBundle:SprintNormal:saveHoursSprint }    

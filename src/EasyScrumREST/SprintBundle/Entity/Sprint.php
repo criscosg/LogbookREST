@@ -148,10 +148,19 @@ class Sprint
      */
     protected $finalized;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\SprintBundle\Entity\HoursSprint", mappedBy="sprint", cascade={"persist", "merge", "remove"})
+     * @MaxDepth(0)
+     * @ORM\OrderBy({"date" = "ASC"})
+     */
+    private $listHours;
+    
     public function __construct()
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
         $this->urgencies = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->listHours = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -377,6 +386,21 @@ class Sprint
         $this->planified = $planified;
     }
     
+    public function setListHours($listHours)
+    {
+        $this->listHours = $listHours;
+    }
+    
+    public function getListHours()
+    {
+        return $this->listHours;
+    }
+    
+    public function addHour(HoursSprint $sprintHour)
+    {
+        $this->listHours->add($sprintHour);
+    }
+    
     public function getPlanificationHours()
     {
         $total=0;
@@ -487,5 +511,84 @@ class Sprint
         }
         
         return $chartData;
+    }
+
+    public function getChartHoursArray()
+    {
+        $chartData= array();
+        $chartData[$this->dateFrom->format('d/m')] = $this->getHoursPlanified();
+        foreach ($this->getListHours() as $listHour) {
+            if($listHour->getDate() >= $this->getDateFrom() && $listHour->getDate() <= $this->getDateTo()){
+                $day=$listHour->getDate()->format('l');
+                if ($day!="Sunday" && $day!="Saturday" ) {
+                    $chartData[$listHour->getDate()->format('d/m')] = $listHour->getHours();
+                }
+            }
+        }
+        $today = new \DateTime('today');
+        $day=$today->format('l');
+        if ($day=="Sunday" ) {
+            $today->sub(new \DateInterval('P2D'));
+        } else if ($day=="Saturday") {
+            $today->sub(new \DateInterval('P1D'));
+        }
+        if (!$this->getSprintHourbyDate($today)) {
+            $chartData[$today->format('d/m')] = $this->getHoursUndone();
+        }
+
+        return $chartData;
+    }
+
+    public function getSprintHourbyDate(\DateTime $date)
+    {
+        foreach ($this->listHours as $hours){
+            if($date ==$hours->getDate()){
+                return $hours;
+            }
+        }
+
+        return null;
+    }
+    
+    public function getSprintNotifications()
+    {
+        $notifications=array();
+        if($this->notFinishedNotification()) {
+            $notifications['Sprint not finalized']= "The sprint " . $this->title . " has exceeded it's expiration date.";
+        } else if($this->overProgressLine()){
+            $notifications['Sprint above progress line']= "The sprint " . $this->title . " is above the normal progress line.";
+        }
+        
+        return $notifications;
+    }
+    
+    private function notFinishedNotification()
+    {
+        $now=new \DateTime('today');
+        if ($now > $this->getDateTo() && !$this->finalized) {
+            return true;
+        }
+
+        return null;
+    }
+    
+    private function overProgressLine()
+    {
+        $progressLine=$this->getChartArray();
+        $today = new \DateTime('today');
+        if($today > $this->dateFrom){
+            $day=$today->format('l');
+            if ($day=="Sunday" ) {
+                $today->sub(new \DateInterval('P2D'));
+            } else if ($day=="Saturday") {
+                $today->sub(new \DateInterval('P1D'));
+            }
+            $time = $progressLine[$today->format('d/m')];
+            if($this->getHoursUndone() > ($time * 1.2)){
+                return true;
+            }
+        }
+        
+        return null;
     }
 }
