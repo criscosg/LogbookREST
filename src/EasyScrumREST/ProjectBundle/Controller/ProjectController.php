@@ -1,6 +1,10 @@
 <?php
 namespace EasyScrumREST\ProjectBundle\Controller;
 
+use EasyScrumREST\ActionBundle\Entity\ActionBacklog;
+
+use EasyScrumREST\ActionBundle\Entity\ActionProject;
+
 use EasyScrumREST\ProjectBundle\Form\IssueType;
 
 use EasyScrumREST\ProjectBundle\Entity\Issue;
@@ -53,6 +57,7 @@ class ProjectController extends EasyScrumController
         if ($request->getMethod()=='POST') {
             $newProject = $this->get('project.handler')->createProject($form, $request);
             if($newProject) {
+                $this->get('action.manager')->createProjectAction($newProject, $this->getUser(), ActionProject::CREATE_PROJECT);
 
                 return $this->redirect($this->generateUrl('projects_list'));
             }
@@ -79,7 +84,8 @@ class ProjectController extends EasyScrumController
         if($request->getMethod()=='POST'){
             $newProject = $this->get('project.handler')->createProject($form, $request);
             if($newProject) {
-
+                $this->get('action.manager')->createProjectAction($newProject, $this->getUser(), ActionProject::EDIT_PROJECT);
+                
                 return $this->redirect($this->generateUrl('projects_list'));
             }
         }
@@ -109,6 +115,7 @@ class ProjectController extends EasyScrumController
         if ($request->getMethod()=='POST') {
             $newBacklog = $this->get('project.handler')->createBacklog($form, $request);
             if($newBacklog) {
+                $this->get('action.manager')->createBacklogAction($newBacklog, $this->getUser(), ActionBacklog::CREATE_BACKLOG);
     
                 return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$project->getId())));
             }
@@ -127,8 +134,9 @@ class ProjectController extends EasyScrumController
         if($request->getMethod()=='POST'){
             $newProject = $this->get('project.handler')->createBacklog($form, $request);
             if($newProject) {
+                $this->get('action.manager')->createBacklogAction($newBacklog, $this->getUser(), ActionBacklog::EDIT_BACKLOG);
     
-                 return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$backlog->getProject()->getId())));
+                return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$backlog->getProject()->getId())));
             }
         }
     
@@ -155,6 +163,7 @@ class ProjectController extends EasyScrumController
     public function finalizeBacklogAction(Backlog $backlog)
     {
         $this->container->get('project.handler')->finalizeBacklogTask($backlog);
+        $this->get('action.manager')->createBacklogAction($backlog, $this->getUser(), ActionBacklog::FINALIZED_BACKLOG);
     
         return array('task'=> $backlog);
     }
@@ -171,6 +180,7 @@ class ProjectController extends EasyScrumController
         if ($request->getMethod()=='POST') {
             $newBacklog = $this->get('project.handler')->createIssue($form, $request);
             if($newBacklog) {
+                $this->get('action.manager')->createBacklogAction($backlog, $this->getUser(), ActionBacklog::NEW_ISSUE);
     
                 return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$issue->getBacklog()->getProject()->getId())));
             }

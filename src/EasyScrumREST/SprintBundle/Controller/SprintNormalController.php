@@ -1,6 +1,12 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Controller;
 
+use EasyScrumREST\ActionBundle\Entity\ActionSprint;
+
+use EasyScrumREST\SprintBundle\Form\EditSprintType;
+
+use EasyScrumREST\SprintBundle\Form\SprintSearchType;
+
 use EasyScrumREST\SprintBundle\Entity\HoursSprint;
 use EasyScrumREST\SprintBundle\Form\SprintHourType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,13 +24,13 @@ class SprintNormalController extends EasyScrumController
 {
     public function listSprintsAction(Request $request)
     {
-        $user = $this->getUser();
-        $search['company'] = $user->getCompany()->getId();
-        $project=$request->query->get('project');
-        $search['project'] = $project;
-        $sprints=$this->container->get('sprint.handler')->all(20, 0, null, $search);
+        $company = $this->getUser()->getCompany()->getId();
+        $paginator = $this->get('ideup.simple_paginator');
+        $form = $this->createForm(new SprintSearchType());
+        $search = $this->get('sprint.handler')->search($form, $request, $company);
+        $sprints = $this->get('sprint.handler')->paginate($search, $paginator);
 
-        return $this->render('SprintBundle:Sprint:index.html.twig', array('sprints'=>$sprints));
+        return $this->render('SprintBundle:Sprint:index.html.twig', array('sprints'=>$sprints, 'form' => $form->createView(), 'paginator'=>$paginator));
     }
 
     /**
@@ -66,6 +72,7 @@ class SprintNormalController extends EasyScrumController
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
             $sprint = $this->get('sprint.handler')->endPlanificationSprint($request, $sprint);
+            $this->get('action.manager')->createSprintAction($sprint, $this->getUser(), ActionSprint::CREATE_SPRINT);
             if($sprint) {
                 return $this->redirect($this->generateUrl('sprints_list'));
             }
@@ -77,10 +84,27 @@ class SprintNormalController extends EasyScrumController
     /**
      * @ParamConverter("sprint", class="SprintBundle:Sprint")
      */
+    public function editSprintAction(Sprint $sprint)
+    {
+        $form = $this->createForm(new EditSprintType(), $sprint);
+        $request=$this->getRequest();
+        if($this->get('sprint.handler')->handleEdit($form, $request)){
+            $this->get('action.manager')->createSprintAction($sprint, $this->getUser(), ActionSprint::EDIT_SPRINT);
+            
+            return $this->redirect($this->generateUrl('show_normal_sprint', array('id'=>$sprint->getId())));
+        }
+    
+        return $this->render('SprintBundle:Sprint:edit.html.twig', array('sprint' => $sprint, 'form'=>$form->createView()));
+    }
+    
+    /**
+     * @ParamConverter("sprint", class="SprintBundle:Sprint")
+     */
     public function sprintFinalizeAction(Sprint $sprint)
     {
         if(!$sprint->getFinalized()){
             $this->get('sprint.handler')->finalizeSprint($sprint);
+            $this->get('action.manager')->createSprintAction($sprint, $this->getUser(), ActionSprint::FINALIZED_SPRINT);
         }
         $doneUrgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
         $charts=$this->get('sprint.focus_member')->getChartFocusMember($sprint);
@@ -134,6 +158,7 @@ class SprintNormalController extends EasyScrumController
         $form = $this->createForm(new SprintHourType());
         if($request->getMethod()=='POST'){
             $hour = $this->get('sprint.handler')->saveHoursSprint($request, $sprint);
+            $this->get('action.manager')->createSprintAction($sprint, $this->getUser(), ActionSprint::STATE_HOURS_SAVED);
             if($hour) {
                 return $this->redirect($this->generateUrl('show_normal_sprint', array('id'=>$sprint->getId())));
             }

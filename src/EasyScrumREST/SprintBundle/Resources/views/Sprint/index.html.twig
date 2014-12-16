@@ -19,55 +19,96 @@
             </a>
         {% endif %}
     </div>
-
-    {% if sprints | length > 0 %}
     <div class="widget-box">
         <div class="widget-title">
             <span class="icon">
-                <i class="fa fa-align-justify"></i>
+                <i class="fa fa-search"></i>
             </span>
-            <h5>{{ "Lists of sprints"|trans }}</h5>
+            <h5>{{ "Sprints search"|trans }}</h5>
         </div>
         <div class="widget-content nopadding">
-            <table class="table table-bordered table-striped table-hover">
-                <thead>
-                <tr>
-                    <th>{{ "Title" | trans }}</th>
-                    <th>{{ "Description" | trans }}</th>
-                    <th>{{ "State" | trans }}</th>
-                    <th>{{ "Project" | trans }}</th>
-                    <th>{{ "Actions" | trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for sprint in sprints %}
-                    <tr>
-                        <td>{% if sprint.title is defined %}{{ sprint.title }}{% endif %}</td>
-                        <td>{% if sprint.description is defined %}
-                                {{ sprint.description }}
-                            {% endif %}
-                        </td>
-                        <td>{% if sprint.finalized %}{{ "Finalized"|trans }}{% else %}{{"Active"|trans}}{% endif %}</td>
-                        <td>{% if sprint.project is not empty %}<a href="{{ path('show_normal_project', {id:sprint.project.id}) }}">{{ sprint.project.title }}</a>{% endif %}</td>
-                        <td class="taskOptions">
-                            {% if sprint.finalized is empty %}
-                                <a title="See" href="{{ path('show_normal_sprint', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>
-                            {% else %}
-                                <a title="Finalize" href="{{ path('sprint_finalize', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>
-                            {% endif %}
-                            {% if is_granted('ROLE_SCRUM_MASTER') %}
-                                {% if sprint.finalized is empty %}
-                                    <a title="Planify" href="{{ path('sprint_planification', { 'id': sprint.id }) }}"><i class="fa fa-pencil"></i></a>
-                                {% endif %}
-                                <a title="Delete" href="{{ path('delete_normal_sprint', { 'id': sprint.id }) }}"><i class="fa fa-trash-o"></i></a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <form action="{{ path('sprints_list') }}" method="get" class="form-inline" role="form">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        {{ form_widget(form.name, { 'attr':{ 'class':'form-control', 'placeholder':"Name"} }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12 input-group">
+                        {{ form_widget(form.project, { 'attr':{ 'class':'form-control', 'placeholder':"Project"} }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <label for="sprint_search_active" style="margin-right: 10px;">Active sprints</label>
+                        {{ form_widget(form.active, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+
+                {{ form_rest(form) }}
+                <button id="search" type="submit" class="btn btn-large btn-primary">
+                    {{ "Search"|trans }}
+                </button>
+            </form>
         </div>
     </div>
+    {% if sprints | length > 0 %}
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="fa fa-align-justify"></i>
+                </span>
+                <h5>{{ "Lists of sprints"|trans }}</h5>
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>{{ "Title" | trans }}</th>
+                        <th>{{ "Description" | trans }}</th>
+                        <th>{{ "State" | trans }}</th>
+                        <th>{{ "Project" | trans }}</th>
+                        <th>{{ "Actions" | trans }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for sprint in sprints %}
+                            <tr>
+                                <td>{% if sprint.title is defined %}{{ sprint.title }}{% endif %}</td>
+                                <td>{% if sprint.description is defined %}
+                                        {{ sprint.description }}
+                                    {% endif %}
+                                </td>
+                                <td>{% if sprint.finalized %}{{ "Finalized"|trans }}{% else %}{{"Active"|trans}}{% endif %}</td>
+                                <td>{% if sprint.project is not empty %}<a href="{{ path('show_normal_project', {id:sprint.project.id}) }}">{{ sprint.project.title }}</a>{% endif %}</td>
+                                <td class="taskOptions">
+                                    {% if sprint.finalized is empty %}
+                                        <a title="See" href="{{ path('show_normal_sprint', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>
+                                    {% else %}
+                                        <a title="Finalize" href="{{ path('sprint_finalize', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>
+                                    {% endif %}
+                                    {% if is_granted('ROLE_SCRUM_MASTER') %}
+                                        {% if sprint.finalized is empty %}
+                                            <a title="Edit" href="{{ path('edit_normal_sprint', { 'id': sprint.id }) }}"><i class="fa fa-pencil"></i></a>
+                                        {% endif %}
+                                        <a title="Delete" href="{{ path('delete_normal_sprint', { 'id': sprint.id }) }}"><i class="fa fa-trash-o"></i></a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% if paginator is defined and paginator is not null %}
+            <div class="pagination alternate">
+                <ul>
+                    {% set direccion = 'sprints_list' %}
+                    {% set routeParams =  app.request.query.all %}
+                    {% include 'FrontendBundle:Commons:paginator.html.twig' %}
+                </ul>
+            </div>
+        {% endif %}
     {% else %}
         <div class="alert alert-info mt">
             <strong>{{"Information!" | trans }}</strong>

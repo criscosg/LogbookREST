@@ -1,11 +1,9 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Entity;
+
 use EasyScrumREST\SprintBundle\Util\DateHelper;
-
 use EasyScrumREST\ProjectBundle\Entity\Project;
-
 use EasyScrumREST\TaskBundle\Entity\Urgency;
-
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;

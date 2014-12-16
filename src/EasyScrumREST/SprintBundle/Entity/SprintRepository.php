@@ -12,7 +12,7 @@ class SprintRepository extends EntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->select('s');
         if (isset($search['name'])) {
-            $qb->orWhere($qb->expr()->like('s.name', "'%".$search['name']."%'"));
+            $qb->orWhere($qb->expr()->like('s.title', "'%".$search['name']."%'"));
         }
 
         if (isset($search['company'])) {
@@ -26,6 +26,27 @@ class SprintRepository extends EntityRepository
         $qb->andWhere($qb->expr()->isNull('s.deleted'));
         $qb->setFirstResult($offset);
         $qb->setMaxResults($limit);
+        $qb->orderBy('s.id', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+    
+    public function findSearch($search)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('s');
+        $qb->andWhere($qb->expr()->eq('s.company', $search['company']));
+        if (isset($search['name'])) {
+            $qb->andWhere($qb->expr()->like('s.title', "'%".$search['name']."%'"));
+        }
+        if (isset($search['project'])) {
+            $qb->andWhere($qb->expr()->eq('s.project', $search['project']->getId()));
+        }
+        if (isset($search['active']) && $search['active']) {
+            $qb->andWhere($qb->expr()->isNull('s.finalized'));
+        }
+
+        $qb->andWhere($qb->expr()->isNull('s.deleted'));
         $qb->orderBy('s.id', 'DESC');
 
         return $qb->getQuery()->getResult();

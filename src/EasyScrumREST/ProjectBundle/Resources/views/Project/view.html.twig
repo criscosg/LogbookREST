@@ -49,6 +49,14 @@
                             <td>{{ "Creación"|trans }}</td>
                             <td>{{ project.created |date('d/m/Y') }}</td>
                         </tr>
+                        <tr>
+                            <td>{{ "Tasks defined"|trans }}</td>
+                            <td>{{ project.backlogs.count }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ "Tasks finished"|trans }}</td>
+                            <td>{{ project.getFinishedBacklogTasks | length }}</td>
+                        </tr>
                     </tbody>
                 </table>
 
@@ -67,7 +75,7 @@
             <div class="row">
     			<div class="col-xs-12 col-sm-6">
     				<div class="widget-box">
-    					<div class="widget-title"><span class="icon"><i class="fa fa-file"></i></span><h5>Task to be done</h5><span class="label label-info tip-left">{{ project.backlogs.count }}</span></div>
+    					<div class="widget-title"><span class="icon"><i class="fa fa-file"></i></span><h5>Task to be done</h5><span class="label label-info tip-left">{{ project.backlogs.count -project.getFinishedBacklogTasks | length }}</span></div>
     					<div class="widget-content nopadding">
     					    <ul class="backlog-tasks-view todo-backlog-tasks">
     					        {% for task in project.backlogs if task.state == "TODO" %}
@@ -115,7 +123,7 @@
     			</div>
     			<div class="col-xs-12 col-sm-6">
     				<div class="widget-box">
-    					<div class="widget-title"><span class="icon"><i class="fa fa-file"></i></span><h5>Finished tasks</h5><span class="label label-info tip-left">{{ project.backlogs.count }}</span></div>
+    					<div class="widget-title"><span class="icon"><i class="fa fa-file"></i></span><h5>Finished tasks</h5><span class="label label-info tip-left">{{ project.getFinishedBacklogTasks | length }}</span></div>
     				    <div class="widget-content nopadding">
     				        <ul class="backlog-tasks-view finished-backlog-tasks">
                                 {% for task in project.backlogs if task.state == "DONE" %}

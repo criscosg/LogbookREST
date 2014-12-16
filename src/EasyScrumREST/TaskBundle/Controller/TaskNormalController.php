@@ -1,6 +1,8 @@
 <?php
 namespace EasyScrumREST\TaskBundle\Controller;
 
+use EasyScrumREST\ActionBundle\Entity\ActionTask;
+
 use EasyScrumREST\TaskBundle\Form\SearchTaskType;
 use EasyScrumREST\TaskBundle\Form\TaskHoursType;
 use EasyScrumREST\SprintBundle\Entity\Sprint;
@@ -37,6 +39,7 @@ class TaskNormalController extends EasyScrumController
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
             $newTask = $this->get('task.handler')->handleTask($task, $request, 'POST');
+            $this->get('action.manager')->createTaskAction($task, $this->getUser(), ActionTask::CREATE_TASK);
             if(!$newTask->getSprint()->getPlanified()) {
                 return $this->redirect($this->generateUrl('sprint_planification', array('id'=>$sprint->getId())));
             } else {
@@ -109,6 +112,7 @@ class TaskNormalController extends EasyScrumController
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
             $text = $this->container->get('task.handler')->handleHoursTask($task, $this->getUser(), $request);
+            $this->get('action.manager')->createTaskAction($task, $this->getUser(), ActionTask::UPDATED_TASK_HOURS);
         }
 
         $jsonResponse = json_encode(array('text' => $text, 'task'=>$task->getId()));
@@ -127,6 +131,7 @@ class TaskNormalController extends EasyScrumController
     {
         if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
             $this->container->get('task.handler')->moveTo($task, 'ONPROCESS');
+            $this->get('action.manager')->createTaskAction($task, $this->getUser(), ActionTask::ONPROCESS_TASK);
         }
         
         return array('sprint'=> $task->getSprint());
@@ -143,6 +148,7 @@ class TaskNormalController extends EasyScrumController
     {
         if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
             $this->container->get('task.handler')->moveTo($task, 'TODO');
+            $this->get('action.manager')->createTaskAction($task, $this->getUser(), ActionTask::TODO_TASK);
         }
     
         return array('sprint'=> $task->getSprint());
@@ -159,6 +165,7 @@ class TaskNormalController extends EasyScrumController
     {
         if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
             $this->container->get('task.handler')->moveTo($task, 'DONE');
+            $this->get('action.manager')->createTaskAction($task, $this->getUser(), ActionTask::DONE_TASK);
         }
     
         return array('sprint'=> $task->getSprint());
@@ -175,6 +182,7 @@ class TaskNormalController extends EasyScrumController
     {
         if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
             $this->container->get('task.handler')->moveTo($task, 'UNDONE');
+            $this->get('action.manager')->createTaskAction($task, $this->getUser(), ActionTask::DROPED_TASK);
         }
 
         return array('sprint'=> $task->getSprint());
@@ -189,6 +197,7 @@ class TaskNormalController extends EasyScrumController
     {
         if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
             $this->container->get('task.handler')->lockTask($task, $this->getUser());
+            $this->get('action.manager')->createTaskAction($task, $this->getUser(), ActionTask::BLOCKED_TASK);
             $jsonResponse = json_encode(array('ok' => true));
         } else {
             $jsonResponse = json_encode(array('ok' => false));
@@ -204,7 +213,7 @@ class TaskNormalController extends EasyScrumController
      */
     public function taskUnlockAction(Task $task)
     {
-        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
+        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser() || $this->get('security.context')->isGranted('ROLE_SCRUM_MASTER')) {
             $this->container->get('task.handler')->unlockTask($task);
             $jsonResponse = json_encode(array('ok' => true));
         } else {
@@ -218,11 +227,15 @@ class TaskNormalController extends EasyScrumController
     {
         $paginator = $this->get('ideup.simple_paginator');
         $form = $this->createForm(new SearchTaskType());
-        $search = $this->get('task.handler')->search($form, $request);
-        $tasks = $this->get('task.handler')->paginate($search, $paginator);
-        $totals = $this->get('task.handler')->totals($search);
         $company = $this->getUser()->getCompany();
-
+        $search = $this->get('task.handler')->search($form, $request, $company);
+        if($search) {
+            $tasks = $this->get('task.handler')->paginate($search, $paginator);
+            $totals = $this->get('task.handler')->totals($search);
+        } else {
+            return $this->render('TaskBundle:Task:facturation.html.twig', array('form' => $form->createView(), 'company'=>$company, 'noSearch'=>true));
+        }
+        
         return $this->render('TaskBundle:Task:facturation.html.twig', array('form' => $form->createView(), 'paginator'=>$paginator , 'tasks' => $tasks, 'company'=>$company, 'totals'=>$totals));
     }
 }

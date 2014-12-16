@@ -1,6 +1,10 @@
 <?php
 
 namespace EasyScrumREST\TaskBundle\Handler;
+use EasyScrumREST\ActionBundle\Entity\ActionTask;
+
+use EasyScrumREST\ActionBundle\Manager\ActionManager;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 use EasyScrumREST\TaskBundle\Entity\HoursSpent;
@@ -43,14 +47,16 @@ class TaskHandler
         return $this->em->getRepository('TaskBundle:Task')->findBy(array(), $orderby, $limit, $offset);
     }
     
-    public function search(FormInterface $form, Request $request)
+    public function search(FormInterface $form, Request $request, $company)
     {
         $criteria = array();
+        $search=array();
         $form->handleRequest($request);
         if ($form->isValid()) {
             $criteria = $form->getData();
+            $criteria['company'] = $company->getId();
+            $search = $this->em->getRepository('TaskBundle:Task')->findBySearch($criteria);
         }
-        $search = $this->em->getRepository('TaskBundle:Task')->findBySearch($criteria);
 
         return $search;
     }

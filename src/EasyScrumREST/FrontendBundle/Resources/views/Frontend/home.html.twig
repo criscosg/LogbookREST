@@ -16,34 +16,93 @@
 {% endblock %}
 
 {% block content %}
+    <div class="col-xs-12 col-sm-12 col-lg-12">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="fa fa-refresh"></i>
+                </span>
+                <h5>Latest actions</h5>
+            </div>
+            <div class="widget-content nopadding updates">
+                {% for action in actions %}
+                    <div class="new-update clearfix">
+                        <i class="fa {{ action.getIcon }}"></i>
+                            <div class="update-done">
+                            {% if action.task is defined %}
+                                <a href="{{ path('show_normal_sprint', {id: action.task.sprint.id}) }}" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%t%': action.task.title, '%s%': action.task.sprint.title}) }}</span>
+                            {% elseif action.sprint is defined %}    
+                                <a href="{{ path('show_normal_sprint', {id: action.sprint.id}) }}" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%s%': action.sprint.title}) }}</span>
+                            {% elseif action.project is defined %}
+                                <a href="{{ path('show_normal_project', {id: action.project.id}) }}" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%p%': action.project.title}) }}</span>
+                            {% elseif action.backlog is defined %}
+                                <a href="{{ path('show_normal_project', {id: action.backlog.project.id}) }}" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%p%': action.backlog.project.title, '%b%': action.backlog.title}) }}</span>    
+                            {% elseif action.urgency is defined %}
+                                <a href="#" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%u%': action.urgency.title}) }}</span> 
+                            {% else %}
+                                <a href="#" title="">
+                                    <strong>{{ action.getTitleText }}</strong>
+                                </a>
+                            {% endif %}
+                            </div>
+                        <div class="update-date">
+                        <span class="update-day">{{ action.created | date('d') }}</span>
+                            {{ action.created | date('M') }}
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="new-update clearfix viewall">
+                    <a class="tip-top" href="#" title="" data-original-title="View all posts"> + View all + </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% for sprint in sprints %}
-    	<div class="widget-box">
-    		<div class="widget-title">
-    			<span class="icon">
-    				<i class="fa fa-th"></i>
-    			</span>
-    			<div>
-        			<a href="{{ path('show_normal_sprint', {id: sprint.id}) }}"><h5>{{ sprint.title }}</h5></a>
-        			<a href="{{ path('show_normal_project', {id: sprint.project.id}) }}"><h5> ({{ sprint.project.title }})</h5></a>
-    			</div>
-    		</div>
-    		<div class="widget-content">
-    			<div class="row">
-    				<div class="col-xs-12 col-sm-4">
-    					<ul class="site-stats">
-    						<li><div class="cc"><i class="fa fa-tasks"></i> <strong>{{ sprint.tasks.count() }}</strong> <small>Tasks planified</small></div></li>
-    						<li><div class="cc"><i class="fa fa-arrow-right"></i> <strong>{{ sprint.getTaskDone() | length }}</strong> <small>Tasks done</small></div></li>
-    						<li class="divider"></li>
-    						<li><div class="cc"><i class="fa fa-calendar"></i> <strong>{{ sprint.hoursPlanified }}</strong> <small>Planified Hours</small></div></li>
-    						<li><div class="cc"><i class="fa fa-clock-o"></i> <strong>{{ sprint.getSpentHours() }}</strong> <small>Spent hours</small></div></li>
-    						<li><div class="cc"><i class="fa fa-fire"></i> <strong>{{ sprint.getHoursUndone() }}</strong> <small>Hours left</small></div></li>
-    					</ul>
-    				</div>
-    				<div class="col-xs-12 col-sm-8">
-    					<div class="chart" id="chart-{{ sprint.id }}"></div>
-    				</div>	
-    			</div>							
-    		</div>
+        <div class="col-xs-12">
+        	<div class="widget-box">
+        		<div class="widget-title">
+        			<span class="icon">
+        				<i class="fa fa-th"></i>
+        			</span>
+        			<div>
+            			<a href="{{ path('show_normal_sprint', {id: sprint.id}) }}"><h5>{{ sprint.title }}</h5></a>
+            			<a href="{{ path('show_normal_project', {id: sprint.project.id}) }}"><h5> ({{ sprint.project.title }})</h5></a>
+        			</div>
+        		</div>
+        		<div class="widget-content">
+        			<div class="row">
+        				<div class="col-xs-12 col-sm-4">
+        					<ul class="site-stats">
+        						<li><div class="cc"><i class="fa fa-tasks"></i> <strong>{{ sprint.tasks.count() }}</strong> <small>Tasks planified</small></div></li>
+        						<li><div class="cc"><i class="fa fa-arrow-right"></i> <strong>{{ sprint.getTaskDone() | length }}</strong> <small>Tasks done</small></div></li>
+        						<li class="divider"></li>
+        						<li><div class="cc"><i class="fa fa-calendar"></i> <strong>{{ sprint.hoursPlanified }}</strong> <small>Planified Hours</small></div></li>
+        						<li><div class="cc"><i class="fa fa-clock-o"></i> <strong>{{ sprint.getSpentHours() }}</strong> <small>Spent hours</small></div></li>
+        						<li><div class="cc"><i class="fa fa-fire"></i> <strong>{{ sprint.getHoursUndone() }}</strong> <small>Hours left</small></div></li>
+        					</ul>
+        				</div>
+        				<div class="col-xs-12 col-sm-8">
+        					<div class="chart" id="chart-{{ sprint.id }}"></div>
+        				</div>	
+        			</div>							
+        		</div>
+        	</div>
     	</div>
     {% else %}
         <div class="alert alert-info mt">

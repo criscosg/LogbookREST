@@ -13,9 +13,10 @@ class FrontendController extends EasyScrumController
         $request=$this->getRequest();
         $session = $request->getSession();
         $sprints = $this->get('sprint.handler')->getActiveSprints($this->getUser()->getCompany()->getId());
+        $actions = $this->get('action.manager')->getLastUpdates($this->getUser());
         $today = new \DateTime('today');
 
-        return $this->render('FrontendBundle:Frontend:home.html.twig', array('sprints'=>$sprints, 'today'=>$today->format('d/m')));
+        return $this->render('FrontendBundle:Frontend:home.html.twig', array('sprints'=>$sprints, 'today'=>$today->format('d/m'), 'actions'=> $actions));
     }
     
     public function loginAction()

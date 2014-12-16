@@ -8,9 +8,9 @@
 		<p>
 			{{ task.description }}
 		</p>
-		{% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
-			{% if issue is defined %}
-			    <a title="Add issue" href="{{ path('create_issue', { 'id': task.id }) }}" class="btn btn-success btn-xs">Add issue</a>
+		{% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(task.project.owner)) %}
+			{% if issue is not defined %}
+			    <a title="Add issue" href="{{ path('create_issue', { 'id': task.id }) }}" class="btn btn-warning btn-xs">Add issue</a>
         		<a title="Edit" href="{{ path('edit_backlog', { 'id': task.id }) }}" class="btn btn-primary btn-xs">Edit</a>
         		<a title="Delete" href="{{ path('delete_backlog', { 'id': task.id }) }}" class="btn btn-danger btn-xs">Delete</a>
 			{% else %}

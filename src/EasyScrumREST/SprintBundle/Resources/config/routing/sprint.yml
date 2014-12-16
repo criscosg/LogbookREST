@@ -6,6 +6,10 @@ show_normal_sprint:
     pattern: /see/{id}
     defaults: { _controller: SprintBundle:SprintNormal:sprintShow }
     
+edit_normal_sprint:
+    pattern: /edit-sprint/{id}
+    defaults: { _controller: SprintBundle:SprintNormal:editSprint }    
+    
 sprint_creation_first:
     pattern: /first-step
     defaults: { _controller: SprintBundle:SprintNormal:newSprintFirstStep }

@@ -1,0 +1,7 @@
+parameters:
+    action.manager.class: EasyScrumREST\ActionBundle\Manager\ActionManager
+
+services:
+    action.manager:
+        class: %action.manager.class%
+        arguments: [@doctrine.orm.entity_manager]

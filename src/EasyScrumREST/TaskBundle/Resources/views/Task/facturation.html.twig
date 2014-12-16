@@ -22,7 +22,7 @@
             <span class="icon">
                 <i class="fa fa-search"></i>
             </span>
-            <h5>{{ "Búsqueda de tareas"|trans }}</h5>
+            <h5>{{ "Task search"|trans }}</h5>
         </div>
         <div class="widget-content nopadding">
             <form action="{{ path('task_facturation') }}" method="get" class="form-inline" role="form">
@@ -50,118 +50,125 @@
 
                 {{ form_rest(form) }}
                 <button id="search" type="submit" class="btn btn-large btn-primary">
-                    {{ "Buscar"|trans }}
+                    {{ "Calcule"|trans }}
                 </button>
             </form>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-12 center" style="text-align: center;">
-            <ul class="stat-boxes">
-                <li class="popover-visits" data-original-title="" title="">
-                    <div class="left sparkline_bar_blue">
-                        <span>
-                            <i class="fa fa-tasks"></i>
-                        </span>
-                        <i class="fa fa-double-angle-up"></i>
-                    </div>
-                    <div class="right">
-                        <strong>{{ totals.count }}</strong>
-                        Tasks
-                    </div>
-                </li>
-                <li class="popover-visits" data-original-title="" title="">
-                    <div class="left sparkline_bar_neutral">
-                        <span>
-                            <i class="fa fa-clock-o"></i>
-                        </span>
-                        <i class="fa fa-double-angle-up"></i>
-                    </div>
-                    <div class="right">
-                        <strong>{{ totals.hours }}</strong>
-                        Hours
-                    </div>
-                </li>
-                <li class="popover-visits" data-original-title="" title="">
-                    <div class="left sparkline_bar_good">
-                        <span>
-                            <i class="fa fa-money"></i>
-                        </span>
-                        <i class="fa fa-double-angle-up"></i>
-                    </div>
-                    <div class="right">
-                        <strong>{{ totals.hours * company.pricePerHour }}€</strong>
-                        Total
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    
-    {% if tasks | length > 0 %}
-    <div class="widget-box">
-        <div class="widget-title">
-            <span class="icon">
-                <i class="fa fa-align-justify"></i>
-            </span>
-            <h5>{{ "Listado de entradas"|trans }}</h5>
-        </div>
-        <div class="widget-content nopadding">
-            <table class="table table-bordered table-striped table-hover">
-                <thead>
-                <tr>
-                    <th style="width: 30%;">{{ "Name"|trans }}</th>
-                    <th style="width: 20%;">{{ "Project"|trans }}</th>
-                    <th style="width: 20%;">{{ "Sprint"|trans }}</th>
-                    <th style="width: 10%;">{{ "Last Update"|trans }}</th>
-                    <th style="width: 5%;">{{ "Hours estimated"|trans }}</th>
-                    <th style="width: 5%;">{{ "Hours spent"|trans }}</th>
-                    <th style="width: 5%;">{{ "€" }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                    {% for task in tasks %}
-                        {% if task.deleted is not defined or task.deleted is null %}
-                            <tr>
-                                <td>{% if task.title is defined %}{{ task.title }}{% endif %}</td>
-                                <td>{% if task.sprint is defined and task.sprint.project is not empty %}{{ task.sprint.project }}{% endif %}</td>
-                                <td>{% if task.sprint is defined %}
-                                        <a title="{{ "See task"|trans }}" href="{{ path('show_normal_sprint',{'id':task.sprint.id}) }}">{% if task.sprint.title is defined %}{{ task.sprint.title }}{% endif %}</a>
-                                    {% endif %}
-                                </td>
-                                <td>{% if task.updated is defined %}{{ task.updated |date('d/m/Y') }}{% endif %}</td>
-                                <td>
-                                    {{ task.hours }}
-                                </td>
-                                <td>
-                                    {{ task.getHoursSpent }}
-                                </td>
-                                <td>
-                                    {% if company.pricePerHour is not empty %}
-                                        {{ task.getHoursSpent * company.pricePerHour }}€
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-        {% if paginator is defined and paginator is not null %}
-            <div class="pagination alternate">
-                <ul>
-                    {% set direccion = 'task_facturation' %}
-                    {% set routeParams =  app.request.query.all %}
-                    {% include 'FrontendBundle:Commons:paginator.html.twig' %}
+    {% if noSearch is not defined %}
+        <div class="row">
+            <div class="col-xs-12 center" style="text-align: center;">
+                <ul class="stat-boxes">
+                    <li class="popover-visits" data-original-title="" title="">
+                        <div class="left sparkline_bar_blue">
+                            <span>
+                                <i class="fa fa-tasks"></i>
+                            </span>
+                            <i class="fa fa-double-angle-up"></i>
+                        </div>
+                        <div class="right">
+                            <strong>{{ totals.count }}</strong>
+                            Tasks
+                        </div>
+                    </li>
+                    <li class="popover-visits" data-original-title="" title="">
+                        <div class="left sparkline_bar_neutral">
+                            <span>
+                                <i class="fa fa-clock-o"></i>
+                            </span>
+                            <i class="fa fa-double-angle-up"></i>
+                        </div>
+                        <div class="right">
+                            <strong>{{ totals.hours }}</strong>
+                            Hours
+                        </div>
+                    </li>
+                    <li class="popover-visits" data-original-title="" title="">
+                        <div class="left sparkline_bar_good">
+                            <span>
+                                <i class="fa fa-money"></i>
+                            </span>
+                            <i class="fa fa-double-angle-up"></i>
+                        </div>
+                        <div class="right">
+                            <strong>{{ totals.hours * company.pricePerHour }}€</strong>
+                            Total
+                        </div>
+                    </li>
                 </ul>
+            </div>
+        </div>
+    
+        
+        {% if tasks | length > 0 %}
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="fa fa-align-justify"></i>
+                </span>
+                <h5>{{ "Listado de entradas"|trans }}</h5>
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th style="width: 30%;">{{ "Name"|trans }}</th>
+                        <th style="width: 20%;">{{ "Project"|trans }}</th>
+                        <th style="width: 20%;">{{ "Sprint"|trans }}</th>
+                        <th style="width: 10%;">{{ "Last Update"|trans }}</th>
+                        <th style="width: 5%;">{{ "Hours estimated"|trans }}</th>
+                        <th style="width: 5%;">{{ "Hours spent"|trans }}</th>
+                        <th style="width: 5%;">{{ "€" }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                            {% if task.deleted is not defined or task.deleted is null %}
+                                <tr>
+                                    <td>{% if task.title is defined %}{{ task.title }}{% endif %}</td>
+                                    <td>{% if task.sprint is defined and task.sprint.project is not empty %}{{ task.sprint.project }}{% endif %}</td>
+                                    <td>{% if task.sprint is defined %}
+                                            <a title="{{ "See task"|trans }}" href="{{ path('show_normal_sprint',{'id':task.sprint.id}) }}">{% if task.sprint.title is defined %}{{ task.sprint.title }}{% endif %}</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>{% if task.updated is defined %}{{ task.updated |date('d/m/Y') }}{% endif %}</td>
+                                    <td>
+                                        {{ task.hours }}
+                                    </td>
+                                    <td>
+                                        {{ task.getHoursSpent }}
+                                    </td>
+                                    <td>
+                                        {% if company.pricePerHour is not empty %}
+                                            {{ task.getHoursSpent * company.pricePerHour }}€
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+            {% if paginator is defined and paginator is not null %}
+                <div class="pagination alternate">
+                    <ul>
+                        {% set direccion = 'task_facturation' %}
+                        {% set routeParams =  app.request.query.all %}
+                        {% include 'FrontendBundle:Commons:paginator.html.twig' %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info mt">
+                <strong>{{"Information!" | trans }}</strong>
+                {{"No task has been found" | trans }}
             </div>
         {% endif %}
     {% else %}
         <div class="alert alert-info mt">
-            <strong>{{"Información!" | trans }}</strong>
-            {{"No se ha encontrado ningún registro" | trans }}
+            <strong>{{"Information!" | trans }}</strong>
+            {{"Make a search to display the results" | trans }}
         </div>
     {% endif %}
     

@@ -1,6 +1,8 @@
 <?php
 
 namespace EasyScrumREST\SprintBundle\Handler;
+use Symfony\Component\Form\FormInterface;
+
 use EasyScrumREST\SprintBundle\Entity\HoursSprint;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -47,6 +49,26 @@ class SprintHandler
     {
 
         return $this->em->getRepository('SprintBundle:Sprint')->findSprintBySearch($limit, $offset, $search, $orderby);
+    }
+    
+    public function search($form, Request $request, $company)
+    {
+        $criteria = array();
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $criteria = $form->getData();
+        }
+        $criteria['company'] = $company;
+        $search = $this->em->getRepository('SprintBundle:Sprint')->findSearch($criteria);
+    
+        return $search;
+    }
+    
+    public function paginate($search, $paginator)
+    {
+        $tasks = $paginator->setItemsPerPage(20)->paginate($search)->getResult();
+    
+        return $tasks;
     }
 
     /**
@@ -97,6 +119,22 @@ class SprintHandler
         }
         $this->em->remove($entity);
         $this->em->flush();
+    }
+    
+    public function handleEdit(FormInterface $form, $request)
+    {
+        if($request->getMethod()=='POST') {
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $sprint = $form->getData();
+                $this->em->persist($sprint);
+                $this->em->flush($sprint);
+
+                return true;
+            }
+        }
+    
+        return null;
     }
     
     /**

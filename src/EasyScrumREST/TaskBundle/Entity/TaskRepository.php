@@ -51,7 +51,7 @@ class TaskRepository extends EntityRepository
         $qb->join('t.sprint', 's');
 
         $qb->andWhere($qb->expr()->like('t.state', '\''."DONE".'\''));
-
+        $qb->andWhere($qb->expr()->eq('s.company', $search['company']));
         if (isset($search['project'])) {
             $qb->andWhere($qb->expr()->eq('s.project', $search['project']->getId()));
         }

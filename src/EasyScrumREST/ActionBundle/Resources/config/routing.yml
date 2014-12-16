@@ -1,0 +1,3 @@
+action_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: ActionBundle:Default:index }

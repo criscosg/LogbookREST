@@ -342,15 +342,21 @@ i.icon-caret-right{
     margin: 0;
     padding: 0;
 }
-.backlog-tasks-view li:last-child {
-	border-bottom: medium none !important;
-}
-
 .backlog-tasks-view li {
-    order-bottom: 1px dotted #AEBDC8;
+    border-bottom: 1px dotted #AEBDC8;
     list-style: none outside none;
     padding: 10px;
 }
+.backlog-tasks-view li:last-child {
+	border-bottom: medium none !important;
+}
 .backlog-tasks-view .backlog-data {
     margin-left: 60px;
+}
+
+.viewall a{
+	color: #888888;
+    display: block;
+    padding: 5px;
+    text-align: center;
 }
