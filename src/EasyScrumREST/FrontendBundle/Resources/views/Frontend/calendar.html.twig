@@ -51,7 +51,7 @@
     		events: [
 	         {% for sprint in sprints %}
     	         {
-     				title: '{{ sprint.title }}',
+     				title: '{{ sprint.title }} ({{ sprint.project.title }})',
      				start: new Date("{{ sprint.dateFrom | date('Y') }}", "{{ sprint.dateFrom | date('m') -1 }}", "{{ sprint.dateFrom | date('d') }}"),
      				end: new Date("{{ sprint.dateTo | date('Y') }}", "{{ sprint.dateTo | date('m') - 1 }}", "{{ sprint.dateTo | date('d') }}")
      			 },

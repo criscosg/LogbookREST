@@ -106,7 +106,7 @@
                 <span class="icon">
                     <i class="fa fa-align-justify"></i>
                 </span>
-                <h5>{{ "Listado de entradas"|trans }}</h5>
+                <h5>{{ "Invoice"|trans }}</h5>
             </div>
             <div class="widget-content nopadding">
                 <table class="table table-bordered table-striped table-hover">
@@ -146,6 +146,13 @@
                                 </tr>
                             {% endif %}
                         {% endfor %}
+                        <tfoot>
+                            <tr>
+                                <th class="total-label" colspan="6" style="text-align: right;"> Total: </th>
+                                <th class="total-amount"> {{ totals.hours * company.pricePerHour }}€ </th>
+                            </tr>
+                        </tfoot>
+                        
                     </tbody>
                 </table>
             </div>

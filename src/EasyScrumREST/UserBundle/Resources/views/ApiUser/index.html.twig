@@ -4,6 +4,16 @@
     {{ "List of users" | trans }}
 {% endblock %}
 
+{% block buttons_section %}
+    {% if is_granted('ROLE_SCRUM_MASTER') %}  
+        <div class="btn-group">
+            <a title="" data-original-title="{{ "New User" | trans }}" href="{{ path('new_normal_api_user') }}" class="btn btn-large tip-bottom"">
+                <i class="fa fa-plus"></i> 
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block breadcrumb %}
     {% set crumbs = {'Users':'#'} %}
     {{ setCrumbs(crumbs) }}
@@ -11,15 +21,6 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="row">
-    {% if is_granted('ROLE_SCRUM_MASTER') %}  
-        <a href="{{ path('new_normal_api_user') }}" class="btn btn-primary btn-m">
-            <i class="fa fa-plus"></i> {{ "New" | trans }}
-        </a>
-    {% endif %}
-    </div>
-
     {% if api_users | length > 0 %}
     <div class="widget-box">
         <div class="widget-title">

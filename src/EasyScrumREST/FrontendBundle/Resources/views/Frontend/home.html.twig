@@ -1,7 +1,7 @@
 {% extends "FrontendBundle:Layouts:2column.html.twig" %}
 
 {% block title_section %}
-	Título de la página
+	Home dashboard
 {% endblock %}
 
 {% block stylesheets %}
@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block breadcrumb %}
-  {% set crumbs = {'Título de la página':'#'} %}
+  {% set crumbs = {'Home dashboard':'#'} %}
   {{ setCrumbs(crumbs) }}
   {{ parent() }}
 {% endblock %}
@@ -67,7 +67,7 @@
                     </div>
                 {% endfor %}
                 <div class="new-update clearfix viewall">
-                    <a class="tip-top" href="#" title="" data-original-title="View all posts"> + View all + </a>
+                    <a href="{{ path('actions') }}"> + View all + </a>
                 </div>
             </div>
         </div>

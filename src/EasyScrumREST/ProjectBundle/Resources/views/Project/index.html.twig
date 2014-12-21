@@ -4,6 +4,16 @@
     {{ "Projects" | trans }}
 {% endblock %}
 
+{% block buttons_section %}
+    {% if is_granted('ROLE_SCRUM_MASTER') or is_granted('ROLE_PRODUCT_OWNER') %}
+        <div class="btn-group">
+            <a title="" data-original-title="{{ "New Project" | trans }}" href="{{ path('project_creation') }}" class="btn btn-large tip-bottom"">
+                <i class="fa fa-plus"></i> 
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block breadcrumb %}
     {% set crumbs = {'Projects':''} %}
     {{ setCrumbs(crumbs) }}
@@ -11,70 +21,64 @@
 {% endblock %}
 
 {% block content %}
-
     <div class="row">
-        {% if is_granted('ROLE_SCRUM_MASTER') or is_granted('ROLE_PRODUCT_OWNER') %}
-            <a href="{{ path('project_creation') }}" class="btn btn-primary btn-m">
-                <i class="fa fa-plus"></i> {{ "New Project" | trans }}
-            </a>
-        {% endif %}
-    </div>
-
-    {% if projects | length > 0 %}
-    <div class="widget-box">
-        <div class="widget-title">
-            <span class="icon">
-                <i class="fa fa-align-justify"></i>
-            </span>
-            <h5>{{ "Lists of projects"|trans }}</h5>
-        </div>
-        <div class="widget-content nopadding">
-            <table class="table table-bordered table-striped table-hover">
-                <thead>
-                <tr>
-                    <th>{{ "Title" | trans }}</th>
-                    <th>{{ "Description" | trans }}</th>
-                    <th>{{ "Created" | trans }}</th>
-                    <th>{{ "Progression" | trans }}
-                    <th>{{ "Actions" | trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for project in projects %}
-                    <tr>
-                        <td>{% if project.title is defined %}{{ project.title }}{% endif %}</td>
-                        <td>{% if project.description is defined %}
-                                {{ project.description }}
-                            {% endif %}
-                        </td>
-                        <td>{% if project.created is defined %}{{ project.created |date('d/m/Y') }}{% endif %}</td>
-                        <td>
-                            {% if project.backlogs.count > 0 %}
-                                {% set percentaje = ((project.getFinishedBacklogTasks|length) /project.backlogs.count) *100 %}
-                            {% else %}
-                                 {% set percentaje = 0 %}
-                            {% endif %}
-                            <div class="progress progress-sm">
-                            <div class="progress-bar" style="width: {{ percentaje }}%;"></div>
+    {% for project in projects %}
+        <div class="col-xs-12 col-sm-6 col-md-4">
+        	<div class="widget-box">
+        		<div class="widget-title">
+        			<span class="icon">
+    				    <i class="fa fa-suitcase"></i>
+        			</span>
+        			<div>
+            			<h5>{{ project.title }}</h5>
+        			</div>
+        			<div class="buttons">
+        			    <a title="See" class="btn" href="{{ path('show_normal_project', { 'id': project.id }) }}"><i class="fa fa-eye"></i></a>
+                        {% if is_granted('ROLE_SCRUM_MASTER') or ( project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
+                            <a title="Edit" class="btn" href="{{ path('project_edit', { 'id': project.id }) }}"><i class="fa fa-pencil"></i></a>
+                            <a title="Delete" class="btn" href="{{ path('delete_normal_project', { 'id': project.id }) }}"><i class="fa fa-trash-o"></i></a>
+                        {% endif %}
+                    </div>
+        		</div>
+        		<div class="widget-content">
+        			<div class="row">
+        				<div class="col-xs-12 project-index">
+        				    <div class="knob-wrap">
+        				        {% if project.backlogs.count > 0 %}
+                                    {% set percentaje = ((project.getFinishedBacklogTasks|length) /project.backlogs.count) *100 %}
+                                {% else %}
+                                     {% set percentaje = 0 %}
+                                {% endif %}
+                                <input class="knob" disabled="disabled" data-displayInput=false data-thickness=".3" data-height="50" data-width="50" data-readOnly=true value="{{ percentaje }}">
                             </div>
-                        </td>
-                        <td class="taskOptions">
-                            <a title="See" href="{{ path('show_normal_project', { 'id': project.id }) }}"><i class="fa fa-eye"></i></a>
-                            {% if is_granted('ROLE_SCRUM_MASTER') or ( project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
-                                <a title="Edit" href="{{ path('project_edit', { 'id': project.id }) }}"><i class="fa fa-pencil"></i></a>
-                                <a title="Delete" href="{{ path('delete_normal_project', { 'id': project.id }) }}"><i class="fa fa-trash-o"></i></a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% else %}
+                            <p class="description">{{ project.description }}</h5>
+                         </div>
+    				 </div>
+                     <div class="row">
+        				<div class="col-xs-12">       
+                            <ul class="site-stats">
+                                <li class="divider"></li>
+                                <li><div class="cc"><i class="fa fa-calendar-o"></i><small>{{ project.created |date }}</small></div></li>
+        					    <li><div class="cc"><i class="fa fa-tasks"></i> <strong>{{ project.backlogs.count }}</strong><small>{{ "Number of tasks" }}</small></div></li>
+        				        <li><div class="cc"><i class="fa fa-check"></i> <strong>{{ project.getFinishedBacklogTasks|length }}</strong><small>{{ "Finished tasks" }}</small></div></li>
+        				    </ul>
+        				</div>
+    				</div>
+				</div>
+			</div>
+		</div>
+	{% else %}
         <div class="alert alert-info mt">
             <strong>{{"Information!" | trans }}</strong>
             {{"No projects created" | trans }}
         </div>
-    {% endif %}
+    {% endfor %}
+    </div>
+    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script language="javascript" type="text/javascript" src="{{ asset('bundles/frontend/js/jquery.knob.js')}}"></script>
+    <script>$(function(){$(".knob").knob()});</script>
 {% endblock %}

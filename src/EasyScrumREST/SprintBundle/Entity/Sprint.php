@@ -217,6 +217,15 @@ class Sprint
     {
         $this->tasks = $tasks;
     }
+    
+    public function getTasksByState($state)
+    {
+        $tasks = $this->tasks->filter(function($entry) use ($state) {
+            return $entry->getState() == $state;
+        });
+        
+        return $tasks;
+    }
 
     public function addTask(Task $task)
     {

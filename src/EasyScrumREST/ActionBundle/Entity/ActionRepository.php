@@ -21,4 +21,17 @@ class ActionRepository extends EntityRepository
         
         return $qb->getQuery()->getResult();
     }
+    
+    public function companyActions(ApiUser $user)
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('a');
+        $qb->join('a.user', 'u');
+        $qb->join('u.company', 'c');
+        $qb->andWhere($qb->expr()->eq('u.company', $user->getCompany()->getId()));
+        $qb->orderBy('a.id', 'DESC');
+        $qb->groupBy('a.type');
+    
+        return $qb->getQuery()->getResult();
+    }
 }

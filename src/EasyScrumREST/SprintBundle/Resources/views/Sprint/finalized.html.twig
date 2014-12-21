@@ -1,7 +1,10 @@
 {% extends "FrontendBundle:Layouts:2column.html.twig" %}
 
-{% block title_section %}
-    {{ "Sprint" | trans }}
+{% block content_header %}
+    <div id="content-header">
+        <h1>{{ sprint.title }} ({{ sprint.dateFrom |date('d/m/Y') }} - {{ sprint.dateTo |date('d/m/Y') }})</h1>
+        <h5>{{ sprint.description }}</h5>
+    </div>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -11,180 +14,256 @@
 {% endblock %}
 
 {% block content %}
-    {% set params = {'title':'Introduce time spent on this task', 'text':'<div class="hours"></div>', 'btn-close':false} %}
-    {{ makeModal('modalHours', params) }}
-
-    {% if sprint %}
-
-        <div class="widget-box">
-            <div class="widget-title">
-            <span class="icon">
-                <i class="fa fa-th-list"></i>
-            </span>
-                <h5>{{ "Sprint: " ~ sprint.title|trans }}</h5>
-            </div>
-            <div class="widget-content nopadding">
-                <table class="table table-bordered table-striped table-hover">
-                    <tbody>
-                        <tr>
-                            <td style="width:20%;">{{ "Description"|trans }}</td>
-                            <td>{% if sprint.description is defined %}{{ sprint.description }}{% endif %}</td>
-                        </tr>
-                        <tr>
-                            <td style="width:20%;">{{ "From - To"|trans }}</td>
-                            <td>{% if sprint.dateFrom is not empty %}{{ sprint.dateFrom |date('d/m/Y') }} - {{ sprint.dateTo |date('d/m/Y') }}{% endif %}</td>
-                        </tr>
-                        <tr>
-                            <td style="width:20%;">{{ "Hours planified"|trans }}</td>
-                            <td>{% if sprint.hoursPlanified is not empty %}{{ sprint.hoursPlanified }}{% endif %}</td>
-                        </tr>
-                        <tr>
-                            <td style="width:20%;">{{ "Focus factor"|trans }}</td>
-                            <td>{% if sprint.focus is not empty %}{{ sprint.focus }}{% endif %}</td>
-                        </tr>
-                        <tr>
-                            <td style="width:20%;">{{ "Hours spent"|trans }}</td>
-                            <td>{{ sprint.getSpentHours() }}</td>
-                        </tr>
-                        <tr>
-                            <td style="width:20%;">{{ "Finished task Hours" |trans }}</td>
-                            <td>{{ sprint.getHoursDone()}}</td>
-                        </tr>
-                        <tr>
-                            <td style="width:20%;">{{ "Real focus factor"|trans }}</td>
-                            <td>{{ ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') }}</td>
-                        </tr>
-                        <tr>
-                            <td style="width:20%;">{{ "Hours spent in urgencies"|trans }}</td>
-                            <td>{{ sprint.getUrgenciesSpentHours() }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <div class="widget-box hidden-xs">
-            <div class="widget-title">
-                <span class="icon">
-                    <i class="fa fa-align-justify"></i>
-                </span>
-                <h5>{{ "Charts"|trans }}</h5>
-                <ul class="nav nav-tabs pull-right steps">
-                    <li class="active" data-target="#bars-general-container">
-                        <a data-toggle="tab" href="#inbox-tab">
-                            <span class="text">Whole team</span>
-                        </a>
-                    </li>
-                    {% for key in charts|keys %}
-                        <li data-target="#bars-user-container-{{ key }}">
-                            <a data-toggle="tab" href="#inbox-tab">
-                                <span class="text"> {{ users[key].name ~ " " ~ users[key].lastName }}</span>
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="widget-content nopadding" id="sprint-tasks">
-                <div class="row" id="bars-general-container">
-                    <h5 class="col-md-12">All team focus factor</h5>
-                    <div class="bars col-md-12" id="bars-general" style="padding: 0px; position: relative;"></div>
-                </div>
-                {% for key in charts|keys %}
-                    <div class="row hidden-charts" id="bars-user-container-{{ key }}">
-                        <h5 class="col-md-12">{{ users[key].name ~ " " ~ users[key].lastName }}</h5>
-                        <div class="bars col-md-12" id="bars-user-{{ key }}" style="padding: 0px; position: relative;"></div>
+    <div class="row">
+        <div class="col-xs-12 center" style="text-align: center;">
+            <ul class="stat-boxes">
+                <li class="popover-visits" data-original-title="" data-content="<span class='content-big'>{{ sprint.getSpentHours() }}</span> <span class='content-small'>Hours spent</span><br /><span class='content-big'>{{ sprint.hoursPlanified }}</span> <span class='content-small'>Hours planified</span><br /><span class='content-big'>{{ sprint.getHoursDone }}</span> <span class='content-small'>Task finished hours</span><br /><span class='content-big'>{{ sprint.getUrgenciesSpentHours() }}</span> <span class='content-small'>Urgency hours</span>" title=''>
+                    <div class="left {% if sprint.hoursPlanified < sprint.getHoursDone %}sparkline_bar_good{% elseif sprint.hoursPlanified == sprint.getHoursDone %}sparkline_bar_neutral{% else %}sparkline_bar_bad{% endif %}">
+                        <span class="inlinebar">{{ sprint.hoursPlanified }},{{ sprint.getHoursDone }},{{ sprint.getSpentHours() }},{{ sprint.getUrgenciesSpentHours() }}</span>
+                        <i class="fa fa-double-angle-up"></i>
+                            +10%
                     </div>
-                {% endfor %}   
-            </div>
-        </div>         
-
-        {% if sprint.tasks | length > 0 %}
-            <div class="widget-box">
+                    <div class="right">
+                        <strong>{{ sprint.getSpentHours() }}</strong>
+                        <small>Spent hours</small>
+                    </div>
+                </li>
+                <li class="popover-visits" data-original-title="" data-content="<span class='content-big'>{{ ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') }}</span> <span class='content-small'>Final focus factor</span><br /><span class='content-big'>{{ sprint.focus }} </span><span class='content-small'> Initial focus factor</span>" title=''>
+                    <div class="left {% if sprint.focus < ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') %}sparkline_bar_good{% elseif sprint.focus == ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') %}sparkline_bar_neutral{% else %}sparkline_bar_bad{% endif %}">
+                        <span class="inlinebar">{{ sprint.focus }},{{ ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') }}</span>
+                        <i class="fa fa-double-angle-up"></i>
+                            +10%
+                    </div>
+                    <div class="right">
+                        <strong>{{ ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') }}</strong>
+                        <small>Real focus</small>
+                    </div>
+                </li>
+                <li class="popover-visits" data-original-title="" data-content="<span class='content-big'>{{ sprint.tasks.count }}</span> <span class='content-small'>Total tasks</span><br /><span class='content-big'>{{ sprint.getTaskDone()| length }} </span><span class='content-small'> Tasks done</span><br /><span class='content-big'>{{ sprint.getTasksByState("UNDONE").count }} </span><span class='content-small'> Tasks undone</span>" title=''>
+                    <div class="left sparkline_bar_good">
+                        <span class="inlinebar">{{ sprint.tasks.count }},{{ sprint.getTaskDone() }},{{ sprint.getTasksByState("UNDONE").count }}</span>
+                        <i class="fa fa-double-angle-up"></i>
+                            +10%
+                    </div>
+                    <div class="right">
+                        <strong>{{ sprint.getTaskDone() | length }}</strong>
+                        <small>Tasks done</small>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">    
+            <div class="widget-box hidden-xs">
                 <div class="widget-title">
                     <span class="icon">
                         <i class="fa fa-align-justify"></i>
                     </span>
-                    <h5>{{ "Tasks"|trans }}</h5>
-                    <ul class="nav nav-tabs pull-right steps">
-                        <li class="active" data-target="#done">
+                    <h5>{{ "Charts"|trans }}</h5>
+                    <ul class="nav nav-tabs pull-right steps-charts">
+                        <li class="active" data-target="#bars-general-container">
                             <a data-toggle="tab" href="#inbox-tab">
-                                <span class="text"> {{ "DONE" | trans }}</span>
+                                <span class="text">Whole team</span>
                             </a>
                         </li>
-                        <li data-target="#undone">
-                            <a data-toggle="tab" href="#inbox-tab">
-                                <span class="text"> {{ "UNDONE" | trans }}</span>
-                            </a>
-                        </li>
+                        {% for key in charts|keys %}
+                            <li data-target="#bars-user-container-{{ key }}">
+                                <a data-toggle="tab" href="#inbox-tab">
+                                    <span class="text"> {{ users[key].name ~ " " ~ users[key].lastName }}</span>
+                                </a>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </div>
-                <div class="widget-content nopadding" id="sprint-tasks">
-                    <div class="row" id="done">
-                        {% for task in sprint.getTaskDone() %}
-                            {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: false} %}
-                        {% else %}
-                            <div class="alert alert-info mt">
-                                <strong>{{"Information!" | trans }}</strong>
-                                {{"There is no tasks on this state" | trans }}
-                            </div>    
-                        {% endfor %}
+                <div class="widget-content nopadding" id="sprint-charts">
+                    <div class="row" id="bars-general-container">
+                        <h5 class="col-md-12">All team focus factor</h5>
+                        <div class="bars col-md-12" id="bars-general" style="padding: 0px; position: relative;"></div>
                     </div>
-                    <div class="row" id="undone" style="display: none;">
-                        {% for task in sprint.tasks if task.state == "UNDONE" %}
-                            {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: false} %}
-                        {% else %}
-                            <div class="alert alert-info mt">
-                                <strong>{{"Information!" | trans }}</strong>
-                                {{"There is no tasks on this state" | trans }}
-                            </div>    
-                        {% endfor %}
-                    </div>
+                    {% for key in charts|keys %}
+                        <div class="row hidden-charts" id="bars-user-container-{{ key }}">
+                            <h5 class="col-md-12">{{ users[key].name ~ " " ~ users[key].lastName }}</h5>
+                            <div class="bars col-md-12" id="bars-user-{{ key }}" style="padding: 0px; position: relative;"></div>
+                        </div>
+                    {% endfor %}   
                 </div>
             </div>
-        {% else %}
-            <div class="alert alert-info mt">
-                <strong>{{"Information!" | trans }}</strong>
-                {{"No task where created for this sprint" | trans }}
-            </div>
-        {% endif %}
-        <div class="widget-box">
-            <div class="widget-title">
-                <span class="icon">
-                    <i class="fa fa-align-justify"></i>
-                </span>
-                <h5>{{ "Urgencies"|trans }}</h5>
-            </div>
-            <div class="widget-content nopadding" id="sprint-urgencies">
-                <div class="row" id="urgencies-done">
-                {% for urgency in sprint.urgencies if urgency.state == "DONE" %}
-                    {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: false} %}
-                {% else %}
-                    <div class="alert alert-info mt">
-                        <strong>{{"Information!" | trans }}</strong>
-                        {{"No urgencies where finished during this sprint" | trans }}
-                    </div>    
-                {% endfor %}
+        </div>
+    </div>
+    {% if sprint.tasks | length > 0 %}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon">
+                            <i class="fa fa-align-justify"></i>
+                        </span>
+                        <h5>{{ "Tasks"|trans }}</h5>
+                        <ul class="nav nav-tabs pull-right steps-tasks">
+                            <li class="active" data-target="#done">
+                                <a data-toggle="tab" href="#inbox-tab">
+                                    <span class="text"> {{ "DONE" | trans }}</span>
+                                </a>
+                            </li>
+                            <li data-target="#undone">
+                                <a data-toggle="tab" href="#inbox-tab">
+                                    <span class="text"> {{ "UNDONE" | trans }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="widget-content nopadding" id="sprint-tasks">
+                        <div class="row" id="done">
+                            {% for task in sprint.getTaskDone() %}
+                                {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: false} %}
+                            {% else %}
+                                <div class="alert alert-info mt">
+                                    <strong>{{"Information!" | trans }}</strong>
+                                    {{"There is no tasks on this state" | trans }}
+                                </div>    
+                            {% endfor %}
+                        </div>
+                        <div class="row" id="undone" style="display: none;">
+                            {% for task in sprint.tasks if task.state == "UNDONE" %}
+                                {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: false} %}
+                            {% else %}
+                                <div class="alert alert-info mt">
+                                    <strong>{{"Information!" | trans }}</strong>
+                                    {{"There is no tasks on this state" | trans }}
+                                </div>    
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     {% else %}
-        <div class="alert alert-info mt">
-            <strong>{{"Information!" | trans }}</strong>
-            {{"No sprint found" | trans }}
+            <div class="alert alert-info mt">
+                <strong>{{"Information!" | trans }}</strong>
+                {{"No task where created for this sprint" | trans }}
+            </div>
+            </div>
         </div>
     {% endif %}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon">
+                            <i class="fa fa-align-justify"></i>
+                        </span>
+                        <h5>{{ "Urgencies"|trans }}</h5>
+                    </div>
+                    <div class="widget-content nopadding" id="sprint-urgencies">
+                        <div class="row" id="urgencies-done">
+                        {% for urgency in sprint.urgencies if urgency.state == "DONE" %}
+                            {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: false} %}
+                        {% else %}
+                            <div class="alert alert-info mt">
+                                <strong>{{"Information!" | trans }}</strong>
+                                {{"No urgencies where finished during this sprint" | trans }}
+                            </div>    
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 {% endblock %}
 
 {% block javascripts %}
 {{ parent() }}
 <script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
 <script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
+<script src="{{ asset('bundles/frontend/js/jquery.sparkline.min.js') }}"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
-    	$('.steps li').click(function() {
+    var unicorn = {
+    		// === Peity charts === //
+    		sparkline: function(){		
+    			$(".sparkline_line_good span").sparkline("html", {
+    				type: "line",
+    				fillColor: "#B1FFA9",
+    				lineColor: "#459D1C",
+    				width: "50",
+    				height: "24"
+    			});
+    			$(".sparkline_line_bad span").sparkline("html", {
+    				type: "line",
+    				fillColor: "#FFC4C7",
+    				lineColor: "#BA1E20",
+    				width: "50",
+    				height: "24"
+    			});	
+    			$(".sparkline_line_neutral span").sparkline("html", {
+    				type: "line",
+    				fillColor: "#CCCCCC",
+    				lineColor: "#757575",
+    				width: "50",
+    				height: "24"
+    			});
+    			
+    			$(".sparkline_bar_good span").sparkline('html',{
+    				type: "bar",
+    				barColor: "#83bd67",
+    				barWidth: "5",
+    				height: "24"
+    			});
+    			$(".sparkline_bar_bad span").sparkline('html',{
+    				type: "bar",
+    				barColor: "#55acd2",
+    				barWidth: "5",
+    				height: "24"
+    			});	
+    			$(".sparkline_bar_neutral span").sparkline('html',{
+    				type: "bar",
+    				barColor: "#757575",
+    				barWidth: "5",
+    				height: "24"
+    			});
+    		},
+    
+    		// === Tooltip for flot charts === //
+    		flot_tooltip: function(x, y, contents) {
+    			
+    			$('<div id="tooltip">' + contents + '</div>').css( {
+    				top: y + 5,
+    				left: x + 5
+    			}).appendTo("body").fadeIn(200);
+    		}
+    }
 
+    $(document).ready(function(){
+    	unicorn.sparkline();
+
+    	// === Popovers === //
+    	var placement = 'bottom';
+    	var trigger = 'hover';
+    	var html = true;
+    	$('.popover-visits').popover({
+        	placement: placement,
+        	trigger: trigger,
+        	html: html
+    	});
+        
+    	$('.steps-charts li').click(function() {
             var target_current = $(this).attr('data-target');
-            $('.steps li').each(function(key, element){
+            $('.steps-charts li').each(function(key, element){
+                var target = $(element).attr('data-target');
+                if(target_current == target){
+                    $(target).show();
+                    $(element).addClass('active');
+                }else{
+                    $(target).hide();
+                    $(element).removeClass('active');
+                }
+            });
+            
+        });
+
+    	$('.steps-tasks li').click(function() {
+            var target_current = $(this).attr('data-target');
+            $('.steps-tasks li').each(function(key, element){
                 var target = $(element).attr('data-target');
                 if(target_current == target){
                     $(target).show();
@@ -234,6 +313,7 @@
     	$.each($('.hidden-charts'), function(index, value){
             $(value).hide();
         });
+
     });
 </script>    
 {% endblock %}

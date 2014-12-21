@@ -1,7 +1,7 @@
 {% set crumbs = getCrumbs() %}
 {% if crumbs | length > 0 %}
 <div id="breadcrumb">
-	<a href="{{ path("home") }}" title="{{"Ir al inicio" | trans}}" class="tip-bottom"><i class="fa fa-home"></i> {{"Inicio" | trans}}</a>
+	<a href="{{ path("home") }}" class="tip-right"><i class="fa fa-home"></i> {{"Home" | trans}}</a>
 	{% for key, value in crumbs %}
 	  	<a href="{{ value }}" {% if loop.last %} class="current"{% endif %}>
 	  		{{ key }}

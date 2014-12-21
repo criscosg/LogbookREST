@@ -1,0 +1,138 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+	Latest actions performed
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/jquery.gritter.css') }}" />
+{% endblock %}
+
+{% block breadcrumb %}
+  {% set crumbs = {'Latest actions performed':'#'} %}
+  {{ setCrumbs(crumbs) }}
+  {{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-lg-6">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="fa fa-refresh"></i>
+                </span>
+                <h5>Latest actions on projects</h5>
+            </div>
+            <div class="widget-content nopadding updates">
+                {% for action in actions if (action.project is defined or action.backlog is defined) %}
+                    <div class="new-update clearfix">
+                        <i class="fa {{ action.getIcon }}"></i>
+                            <div class="update-done">
+                            {% if action.project is defined %}
+                                <a href="{{ path('show_normal_project', {id: action.project.id}) }}" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%p%': action.project.title}) }}</span>
+                            {% elseif action.backlog is defined %}
+                                <a href="{{ path('show_normal_project', {id: action.backlog.project.id}) }}" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%p%': action.backlog.project.title, '%b%': action.backlog.title}) }}</span>    
+                            {% endif %}
+                            </div>
+                        <div class="update-date">
+                        <span class="update-day">{{ action.created | date('d') }}</span>
+                            {{ action.created | date('M') }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-lg-6">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="fa fa-refresh"></i>
+                </span>
+                <h5>Latest actions on sprints</h5>
+            </div>
+            <div class="widget-content nopadding updates">
+                {% for action in actions if action.sprint is defined %}
+                    <div class="new-update clearfix">
+                        <i class="fa {{ action.getIcon }}"></i>
+                            <div class="update-done">
+                                <a href="{{ path('show_normal_sprint', {id: action.sprint.id}) }}" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%s%': action.sprint.title}) }}</span>
+                            </div>
+                        <div class="update-date">
+                        <span class="update-day">{{ action.created | date('d') }}</span>
+                            {{ action.created | date('M') }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-lg-6">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="fa fa-refresh"></i>
+                </span>
+                <h5>Latest actions on tasks</h5>
+            </div>
+            <div class="widget-content nopadding updates">
+                {% for action in actions if action.task is defined %}
+                    <div class="new-update clearfix">
+                        <i class="fa {{ action.getIcon }}"></i>
+                            <div class="update-done">
+                                <a href="{{ path('show_normal_sprint', {id: action.task.sprint.id}) }}" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%t%': action.task.title, '%s%': action.task.sprint.title}) }}</span>
+                            </div>
+                        <div class="update-date">
+                        <span class="update-day">{{ action.created | date('d') }}</span>
+                            {{ action.created | date('M') }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-lg-6">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon">
+                    <i class="fa fa-refresh"></i>
+                </span>
+                <h5>Latest actions on urgencies</h5>
+            </div>
+            <div class="widget-content nopadding updates">
+                {% for action in actions if action.urgencies is defined %}
+                    <div class="new-update clearfix">
+                        <i class="fa {{ action.getIcon }}"></i>
+                            <div class="update-done">
+                                <a href="" title="">
+                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                </a>
+                                <span>{{ action.getDescriptionText | replace({'%t%': action.task.title, '%s%': action.task.sprint.title}) }}</span>
+                            </div>
+                        <div class="update-date">
+                        <span class="update-day">{{ action.created | date('d') }}</span>
+                            {{ action.created | date('M') }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

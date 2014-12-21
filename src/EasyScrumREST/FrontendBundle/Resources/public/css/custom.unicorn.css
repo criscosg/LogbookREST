@@ -360,3 +360,35 @@ i.icon-caret-right{
     padding: 5px;
     text-align: center;
 }
+
+#content-header h5 {
+    color: #555555;
+    font-size: 16px;
+    font-weight: normal;
+    margin-left: 20px;
+    text-shadow: 0 1px 0 #FFFFFF;
+    margin-bottom:10px;
+    padding-bottom: 5px;
+    width: 70%;
+}
+
+.project-index {
+	margin-bottom: 10px;
+}
+
+.project-index .knob-wrap {
+    float: left;
+    height: 50px;
+    margin-right: 15px;
+    width: 50px;
+}
+
+.project-index .description{
+	color: #666666;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 12px;
+    margin: 0;
+    padding: 6px;
+    text-shadow: 0 1px 0 #FFFFFF;
+}

@@ -26,7 +26,7 @@ class FrontendController extends EasyScrumController
 
     public function calendarAction()
     {
-        $sprints = $this->get('sprint.handler')->getActiveSprints($this->getUser()->getCompany()->getId());
+        $sprints = $this->get('sprint.handler')->all(20, 0, null, array('company'=>$this->getUser()->getCompany()->getId()));
         
         return $this->render('FrontendBundle:Frontend:calendar.html.twig', array('sprints'=>$sprints));
     }
