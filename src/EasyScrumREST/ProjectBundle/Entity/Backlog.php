@@ -87,10 +87,17 @@ class Backlog
      * @MaxDepth(0)
      */
     private $issues;
+    
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\ActionBundle\Entity\ActionBacklog", mappedBy="backlog", cascade={"persist", "remove"})
+     */
+    private $actions;
 
     public function __construct()
     {
         $this->issues = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->actions = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -214,6 +221,16 @@ class Backlog
     public function addIssue(Issue $issue)
     {
         $this->issues->add($issue);
+    }
+    
+    public function getActions()
+    {
+        return $this->actions;
+    }
+    
+    public function setActions(ArrayCollection $actions)
+    {
+        $this->actions = $actions;
     }
 
 }

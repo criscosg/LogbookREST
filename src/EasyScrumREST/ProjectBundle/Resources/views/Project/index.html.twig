@@ -7,7 +7,7 @@
 {% block buttons_section %}
     {% if is_granted('ROLE_SCRUM_MASTER') or is_granted('ROLE_PRODUCT_OWNER') %}
         <div class="btn-group">
-            <a title="" data-original-title="{{ "New Project" | trans }}" href="{{ path('project_creation') }}" class="btn btn-large tip-bottom"">
+            <a title="" data-original-title="{{ "New Project" | trans }}" href="{{ path('project_creation') }}" class="btn btn-large tip-bottom">
                 <i class="fa fa-plus"></i> 
             </a>
         </div>
@@ -22,7 +22,7 @@
 
 {% block content %}
     <div class="row">
-    {% for project in projects %}
+    {% for project in projects if not is_granted('ROLE_PRODUCT_OWNER') or ( project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
         <div class="col-xs-12 col-sm-6 col-md-4">
         	<div class="widget-box">
         		<div class="widget-title">

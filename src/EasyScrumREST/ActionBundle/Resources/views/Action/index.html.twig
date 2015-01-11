@@ -116,14 +116,14 @@
                 <h5>Latest actions on urgencies</h5>
             </div>
             <div class="widget-content nopadding updates">
-                {% for action in actions if action.urgencies is defined %}
+                {% for action in actions if action.urgency is defined %}
                     <div class="new-update clearfix">
                         <i class="fa {{ action.getIcon }}"></i>
                             <div class="update-done">
                                 <a href="" title="">
                                     <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
                                 </a>
-                                <span>{{ action.getDescriptionText | replace({'%t%': action.task.title, '%s%': action.task.sprint.title}) }}</span>
+                                <span>{{ action.getDescriptionText | replace({'%u%': action.urgency.title}) }}</span>
                             </div>
                         <div class="update-date">
                         <span class="update-day">{{ action.created | date('d') }}</span>

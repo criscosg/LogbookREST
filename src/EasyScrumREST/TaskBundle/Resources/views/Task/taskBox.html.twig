@@ -18,7 +18,7 @@
             {% elseif is_granted('ROLE_SCRUM_MASTER') and (not ended) and task.sprint.finalized is empty %}
                 <a class="delete-task" href="{{ path('delete_normal_task', {id: task.id}) }}"><i class="fa fa-trash-o"></i></a>
             {% endif %}
-            {% if ended %}
+            {% if ended and not is_granted('ROLE_PRODUCT_OWNER') %}
                 {% if task.user is not empty and (is_granted('ROLE_SCRUM_MASTER') or app.user.isEqualTo(task.user)) %}
                     <a href="{{ path('task_unlock', {id:task.id}) }}" class="unlock" data-toggle="tooltip" data-placement="top" title="{{ 'Task blocked by ' ~ task.user.name }}"><i class="fa fa-lock" {% if task.user.color is not empty %}style="font-size: 20px;color:{{ task.user.color }}"{% else %}style="font-size: 20px;"{% endif %}></i></a>
                 {% elseif task.user is empty %}

@@ -100,6 +100,12 @@ class Task
     private $listHours;
 
     /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\ActionBundle\Entity\ActionTask", mappedBy="task", cascade={"persist", "remove"})
+     */
+    private $actions;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser", inversedBy="tasks")
      * @Expose
      */
@@ -108,6 +114,7 @@ class Task
     public function __construct()
     {
         $this->listHours = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->actions = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -320,6 +327,16 @@ class Task
         }
 
         return null;
+    }
+
+    public function getActions()
+    {
+        return $this->actions;
+    }
+
+    public function setActions(ArrayCollection $actions)
+    {
+        $this->actions = $actions;
     }
 
 }

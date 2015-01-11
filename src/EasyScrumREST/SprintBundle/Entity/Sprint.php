@@ -156,11 +156,18 @@ class Sprint
      */
     private $listHours;
     
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\ActionBundle\Entity\ActionSprint", mappedBy="sprint", cascade={"persist", "remove"})
+     */
+    private $actions;
+    
     public function __construct()
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
         $this->urgencies = new \Doctrine\Common\Collections\ArrayCollection();
         $this->listHours = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->actions = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -599,5 +606,15 @@ class Sprint
         }
         
         return null;
+    }
+    
+    public function getActions()
+    {
+        return $this->actions;
+    }
+    
+    public function setActions(ArrayCollection $actions)
+    {
+        $this->actions = $actions;
     }
 }

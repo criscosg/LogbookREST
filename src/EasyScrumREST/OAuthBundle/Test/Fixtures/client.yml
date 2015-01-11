@@ -1,0 +1,4 @@
+EasyScrumREST\OauthBundle\Entity\Client:
+    randomId: "25mlhmydi1lw8ook4k88kssg48koo8gk800oko80wkokg4kcg8"
+    secret: "2a1iled5fs00s84ocwogwkw0w4kk400kcs08wcs84koko8c48k"
+    allowedGrantTypes: ['authorization_code', 'password', 'refresh_token', 'token', 'client_credentials']

@@ -46,28 +46,28 @@
                 </div>
                 
                 <div class="form-group">
-                    <label id="label_name" for="api_user_name" class="col-sm-3 control-label user-active is-public"><span class="red">*</span> {{ "Nombre" |trans}}</label>
+                    <label id="label_name" for="api_user_name" class="col-sm-3 control-label user-active is-public"><span class="red">*</span> {{ "Name" |trans}}</label>
                     <div class="col-sm-4">
                         {{ form_widget(form.name, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label id="label_lastname" for="api_user_lastname" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Apellidos" |trans}}</label>
+                    <label id="label_lastname" for="api_user_lastname" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Surname" |trans}}</label>
                     <div class="col-sm-4">
                         {{ form_widget(form.lastName, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label id="label_password" for="api_user_password" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Contraseña" |trans}}</label>
+                    <label id="label_password" for="api_user_password" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Password" |trans}}</label>
                     <div class="col-sm-4">
                         {{ form_widget(form.password, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label id="label_password" for="api_user_roles" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Roles" |trans}}</label>
+                    <label id="label_password" for="api_user_roles" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Rol" |trans}}</label>
                     <div class="col-sm-4">
                         {{ form_widget(form.roles, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
@@ -76,7 +76,7 @@
                 {{ form_rest(form) }}
                 <div class="form-actions">
                     <button id="register" type="submit" class="btn btn-large btn-primary">
-                        {{ "Save changes"|trans }}
+                        {{ "Save"|trans }}
                     </button>
                     <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
                     <div class="help-block mt10">

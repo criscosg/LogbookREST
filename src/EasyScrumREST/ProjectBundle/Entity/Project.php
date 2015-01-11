@@ -1,6 +1,5 @@
 <?php
 namespace EasyScrumREST\ProjectBundle\Entity;
-
 use EasyScrumREST\UserBundle\Entity\ApiUser;
 
 use EasyScrumREST\SprintBundle\Entity\Sprint;
@@ -60,7 +59,7 @@ class Project
      * @MaxDepth(0)
      */
     private $sprints;
-    
+
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="EasyScrumREST\ProjectBundle\Entity\Backlog", mappedBy="project", cascade={"persist", "merge", "remove"})
@@ -74,7 +73,7 @@ class Project
      * @Expose
      */
     private $company;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser")
      * @Expose
@@ -96,10 +95,17 @@ class Project
      */
     protected $deleted;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\ActionBundle\Entity\ActionProject", mappedBy="project", cascade={"persist", "remove"})
+     */
+    private $actions;
+
     public function __construct()
     {
         $this->sprints = new \Doctrine\Common\Collections\ArrayCollection();
         $this->backlogs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->actions = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -134,7 +140,7 @@ class Project
         } else {
             return strval($this->id);
         }
-    
+
     }
 
     public function getDescription()
@@ -151,70 +157,71 @@ class Project
     {
         return $this->sprints;
     }
-    
+
     public function setSprints(ArrayCollection $sprints)
     {
         $this->sprints = $sprints;
     }
-    
+
     public function addSprint(Sprint $sprint)
     {
         $this->sprints->add($sprint);
     }
-    
+
     public function getBacklogs()
     {
         return $this->backlogs;
     }
-    
+
     public function setBacklogs(ArrayCollection $backlogs)
     {
         $this->backlogs = $backlogs;
     }
-    
+
     public function addBacklog(Backlog $backlog)
     {
         $this->backlogs->add($backlog);
     }
-    
+
     public function getCompany()
     {
         return $this->company;
     }
-    
+
     public function setCompany(Company $company)
     {
         $this->company = $company;
     }
-    
+
     public function getDeleted()
     {
         return $this->deleted;
     }
-    
+
     public function setDeleted($deleted)
     {
         $this->deleted = $deleted;
     }
-    
+
     public function getOwner()
     {
         return $this->owner;
     }
-    
+
     public function setOwner(ApiUser $owner)
     {
         $this->owner = $owner;
     }
-    
+
     public function getSalt()
     {
         return $this->salt;
     }
-    
+
     /**
      * @ORM\PrePersist
      */
+
     public function setSalt($salt = null)
     {
         if (!$this->salt) {
@@ -224,26 +231,37 @@ class Project
             $this->salt = $salt;
         }
     }
-    
+
     public function getTitle()
     {
         return $this->title;
     }
-    
+
     public function setTitle($title)
     {
         $this->title = $title;
     }
-    
+
     public function getFinishedBacklogTasks()
     {
-        $finished=array();
-        for ($i=0; $i < $this->backlogs->count(); $i++) {
-            if($this->backlogs->get($i)->getState() == "DONE") {
-                $finished[]=$this->backlogs->get($i);
+        $finished = array();
+        for ($i = 0; $i < $this->backlogs->count(); $i++) {
+            if ($this->backlogs->get($i)->getState() == "DONE") {
+                $finished[] = $this->backlogs->get($i);
             }
         }
-        
+
         return $finished;
     }
+
+    public function getActions()
+    {
+        return $this->actions;
+    }
+
+    public function setActions(ArrayCollection $actions)
+    {
+        $this->actions = $actions;
+    }
+
 }

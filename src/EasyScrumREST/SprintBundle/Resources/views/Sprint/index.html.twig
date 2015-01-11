@@ -64,7 +64,9 @@
         </div>
     </div>
     <div class="row">
-    {% for sprint in sprints %}
+    {% set inside = false %}
+    {% for sprint in sprints if not is_granted('ROLE_PRODUCT_OWNER') or ( sprint.project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(sprint.project.owner)) %}
+        {% set inside = true %}
         <div class="col-xs-12 col-sm-6 col-md-4">
         	<div class="widget-box">
         		<div class="widget-title">
@@ -124,16 +126,16 @@
         </div>
     {% endfor %}
     </div>
-    {% if paginator is defined and paginator is not null and (sprints | length > 0) %}
-    <div class="row">
-        <div class="pagination alternate">
-            <ul>
-                {% set direccion = 'sprints_list' %}
-                {% set routeParams =  app.request.query.all %}
-                {% include 'FrontendBundle:Commons:paginator.html.twig' %}
-            </ul>
+    {% if paginator is defined and paginator is not null and (sprints | length > 0) and inside %}
+        <div class="row">
+            <div class="pagination alternate">
+                <ul>
+                    {% set direccion = 'sprints_list' %}
+                    {% set routeParams =  app.request.query.all %}
+                    {% include 'FrontendBundle:Commons:paginator.html.twig' %}
+                </ul>
+            </div>
         </div>
-    </div>
     {% endif %}
     
 {% endblock %}

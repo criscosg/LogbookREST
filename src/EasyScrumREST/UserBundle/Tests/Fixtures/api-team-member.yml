@@ -1,7 +1,9 @@
-EasyScrumREST\UserBundle\Entity\AdminUser:
-    email: "jiminy@cricket.com"
+EasyScrumREST\UserBundle\Entity\ApiUser:
+    email: "member@cricket.com"
     password: "mFKBK+2hHaVtz1onBMi3G6vj6kNUwWzSZrc1Yz+Cdm6eXWxdkmXmada9uQhnDcjgxhUw8aFQ4FgoOr4zSx6dng=="
     salt: "cf902b71f391a2a973cdb32ae3129655"
     created: "__date__2013-02-23"
-    name: 'Pepe'
-    lastName: 'Grillo'
+    name: 'Member'
+    lastName: 'Team'
+    roles: 'ROLE_TEAM'
+    company: 'UserBundle:Company__id__1'

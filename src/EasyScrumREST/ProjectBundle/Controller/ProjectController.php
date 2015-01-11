@@ -55,7 +55,11 @@ class ProjectController extends EasyScrumController
         }
         $request=$this->getRequest();
         if ($request->getMethod()=='POST') {
-            $newProject = $this->get('project.handler')->createProject($form, $request);
+            if($this->container->get('security.context')->isGranted('ROLE_PRODUCT_OWNER')) {
+                $newProject = $this->get('project.handler')->createProject($form, $request, $this->getUser());
+            } else {
+                $newProject = $this->get('project.handler')->createProject($form, $request);
+            }
             if($newProject) {
                 $this->get('action.manager')->createProjectAction($newProject, $this->getUser(), ActionProject::CREATE_PROJECT);
 

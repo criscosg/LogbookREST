@@ -2,6 +2,10 @@
 
 namespace EasyScrumREST\TestBundle\Classes;
 
+use FOS\RestBundle\Decoder\JsonDecoder;
+
+use Symfony\Component\Serializer\Encoder\JsonDecode;
+
 require_once __DIR__.'/../../../../app/AppKernel.php';
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -13,7 +17,9 @@ use EasyScrumREST\TestBundle\Util\FileHelper;
 abstract class CustomTestCase extends WebTestCase
 {
     const USERNAME = "jiminy@cricket.com";
-    const PASSWORD = "conscience";
+    const PASSWORD = "123456";
+    const OAUTH_CLIENT_ID = "1_25mlhmydi1lw8ook4k88kssg48koo8gk800oko80wkokg4kcg8";
+    const OAUTH_SECRET = "2a1iled5fs00s84ocwogwkw0w4kk400kcs08wcs84koko8c48k";
 
     protected $entityManager;
     protected $container;
@@ -183,23 +189,29 @@ abstract class CustomTestCase extends WebTestCase
         foreach ($values as $field => $value) {
             $this->setField($o, $field, $value);
         }
+
         $this->entityManager->persist($o);
         $this->entityManager->flush();
     }
 
     protected function setField($o, $field, $value)
     {
-        if (strpos($value, "__id__") !== false) {
-            $parts = explode("__id__", $value);
-            $bundleName = $parts[0];
-            $objectId = $parts[1];
-            $this->setFixtureObject($bundleName, $objectId, $field, $o);
-        } else if (strpos($value, "__date__") !== false) {
-            $parts = explode("__date__", $value);
-            $dateString = $parts[0];
-            $date = new \DateTime($dateString);
-            $method = 'set' . ucfirst($field);
-            $o->$method($date);
+        if (!is_array($value)){
+            if (strpos($value, "__id__") !== false) {
+                $parts = explode("__id__", $value);
+                $bundleName = $parts[0];
+                $objectId = $parts[1];
+                $this->setFixtureObject($bundleName, $objectId, $field, $o);
+            } else if (strpos($value, "__date__") !== false) {
+                $parts = explode("__date__", $value);
+                $dateString = $parts[0];
+                $date = new \DateTime($dateString);
+                $method = 'set' . ucfirst($field);
+                $o->$method($date);
+            } else {
+                $method = 'set' . ucfirst($field);
+                $o->$method($value);
+            }
         } else {
             $method = 'set' . ucfirst($field);
             $o->$method($value);
@@ -237,10 +249,20 @@ abstract class CustomTestCase extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/login');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $form = $crawler->selectButton('Entrar!')->form(array('_username' => $username, '_password'=>$password));
+        $form = $crawler->selectButton('Acceder')->form(array('_username' => $username, '_password'=>$password));
         $crawler = $this->client->submit($form);
         $crawler = $this->client->followRedirect();
 
         return $crawler;
+    }
+    
+    protected function loginOauth($username = self::USERNAME, $password = self::PASSWORD)
+    {
+        //ldd('/oauth/v2/token?client_id='.self::OAUTH_CLIENT_ID.'&client_secret='.self::OAUTH_SECRET.'&grant_type=password&username='.self::USERNAME.'&password='.self::PASSWORD);
+        $crawler = $this->client->request('GET', '/oauth/v2/token?client_id='.self::OAUTH_CLIENT_ID.'&client_secret='.self::OAUTH_SECRET.'&grant_type=password&username='.self::USERNAME.'&password='.self::PASSWORD);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $response=json_decode($this->client->getResponse()->getContent(), true);
+        
+        return $response['access_token'];
     }
 }

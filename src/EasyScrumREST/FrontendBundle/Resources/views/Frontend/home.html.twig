@@ -9,6 +9,17 @@
     <link rel="stylesheet" href="{{ asset('bundles/frontend/css/jquery.gritter.css') }}" />
 {% endblock %}
 
+{% block buttons_section %}
+    {% if is_granted('ROLE_SCRUM_MASTER') or is_granted('ROLE_PRODUCT_OWNER') %}
+        <div class="btn-group">
+            <a title="" data-original-title="{{ "Show notifications" | trans }}" href="#" class="btn btn-large tip-bottom notifications">
+                <i class="fa fa-bell"></i>
+                <span class="label label-danger">{% if app.user.notification and app.user.notification | length > 0 %}{{ app.user.notification | length }}{% endif %}</span>
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block breadcrumb %}
   {% set crumbs = {'Home dashboard':'#'} %}
   {{ setCrumbs(crumbs) }}
@@ -16,64 +27,65 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col-xs-12 col-sm-12 col-lg-12">
-        <div class="widget-box">
-            <div class="widget-title">
-                <span class="icon">
-                    <i class="fa fa-refresh"></i>
-                </span>
-                <h5>Latest actions</h5>
-            </div>
-            <div class="widget-content nopadding updates">
-                {% for action in actions %}
-                    <div class="new-update clearfix">
-                        <i class="fa {{ action.getIcon }}"></i>
-                            <div class="update-done">
-                            {% if action.task is defined %}
-                                <a href="{{ path('show_normal_sprint', {id: action.task.sprint.id}) }}" title="">
-                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
-                                </a>
-                                <span>{{ action.getDescriptionText | replace({'%t%': action.task.title, '%s%': action.task.sprint.title}) }}</span>
-                            {% elseif action.sprint is defined %}    
-                                <a href="{{ path('show_normal_sprint', {id: action.sprint.id}) }}" title="">
-                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
-                                </a>
-                                <span>{{ action.getDescriptionText | replace({'%s%': action.sprint.title}) }}</span>
-                            {% elseif action.project is defined %}
-                                <a href="{{ path('show_normal_project', {id: action.project.id}) }}" title="">
-                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
-                                </a>
-                                <span>{{ action.getDescriptionText | replace({'%p%': action.project.title}) }}</span>
-                            {% elseif action.backlog is defined %}
-                                <a href="{{ path('show_normal_project', {id: action.backlog.project.id}) }}" title="">
-                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
-                                </a>
-                                <span>{{ action.getDescriptionText | replace({'%p%': action.backlog.project.title, '%b%': action.backlog.title}) }}</span>    
-                            {% elseif action.urgency is defined %}
-                                <a href="#" title="">
-                                    <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
-                                </a>
-                                <span>{{ action.getDescriptionText | replace({'%u%': action.urgency.title}) }}</span> 
-                            {% else %}
-                                <a href="#" title="">
-                                    <strong>{{ action.getTitleText }}</strong>
-                                </a>
-                            {% endif %}
+    {% if is_granted('ROLE_SCRUM_MASTER') and actions | length > 0 %}
+        <div class="col-xs-12 col-sm-12 col-lg-12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="fa fa-refresh"></i>
+                    </span>
+                    <h5>Latest actions</h5>
+                </div>
+                <div class="widget-content nopadding updates">
+                    {% for action in actions %}
+                        <div class="new-update clearfix">
+                            <i class="fa {{ action.getIcon }}"></i>
+                                <div class="update-done">
+                                {% if action.task is defined %}
+                                    <a href="{{ path('show_normal_sprint', {id: action.task.sprint.id}) }}" title="">
+                                        <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                    </a>
+                                    <span>{{ action.getDescriptionText | replace({'%t%': action.task.title, '%s%': action.task.sprint.title}) }}</span>
+                                {% elseif action.sprint is defined %}    
+                                    <a href="{{ path('show_normal_sprint', {id: action.sprint.id}) }}" title="">
+                                        <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                    </a>
+                                    <span>{{ action.getDescriptionText | replace({'%s%': action.sprint.title}) }}</span>
+                                {% elseif action.project is defined %}
+                                    <a href="{{ path('show_normal_project', {id: action.project.id}) }}" title="">
+                                        <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                    </a>
+                                    <span>{{ action.getDescriptionText | replace({'%p%': action.project.title}) }}</span>
+                                {% elseif action.backlog is defined %}
+                                    <a href="{{ path('show_normal_project', {id: action.backlog.project.id}) }}" title="">
+                                        <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                    </a>
+                                    <span>{{ action.getDescriptionText | replace({'%p%': action.backlog.project.title, '%b%': action.backlog.title}) }}</span>    
+                                {% elseif action.urgency is defined %}
+                                    <a href="#" title="">
+                                        <strong>{{ action.getTitleText }}.</strong> By user {{ action.user }}
+                                    </a>
+                                    <span>{{ action.getDescriptionText | replace({'%u%': action.urgency.title}) }}</span> 
+                                {% else %}
+                                    <a href="#" title="">
+                                        <strong>{{ action.getTitleText }}</strong>
+                                    </a>
+                                {% endif %}
+                                </div>
+                            <div class="update-date">
+                            <span class="update-day">{{ action.created | date('d') }}</span>
+                                {{ action.created | date('M') }}
                             </div>
-                        <div class="update-date">
-                        <span class="update-day">{{ action.created | date('d') }}</span>
-                            {{ action.created | date('M') }}
                         </div>
+                    {% endfor %}
+                    <div class="new-update clearfix viewall">
+                        <a href="{{ path('actions') }}"> + View all + </a>
                     </div>
-                {% endfor %}
-                <div class="new-update clearfix viewall">
-                    <a href="{{ path('actions') }}"> + View all + </a>
                 </div>
             </div>
         </div>
-    </div>
-
-    {% for sprint in sprints %}
+    {% endif %}
+    {% for sprint in sprints if not is_granted('ROLE_PRODUCT_OWNER') or ( sprint.project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(sprint.project.owner)) %}
         <div class="col-xs-12">
         	<div class="widget-box">
         		<div class="widget-title">
@@ -109,13 +121,6 @@
             <strong>{{"Information!" | trans }}</strong>
             {{"No sprints active in this moment" | trans }}
         </div>	
-        <div class="row">
-        {% if is_granted('ROLE_SCRUM_MASTER') %}
-            <a href="{{ path('sprint_creation_first') }}" class="btn btn-primary btn-m">
-                <i class="fa fa-plus"></i> {{ "New Sprint" | trans }}
-            </a>
-        {% endif %}
-        </div>
 	{% endfor %}
 {% endblock %}
 
@@ -137,6 +142,21 @@
             	{% endfor %}
         	{% endfor %}
     	{% endif %}
+
+    	$('.notifications').click(function(event){
+        	event.preventDefault();
+    		{% if app.user.notification %}
+            	{% for sprint in sprints %}
+            	    {% for key, notification in sprint.getSprintNotifications %}
+                    	$.gritter.add({
+                    		title:	'{{ key }}',
+                    		text:	'{{ notification }}',
+                    		sticky: false
+                    	});
+                	{% endfor %}
+            	{% endfor %}
+        	{% endif %}	
+    	});
         
     	{% for sprint in sprints %}
     	    {% set chartHours = sprint.getChartHoursArray() %}

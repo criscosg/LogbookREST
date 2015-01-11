@@ -22,7 +22,7 @@
                   method="post" xmlns="http://www.w3.org/1999/html">
                 
                 <div class="form-group">
-                    <label id="label_email" for="api_user_email" class="col-sm-3 control-label user-active is-public"><span class="red">*</span> {{ "Name" |trans}}</label>
+                    <label id="label_email" for="api_user_email" class="col-sm-3 control-label user-active is-public"><span class="red">*</span> {{ "Company name" |trans}}</label>
                     <div class="col-sm-4">
                         {{ form_widget(form.name, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
@@ -45,7 +45,7 @@
                 {{ form_rest(form) }}
                 <div class="form-actions">
                     <button id="register" type="submit" class="btn btn-large btn-primary">
-                        {{ "Save changes"|trans }}
+                        {{ "Save"|trans }}
                     </button>
                     <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
                     <div class="help-block mt10">

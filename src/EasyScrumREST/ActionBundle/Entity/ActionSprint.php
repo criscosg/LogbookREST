@@ -15,14 +15,14 @@ class ActionSprint extends Action
     const FINALIZED_SPRINT = "finalized_sprint";
     const STATE_HOURS_SAVED = "saved_hours";
     
-    public $titles = array(self::CREATE_SPRINT => "New sprint created", self::EDIT_SPRINT => "Sprint edited", 
+    protected $titles = array(self::CREATE_SPRINT => "New sprint created", self::EDIT_SPRINT => "Sprint edited", 
             self::FINALIZED_SPRINT => "Sprint finalized", self::STATE_HOURS_SAVED=>"Sprint saved with hours");
-    public $description = array(self::CREATE_SPRINT => "A new sprint has been created with name %s%",
+    protected $description = array(self::CREATE_SPRINT => "A new sprint has been created with name %s%",
                                 self::EDIT_SPRINT=>"The sprint %s% has been edited",
                                 self::FINALIZED_SPRINT => "The sprint %s% has been marked as finalized",
                                 self::STATE_HOURS_SAVED => "The hours state of sprint %s% has been registered");
     /**
-     * @ORM\ManyToOne(targetEntity="EasyScrumREST\SprintBundle\Entity\Sprint")
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\SprintBundle\Entity\Sprint", inversedBy="actions")
      */
     private $sprint;
 
@@ -34,16 +34,6 @@ class ActionSprint extends Action
     public function setSprint(Sprint $sprint)
     {
         $this->sprint = $sprint;
-    }
-    
-    public function getTitle()
-    {
-        return $titles[$this->getType()];
-    }
-    
-    public function getDescription()
-    {
-        return $description[$this->getType()];
     }
     
     public function getIcon()

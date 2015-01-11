@@ -30,7 +30,6 @@ class ActionRepository extends EntityRepository
         $qb->join('u.company', 'c');
         $qb->andWhere($qb->expr()->eq('u.company', $user->getCompany()->getId()));
         $qb->orderBy('a.id', 'DESC');
-        $qb->groupBy('a.type');
     
         return $qb->getQuery()->getResult();
     }

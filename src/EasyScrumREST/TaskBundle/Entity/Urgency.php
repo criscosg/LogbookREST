@@ -86,6 +86,12 @@ class Urgency
      * @MaxDepth(0)
      */
     private $listHours;
+    
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\ActionBundle\Entity\ActionUrgency", mappedBy="urgency", cascade={"persist", "remove"})
+     */
+    private $actions;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
@@ -95,6 +101,8 @@ class Urgency
 
     public function __construct()
     {
+        $this->listHours = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->actions = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -242,6 +250,16 @@ class Urgency
             }
             $this->salt = $salt;
         }
+    }
+    
+    public function getActions()
+    {
+        return $this->actions;
+    }
+    
+    public function setActions(ArrayCollection $actions)
+    {
+        $this->actions = $actions;
     }
 
 }
