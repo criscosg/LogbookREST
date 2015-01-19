@@ -127,7 +127,7 @@ class ProjectController extends EasyScrumController
     
         return $this->render('ProjectBundle:Backlog:create.html.twig', array('form' => $form->createView(), 'project'=>$project));
     }
-    
+
     /**
      * @ParamConverter("backlog", class="ProjectBundle:Backlog")
      */
@@ -143,7 +143,7 @@ class ProjectController extends EasyScrumController
                 return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$backlog->getProject()->getId())));
             }
         }
-    
+
         return $this->render('ProjectBundle:Backlog:create.html.twig', array('form' => $form->createView(), 'project'=>$backlog->getProject(), 'backlog'=>$backlog, 'edition'=>true));
     }
     
