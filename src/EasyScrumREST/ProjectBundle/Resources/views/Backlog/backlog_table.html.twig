@@ -14,7 +14,7 @@
         		<a title="Edit" href="{{ path('edit_backlog', { 'id': task.id }) }}" class="btn btn-primary btn-xs">Edit</a>
         		<a title="Delete" href="{{ path('delete_backlog', { 'id': task.id }) }}" class="btn btn-danger btn-xs">Delete</a>
 			{% else %}
-			    <a title="Edit" href="{{ path('edit_issue', { 'id': issue.id }) }}" class="btn btn-primary btn-xs">Edit</a>
+			    <a title="Edit" href="{{ path('edit_issue', { 'id': task.id }) }}" class="btn btn-primary btn-xs">Edit</a>
 			{% endif %}
 	    {% endif %}
 		

@@ -1,0 +1,21 @@
+EasyScrumREST\TaskBundle\Entity\Task:
+    created: "__date__2013-02-23"
+    title: 'Task test'
+    description: 'Task de sprints'
+    sprint: 'SprintBundle:Sprint__id__1'
+    hours: 5
+    state: TODO
+    
+EasyScrumREST\TaskBundle\Entity\Task:
+    created: "__date__2013-02-23"
+    title: 'Task test finalized'
+    description: 'Descripcion done de sprints'
+    sprint: 'SprintBundle:Sprint__id__1'
+    hours: 5
+    state: DONE    
+
+EasyScrumREST\TaskBundle\Entity\HoursSpent:
+    hoursSpent: 7
+    hoursEnd: 0
+    user: 'UserBundle:User__id__1'
+    task: 'TaskBundle:Task__id__1'

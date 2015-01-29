@@ -4,26 +4,39 @@
     <div id="logo">
         <img src="{{ asset('bundles/frontend/img/logo.png') }}" alt="" />
     </div>
-    <div id="loginbox">
-        <form action="{{ path('register') }}" method="post" name="register">
-     <p>{{"Register a user" | trans}}.</p>
-            <div class="input-group input-sm">
-                {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'User email'}}) }}
+    <div id="registerbox">
+        <form action="{{ path('register') }}" class="form-horizontal" method="post" name="register">
+            <h3 class="title">Easy<strong>Scrum</strong></h3>
+            <p>{{"Register for free" | trans}}.</p>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'User email'}}) }}
+                </div>
             </div>
-            <div class="input-group input-sm">
-                {{ form_widget(form.company.name, {'attr': {'class': 'form-control', 'placeholder': 'Company name'}}) }}
+            <div class="form-group">
+                <div class="col-sm-12">
+                    {{ form_widget(form.company.name, {'attr': {'class': 'form-control', 'placeholder': 'Company name'}}) }}
+                </div>
             </div>
-            <div class="input-group input-sm">
-                {{ form_widget(form.password.first, {'attr': {'class': 'form-control'}}) }}
+            <div class="form-group">
+                <div class="col-sm-12">
+                    {{ form_widget(form.password.first, {'attr': {'class': 'form-control'}}) }}
+                </div>
             </div>
-            <div class="input-group input-sm">
-                {{ form_widget(form.password.second, {'attr': {'class': 'form-control'}}) }}
+            <div class="form-group">
+                <div class="col-sm-12">
+                    {{ form_widget(form.password.second, {'attr': {'class': 'form-control'}}) }}
+                </div>
             </div>
             {{ form_rest(form) }}
-            <div class="form-actions clearfix">
-                <div class="pull-right">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <div class="form-actions clearfix">
+                        <div class="pull-right">
+                        </div>
+                        <input type="submit" class="btn btn-block btn-primary btn-default" value="{{"Register" | trans}}" />
+                    </div>
                 </div>
-                <input type="submit" class="btn btn-block btn-primary btn-default" value="{{"Register" | trans}}" />
             </div>
         </form>
     </div>

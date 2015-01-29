@@ -21,3 +21,10 @@ EasyScrumREST\ProjectBundle\Entity\Backlog:
     description: 'Probar que tareas backlog'
     priority: 10
     project: 'ProjectBundle:Project__id__1'
+
+EasyScrumREST\ProjectBundle\Entity\Issue:
+    created: "__date__2013-02-23"
+    title: 'Tarea issue test'
+    description: 'Probar que incidencias backlog'
+    priority: 10
+    backlog: 'ProjectBundle:Backlog__id__1'    
