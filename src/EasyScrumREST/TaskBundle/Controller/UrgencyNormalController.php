@@ -46,7 +46,7 @@ class UrgencyNormalController extends EasyScrumController
 
     /**
      * @ParamConverter("urgency", class="TaskBundle:Urgency")
-     * @ParamConverter("sprint", class="SprintBundle:Sprint")
+     * @ParamConverter("sprint", class="SprintBundle:Sprint", options={"id" = "sprint_id"})
      * 
      */
     public function editUrgencyAction(Urgency $urgency, Sprint $sprint)
@@ -57,12 +57,12 @@ class UrgencyNormalController extends EasyScrumController
             $urgency = $this->container->get('urgency.handler')->handleUrgency($urgency, $request);
             if($urgency) {
                 $this->get('action.manager')->createUrgencyAction($urgency, $this->getUser(), ActionUrgency::CREATE_URGENCY);
-                
+
                 return $this->redirect($this->generateUrl('show_normal_sprint', array('id'=>$sprint->getId())));
             }
         }
 
-        return $this->render('TaskBundle:Urgency:create.html.twig', array('form' => $form->createView(),'edition' => true, 'urgency' => $urgency));
+        return $this->render('TaskBundle:Urgency:create.html.twig', array('form' => $form->createView(),'edition' => true, 'urgency' => $urgency, 'sprint'=>$sprint->getId()));
     }
 
     /**
@@ -171,16 +171,18 @@ class UrgencyNormalController extends EasyScrumController
      * @Template("TaskBundle:Urgency:urgencies.html.twig")
      *
      * @ParamConverter("urgency", class="TaskBundle:Urgency")
+     * @ParamConverter("sprint", class="SprintBundle:Sprint", options={"id" = "sprint"})
      *
      * @return array
      */
-    public function moveToUndoneAction(Urgency $urgency)
+    public function moveToUndoneAction(Urgency $urgency, Sprint $sprint)
     {
         $this->container->get('urgency.handler')->moveTo($urgency, 'UNDONE');
         $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findAll();
+        $doneUrgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
         $this->get('action.manager')->createUrgencyAction($urgency, $this->getUser(), ActionUrgency::DROPED_URGENCY);
 
-        return array('urgencies'=> $urgencies);
+        return array('urgencies'=> $urgencies, 'doneUrgencies'=>$doneUrgencies);
     }
 
 }

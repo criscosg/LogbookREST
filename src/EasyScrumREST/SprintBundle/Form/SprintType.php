@@ -9,9 +9,13 @@ class SprintType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', 'text', array('required' => false))
+        $builder->add('title', 'text', array('required' => false))
             ->add('description', 'textarea', array('required' => false))
-            ->add('company', 'entity', array('class'=>'UserBundle:Company', 'required'=>false));
+            ->add('project', 'entity', array('class'=>'ProjectBundle:Project', 'required'=>false))
+            ->add('dateFrom', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => true, 'format' => 'dd/MM/yyyy'))
+            ->add('dateTo', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => true, 'format' => 'dd/MM/yyyy'))
+            ->add('hoursAvailable', 'number', array('required'=>true))
+            ->add('focus', 'number', array('required'=>true));
     }
 
     public function getName()

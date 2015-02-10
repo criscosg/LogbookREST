@@ -3,7 +3,7 @@ new_normal_urgency:
     defaults: { _controller: TaskBundle:UrgencyNormal:newUrgency }
     
 edit_normal_urgency:
-    pattern: /edit/{id}
+    pattern: /edit/{id}/{sprint_id}
     defaults: { _controller: TaskBundle:UrgencyNormal:editUrgency }
     
 hours_urgency:
@@ -19,11 +19,11 @@ delete_normal_urgency:
     defaults: { _controller: TaskBundle:UrgencyNormal:deleteUrgency }
     
 move_on_process_urgency:
-    pattern: /to-on-process/{id}
+    pattern: /to-on-process/{id}/{sprint}
     defaults: { _controller: TaskBundle:UrgencyNormal:moveToOnProcess }
     
 move_todo_urgency:
-    pattern: /to-todo/{id}
+    pattern: /to-todo/{id}/{sprint}
     defaults: { _controller: TaskBundle:UrgencyNormal:moveToTodo }
     
 move_done_urgency:
@@ -31,5 +31,5 @@ move_done_urgency:
     defaults: { _controller: TaskBundle:UrgencyNormal:moveToDone }
     
 move_undone_urgency:
-    pattern: /to-undone/{id}
+    pattern: /to-undone/{id}/{sprint}
     defaults: { _controller: TaskBundle:UrgencyNormal:moveToUndone }    
