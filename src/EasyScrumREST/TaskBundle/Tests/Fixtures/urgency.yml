@@ -1,0 +1,20 @@
+EasyScrumREST\TaskBundle\Entity\Urgency:
+    created: "__date__2013-02-23"
+    title: 'Urgency test'
+    description: 'Urgency de sprints'
+    project: 'ProjectBundle:Project__id__1'
+    state: TODO
+    
+EasyScrumREST\TaskBundle\Entity\Urgency:
+    created: "__date__2013-02-23"
+    title: 'Urgency test finalized'
+    description: 'Descripcion Urgency done de sprints'
+    project: 'ProjectBundle:Project__id__1'
+    sprint: 'SprintBundle:Sprint__id__1'
+    state: DONE    
+
+EasyScrumREST\TaskBundle\Entity\HoursSpent:
+    hoursSpent: 7
+    hoursEnd: 0
+    user: 'UserBundle:User__id__1'
+    urgency: 'TaskBundle:Urgency__id__1'

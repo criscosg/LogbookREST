@@ -36,7 +36,7 @@
         </div>
         <div class="widget-content nopadding">
             <form class="form-horizontal" id="form-create-item" role="form"
-                  action="{% if edition is defined %}{{ path('edit_normal_urgency',{'id':urgency.id}) }} {% else %} {{ path('new_normal_urgency', {'id':sprint}) }} {% endif %}"
+                  action="{% if edition is defined %}{{ path('edit_normal_urgency',{'id':urgency.id, 'sprint_id': sprint}) }} {% else %} {{ path('new_normal_urgency', {'id':sprint}) }} {% endif %}"
                   method="post" {% if edition is defined %}{{ form_enctype(form) }} {% endif %} xmlns="http://www.w3.org/1999/html">
 
                 <div class="form-group">

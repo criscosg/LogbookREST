@@ -133,7 +133,7 @@ class TaskNormalController extends EasyScrumController
             $this->container->get('task.handler')->moveTo($task, 'ONPROCESS');
             $this->get('action.manager')->createTaskAction($task, $this->getUser(), ActionTask::ONPROCESS_TASK);
         }
-        
+
         return array('sprint'=> $task->getSprint());
     }
     
@@ -180,7 +180,7 @@ class TaskNormalController extends EasyScrumController
      */
     public function moveToUndoneAction(Task $task)
     {
-        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || ! $task->getUser()) {
+        if (($task->getUser() && $task->getUser()->isEqualTo($this->getUser())) || !$task->getUser()) {
             $this->container->get('task.handler')->moveTo($task, 'UNDONE');
             $this->get('action.manager')->createTaskAction($task, $this->getUser(), ActionTask::DROPED_TASK);
         }

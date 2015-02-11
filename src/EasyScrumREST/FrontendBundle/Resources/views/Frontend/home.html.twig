@@ -117,10 +117,12 @@
         	</div>
     	</div>
     {% else %}
-        <div class="alert alert-info mt">
-            <strong>{{"Information!" | trans }}</strong>
-            {{"No sprints active in this moment" | trans }}
-        </div>	
+        <div class="col-xs-12 col-sm-12 col-lg-12">
+            <div class="alert alert-info mt">
+                <strong>{{"Information!" | trans }}</strong>
+                {{"No sprints active in this moment" | trans }}
+            </div>
+        </div>
 	{% endfor %}
 {% endblock %}
 

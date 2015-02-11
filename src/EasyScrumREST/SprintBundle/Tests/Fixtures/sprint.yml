@@ -1,0 +1,12 @@
+EasyScrumREST\SprintBundle\Entity\Sprint:
+    created: "__date__2013-02-23"
+    title: 'Sprint test'
+    description: 'Testeo de sprints'
+    project: 'ProjectBundle:Project__id__1'
+    company: 'UserBundle:Company__id__1'
+    focus: 50
+    hoursAvailable: 30
+    hoursPlanified: 15
+    dateFrom: "__date__2015-02-23"
+    dateTo: "__date__2015-03-23"
+    planified: 1

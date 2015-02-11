@@ -17,14 +17,14 @@ class UrgencyHoursType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         return array(
-                'data_class' => 'EasyScrumREST\TaskBundle\Entity\Urgency',
+                'data_class' => 'EasyScrumREST\TaskBundle\Entity\HoursSpent',
         );
     }
     
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => 'EasyScrumREST\TaskBundle\Entity\Urgency'
+                'data_class' => 'EasyScrumREST\TaskBundle\Entity\HoursSpent'
         ));
     }
 

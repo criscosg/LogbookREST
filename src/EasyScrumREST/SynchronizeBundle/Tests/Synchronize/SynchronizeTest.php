@@ -10,22 +10,21 @@ class SynchronizeTest extends CustomTestCase
 
     protected function setUp(){
         parent::setUp();
-        parent::loadFixture(__DIR__ . "/../Fixtures/company.yml");
-        parent::loadFixture(__DIR__ . "/../Fixtures/veterinary.yml");
-        parent::loadFixture(__DIR__ . "/../Fixtures/owner.yml");
-        parent::loadFixture(__DIR__ . "/../Fixtures/horse.yml");
-        $this->mobileDB = array('owners'=>array(array('salt'=>'r0th985hj66o4uh04', 'name'=>'Testeo', 'lastName'=>'TestOwner', 'address'=>'Calle Test', 
-                                    'email'=>'test@test.com', 'phone'=>912345678, 'mobile'=>612345678, 'modified'=>'2014-02-06 13:55:46','created'=>'2014-02-06 13:55:46')),
-                                'horses'=>array(array('salt'=>'k32g4239847', 'name'=>'TestHorse', 'sex'=>'Male', 'birthdate'=>'1987-07-08 00:00:00', 'comment'=>'El caballo', 
-                                    'owner_salt'=>'r0th985hj66o4uh04', 'modified'=>'2014-02-06 13:55:46','created'=>'2014-02-06 13:55:46')));
+        parent::loadFixture(__DIR__ . "/../Fixtures/api-user.yml");
+        parent::loadFixture(__DIR__ . "/../Fixtures/project.yml");
+        parent::loadFixture(__DIR__ . "/../Fixtures/sprint.yml");
+        parent::loadFixture(__DIR__ . "/../Fixtures/task.yml");
+        $this->mobileDB = array('projects'=>array(array('salt'=>'r0th985hj66o4uh04', 'title'=>'Testeo', 'description'=>'Description', 'updated'=>'2014-02-06 13:55:46','created'=>'2014-02-06 13:55:46')),
+                                'sprints'=>array(array('salt'=>'k32g4239847', 'title'=>'Test sprint Sync', 'dateFrom'=>'2014-02-06', 'dateTo'=>'2014-03-08', 'hoursAvailable'=>'30', 'focus' => '50', 'description'=>'Desc sprint', 
+                                    'project_salt'=>'r0th985hj66o4uh04', 'updated'=>'2014-02-06 13:55:46','created'=>'2014-02-06 13:55:46', 'planified'=>true)));
     }
     
     public function testSynchronize()
     {
-        $veterinary=$this->entityManager->getRepository('VeterinaryBundle:Veterinary')->findOneById(1);
+        $veterinary=$this->entityManager->getRepository('UserBundle:ApiUser')->findOneById(1);
         $response = $this->container->get('synchronize')->synchronize($this->mobileDB, $veterinary);
         $this->assertGreaterThan(0, count($response));
-        $this->assertEquals('Testeo', $this->entityManager->getRepository('OwnerBundle:Owner')->findOneById(2)->getName());
-        $this->assertEquals('TestHorse', $this->entityManager->getRepository('HorseBundle:Horse')->findOneById(2)->getName());
+        $this->assertEquals('Testeo', $this->entityManager->getRepository('ProjectBundle:Project')->findOneById(2)->getTitle());
+        $this->assertEquals('Test sprint Sync', $this->entityManager->getRepository('SprintBundle:Sprint')->findOneById(2)->getTitle());
     }
 }

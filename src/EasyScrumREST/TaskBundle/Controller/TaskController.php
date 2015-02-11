@@ -29,7 +29,7 @@ class TaskController extends FOSRestController{
      *
      * @return array
      */
-    public function getEntriesAction(Request $request, ParamFetcherInterface $paramFetcher)
+    public function getTasksAction(Request $request, ParamFetcherInterface $paramFetcher)
     {
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
@@ -235,7 +235,7 @@ class TaskController extends FOSRestController{
 
         $routeOptions = array('_format' => $request->get('_format'));
 
-        return $this->routeRedirectView('get_entries', $routeOptions, $statusCode);
+        return $this->routeRedirectView('get_tasks', $routeOptions, $statusCode);
     }
 
     /**
@@ -249,11 +249,11 @@ class TaskController extends FOSRestController{
      */
     protected function getOr404($id)
     {
-        if (!($page = $this->container->get('task.handler')->get($id))) {
+        if (!($task = $this->container->get('task.handler')->get($id))) {
             throw new NotFoundHttpException(sprintf('The Task \'%s\' was not found.',$id));
         }
 
-        return $page;
+        return $task;
     }
 
     /**

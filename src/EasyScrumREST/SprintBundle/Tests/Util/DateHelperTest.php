@@ -1,5 +1,5 @@
 <?php
-namespace EasyScrumREST\ImageBundle\Test\Util;
+namespace EasyScrumREST\SprintBundle\Test\Util;
 
 use EasyScrumREST\SprintBundle\Util\DateHelper;
 
@@ -8,7 +8,7 @@ use Symfony\Tests\Component\HttpFoundation\File\UploadedFileTest;
 use EasyScrumREST\ImageBundle\Util\FileHelper;
 use Doctrine\Common\Collections\ArrayCollection as Collection;
 
-class FileHelperTest extends CustomTestCase
+class DateHelperTest extends CustomTestCase
 {
     protected function setUp()
     {

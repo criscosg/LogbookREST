@@ -249,7 +249,7 @@ abstract class CustomTestCase extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/login');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $form = $crawler->selectButton('Acceder')->form(array('_username' => $username, '_password'=>$password));
+        $form = $crawler->selectButton('Access')->form(array('_username' => $username, '_password'=>$password));
         $crawler = $this->client->submit($form);
         $crawler = $this->client->followRedirect();
 
