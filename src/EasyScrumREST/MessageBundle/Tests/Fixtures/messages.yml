@@ -1,0 +1,4 @@
+EasyScrumREST\MessageBundle\Entity\Message:
+    created: "__date__2013-02-23"
+    text: 'Hola que tal'
+    user: 'UserBundle:ApiUser__id__1'
