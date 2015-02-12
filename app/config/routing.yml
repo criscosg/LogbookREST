@@ -45,6 +45,10 @@ project_normal:
 sprint:
     resource: "@SprintBundle/Resources/config/routing.yml"
     prefix:   /security
+    
+project:
+    resource: "@ProjectBundle/Resources/config/routing.yml"
+    prefix:   /security    
 
 synchonize:
     resource: "@SynchronizeBundle/Resources/config/routing.yml"

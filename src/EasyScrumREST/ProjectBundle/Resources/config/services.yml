@@ -1,7 +1,11 @@
 parameters:
     project.handler.class: EasyScrumREST\ProjectBundle\Handler\ProjectHandler
+    backlog.handler.class: EasyScrumREST\ProjectBundle\Handler\BacklogHandler
 
 services:
     project.handler:
         class: %project.handler.class%
         arguments: [@doctrine.orm.entity_manager, @form.factory]
+    backlog.handler:
+        class: %backlog.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory]    

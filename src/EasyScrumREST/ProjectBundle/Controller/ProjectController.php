@@ -117,7 +117,7 @@ class ProjectController extends EasyScrumController
         $form = $this->createForm(new BacklogType(), $backlog);
         $request=$this->getRequest();
         if ($request->getMethod()=='POST') {
-            $newBacklog = $this->get('project.handler')->createBacklog($form, $request);
+            $newBacklog = $this->get('backlog.handler')->createBacklog($form, $request);
             if($newBacklog) {
                 $this->get('action.manager')->createBacklogAction($newBacklog, $this->getUser(), ActionBacklog::CREATE_BACKLOG);
     
@@ -136,7 +136,7 @@ class ProjectController extends EasyScrumController
         $form = $this->createForm(new BacklogType(), $backlog);
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
-            $newProject = $this->get('project.handler')->createBacklog($form, $request);
+            $newProject = $this->get('backlog.handler')->createBacklog($form, $request);
             if($newProject) {
                 $this->get('action.manager')->createBacklogAction($newBacklog, $this->getUser(), ActionBacklog::EDIT_BACKLOG);
     
@@ -152,7 +152,7 @@ class ProjectController extends EasyScrumController
      */
     public function deleteBacklogAction(Backlog $backlog)
     {
-        $this->get('project.handler')->deleteBacklog($backlog);
+        $this->get('backlog.handler')->deleteBacklog($backlog);
     
         return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$backlog->getProject()->getId())));
     }
@@ -166,7 +166,7 @@ class ProjectController extends EasyScrumController
      */
     public function finalizeBacklogAction(Backlog $backlog)
     {
-        $this->container->get('project.handler')->finalizeBacklogTask($backlog);
+        $this->container->get('backlog.handler')->finalizeBacklogTask($backlog);
         $this->get('action.manager')->createBacklogAction($backlog, $this->getUser(), ActionBacklog::FINALIZED_BACKLOG);
     
         return array('task'=> $backlog);
@@ -182,7 +182,7 @@ class ProjectController extends EasyScrumController
         $form = $this->createForm(new IssueType(), $issue);
         $request=$this->getRequest();
         if ($request->getMethod()=='POST') {
-            $newBacklog = $this->get('project.handler')->createIssue($form, $request);
+            $newBacklog = $this->get('backlog.handler')->createIssue($form, $request);
             if($newBacklog) {
                 $this->get('action.manager')->createBacklogAction($backlog, $this->getUser(), ActionBacklog::NEW_ISSUE);
     
@@ -201,7 +201,7 @@ class ProjectController extends EasyScrumController
         $form = $this->createForm(new IssueType(), $issue);
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
-            $newProject = $this->get('project.handler')->createIssue($form, $request);
+            $newProject = $this->get('backlog.handler')->createIssue($form, $request);
             if($newProject) {
     
                 return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$issue->getBacklog()->getProject()->getId())));
@@ -218,7 +218,7 @@ class ProjectController extends EasyScrumController
      */
     public function finalizeIssueAction(Issue $issue)
     {
-        $this->container->get('project.handler')->finalizeIssue($issue);
+        $this->container->get('backlog.handler')->finalizeIssue($issue);
         
         return array('task'=> $issue, 'issue'=>true);
     }
