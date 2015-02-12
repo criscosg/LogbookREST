@@ -21,7 +21,7 @@ class MessageNormalController extends EasyScrumController
     public function getMessagesAction(Request $request)
     {
         $company=$this->getUser()->getCompany()->getId();
-        $messages = $this->container->get('message.handler')->all(50, 0, $company);
+        $messages = $this->container->get('message.handler')->all(20, 0, $company);
         $form=$this->createForm(new MessageType());
 
         return $this->render('MessageBundle:Message:view.html.twig', array('messages' => array_reverse($messages), 'form'=>$form->createView()));

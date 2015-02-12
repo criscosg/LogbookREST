@@ -90,14 +90,7 @@ class MessageHandler
      */
     public function delete(Message $entity)
     {
-        $time = new \DateTime('now');
-        $entity->setDeleted($time);
-        foreach ($entity->getTasks() as $task) {
-            $task->setDeleted($time);
-            $this->em->persist($task);
-            $this->em->flush($task);
-        }
-        $this->em->persist($entity);
+        $this->em->remove($entity);
         $this->em->flush($entity);
     }
     
