@@ -4,7 +4,7 @@
     <div id="loginbox">
       <form id="login" class="vertical" action="{{ path('login_check') }}" method="post">
           <h3 class="title">Easy<strong>Scrum</strong></h3>
-          <p>{{"Introduce your email and password" | trans}}.</p>
+          <p>{{"Introduce your user and password" | trans}}.</p>
           <div class="input-group input-sm">
               <span class="input-group-addon"><i class="fa fa-user"></i></span>
               <input class="form-control" type="text" name="_username" id="USERNAME" placeholder="{{"Email" | trans}}" />
@@ -15,8 +15,8 @@
           </div>
           <div class="input-group">
                 <input type="checkbox" id="remember_me" name="_remember_me" checked="checked">
-                    {{ "Remember my session" | trans }}
-            </label>
+                    {{ "Remember me" | trans }}
+          </div>          
           <div class="form-actions clearfix">
               <input type="submit" class="btn btn-block btn-primary btn-default" value="{{"Access" | trans}}" />
           </div>
