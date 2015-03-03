@@ -2,6 +2,8 @@
 
 namespace EasyScrumREST\ProjectBundle\Handler;
 
+use EasyScrumREST\ProjectBundle\Form\ProjectRestType;
+
 use EasyScrumREST\ProjectBundle\Entity\Issue;
 
 use EasyScrumREST\ProjectBundle\Entity\Backlog;
@@ -33,7 +35,7 @@ class ProjectHandler
 
     public function get($id)
     {
-        return $this->em->getRepository('ProjectBundle:Project')->find($id);
+        return $this->em->getRepository('ProjectBundle:Project')->findOneBySalt($id);
     }
 
     /**
@@ -55,9 +57,10 @@ class ProjectHandler
      *
      * @return Project
      */
-    public function post($request)
+    public function post($request, $company)
     {
         $project = new Project();
+        $project->setCompany($company);
 
         return $this->processForm($project, $request, 'POST');
     }
@@ -108,9 +111,9 @@ class ProjectHandler
      */
     private function processForm(Project $entity, $request, $method = "PUT")
     {
-        $form = $this->factory->create(new ProjectType(), $entity, array('method' => $method));
+        $form = $this->factory->create(new ProjectRestType($this->em), $entity, array('method' => $method));
         $form->handleRequest($request);
-        if (!$form->getErrors()) {
+        if ($form->isValid()) {
             $project = $form->getData();
             $this->em->persist($project);
             $this->em->flush($project);

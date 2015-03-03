@@ -16,6 +16,20 @@ class TaskType extends AbstractType
                 ->add('sprint', 'entity', array('class'=>'SprintBundle:Sprint', 'required' => false));
     }
 
+    public function getDefaultOptions(array $options)
+    {
+        return array(
+                'data_class' => 'EasyScrumREST\TaskBundle\Entity\Task',
+        );
+    }
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+                'data_class' => 'EasyScrumREST\TaskBundle\Entity\Task'
+        ));
+    }
+
     public function getName()
     {
         return 'task';

@@ -24,9 +24,9 @@ class BacklogHandler
         $this->factory = $formFactory;
     }
 
-    public function get($id)
+    public function get($salt)
     {
-        return $this->em->getRepository('ProjectBundle:Backlog')->find($id);
+        return $this->em->getRepository('ProjectBundle:Backlog')->findOneBySalt($salt);
     }
 
     /**
@@ -37,8 +37,11 @@ class BacklogHandler
      */
     public function all($project, $limit = 20, $offset = 0, $orderby = null)
     {
-
-        return $this->em->getRepository('BacklogBundle:Backlog')->findBy(array('project' => $project));
+        $project=$this->em->getRepository('ProjectBundle:Project')->findOneBy(array('salt' => $project));
+        if(!$project)
+            return array();
+        
+        return $this->em->getRepository('ProjectBundle:Backlog')->findBy(array('project' => $project->getId()));
     }
 
     /**
@@ -48,9 +51,10 @@ class BacklogHandler
      *
      * @return Backlog
      */
-    public function post($request)
+    public function post($request, $project)
     {
         $backlog = new Backlog();
+        $backlog->setProject($project);
 
         return $this->processForm($backlog, $request, 'POST');
     }
@@ -103,7 +107,7 @@ class BacklogHandler
     {
         $form = $this->factory->create(new BacklogRestType(), $entity, array('method' => $method));
         $form->handleRequest($request);
-        if (!$form->getErrors()) {
+        if ($form->isValid()) {
             $backlog = $form->getData();
             $this->em->persist($backlog);
             $this->em->flush($backlog);

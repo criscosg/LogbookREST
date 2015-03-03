@@ -2,6 +2,8 @@
 
 namespace EasyScrumREST\ProjectBundle\Controller;
 
+use EasyScrumREST\ProjectBundle\Form\BacklogRestType;
+
 use FOS\RestBundle\Controller\FOSRestController;
 use EasyScrumREST\ProjectBundle\Form\BacklogType;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,17 +30,13 @@ class BacklogController extends FOSRestController
      *
      * @return array
      */
-    public function getBacklogsAction(Request $request, ParamFetcherInterface $paramFetcher)
+    public function getBacklogsAction($salt, Request $request, ParamFetcherInterface $paramFetcher)
     {
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
-        $search = $paramFetcher->get('search_backlog');
-        if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_API_USER'))) {
-            $search['company']=$this->getUser()->getCompany()->getId();
-        }
 
-        return $this->container->get('backlog.handler')->all($limit, $offset, null, $search);
+        return $this->container->get('backlog.handler')->all($salt, $limit, $offset, null);
     }
 
     /**
@@ -47,9 +45,9 @@ class BacklogController extends FOSRestController
      * @View()
      * @return array
      */
-    public function getBacklogAction($id)
+    public function getBacklogAction($project, $salt)
     {
-        $backlog = $this->getOr404($id);
+        $backlog = $this->getOr404($salt);
 
         return $backlog;
     }
@@ -61,17 +59,19 @@ class BacklogController extends FOSRestController
      *
      * @return FormTypeInterface|View
      */
-    public function postBacklogAction(Request $request)
+    public function postBacklogAction($salt, Request $request)
     {
         try {
-            $newBacklog = $this->get('backlog.handler')->post($request);
+            $project = $this->container->get('project.handler')->get($salt);
+            $newBacklog = $this->get('backlog.handler')->post($request, $project);
 
             $routeOptions = array(
-                'id' => $newBacklog->getId(),
+                'project' => $newBacklog->getProject()->getSalt(),
+                'salt' => $newBacklog->getSalt(),
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('get_backlog', $routeOptions, Codes::HTTP_CREATED);
+            return $this->routeRedirectView('get_project_backlog', $routeOptions, Codes::HTTP_CREATED);
         } catch (InvalidFormException $exception) {
 
             return $exception->getForm();
@@ -86,7 +86,7 @@ class BacklogController extends FOSRestController
      */
     public function newBacklogAction()
     {
-        return $this->createForm(new BacklogType());
+        return $this->createForm(new BacklogRestType());
     }
 
     /**
@@ -100,7 +100,7 @@ class BacklogController extends FOSRestController
      *
      * @throws NotFoundHttpException when backlog not exist
      */
-    public function putBacklogAction(Request $request, $id)
+    public function putBacklogAction($salt, Request $request, $id)
     {
         try {
             if (!($backlog = $this->container->get('backlog.handler')->get($id))) {
@@ -110,7 +110,7 @@ class BacklogController extends FOSRestController
                 $statusCode = Codes::HTTP_NO_CONTENT;
                 $backlog = $this->container->get('backlog.handler')->put($backlog, $request);
             }
-            $response = new Response('Der Besitzer des Pferdes wurde erfolgreich gespeichert', $statusCode);
+            $response = new Response('Error', $statusCode);
 
             return $response;
         } catch (\Exception $exception) {
@@ -130,7 +130,7 @@ class BacklogController extends FOSRestController
      *
      * @throws NotFoundHttpException when backlog not exist
      */
-    public function patchBacklogAction(Request $request, $id)
+    public function patchBacklogAction($salt, Request $request, $id)
     {
         try {
             if (($backlog = $this->container->get('backlog.handler')->get($id))) {
@@ -159,7 +159,7 @@ class BacklogController extends FOSRestController
      *
      * @throws NotFoundHttpException when backlog not exist
      */
-    public function deleteBacklogAction(Request $request, $id)
+    public function deleteBacklogAction($salt, Request $request, $id)
     {
         if (($backlog = $this->container->get('backlog.handler')->get($id))) {
             $statusCode = Codes::HTTP_ACCEPTED;
@@ -167,7 +167,7 @@ class BacklogController extends FOSRestController
         } else {
             $statusCode = Codes::HTTP_NO_CONTENT;
         }
-        $response = new Response('Der Besitzer des Pferdes wurde erfolgreich gelöscht', $statusCode);
+        $response = new Response('Error', $statusCode);
 
         return $response;
     }

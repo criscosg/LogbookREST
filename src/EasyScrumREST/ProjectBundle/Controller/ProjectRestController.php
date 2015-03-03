@@ -33,12 +33,12 @@ class ProjectRestController extends FOSRestController
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
-        $search = $paramFetcher->get('search_project');
+        $company = null;
         if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_API_USER'))) {
-            $search['company']=$this->getUser()->getCompany()->getId();
+            $company=$this->getUser()->getCompany()->getId();
         }
 
-        return $this->container->get('project.handler')->all($limit, $offset, null, $search);
+        return $this->container->get('project.handler')->all($company, $limit, $offset, null);
     }
 
     /**
@@ -47,9 +47,9 @@ class ProjectRestController extends FOSRestController
      * @View()
      * @return array
      */
-    public function getProjectAction($id)
+    public function getProjectAction($salt)
     {
-        $project = $this->getOr404($id);
+        $project = $this->getOr404($salt);
 
         return $project;
     }
@@ -64,10 +64,10 @@ class ProjectRestController extends FOSRestController
     public function postProjectAction(Request $request)
     {
         try {
-            $newProject = $this->get('project.handler')->post($request);
+            $newProject = $this->get('project.handler')->post($request, $this->getUser()->getCompany());
 
             $routeOptions = array(
-                'id' => $newProject->getId(),
+                'salt' => $newProject->getSalt(),
                 '_format' => $request->get('_format')
             );
 
@@ -100,12 +100,12 @@ class ProjectRestController extends FOSRestController
      *
      * @throws NotFoundHttpException when project not exist
      */
-    public function putProjectAction(Request $request, $id)
+    public function putProjectAction(Request $request, $salt)
     {
         try {
-            if (!($project = $this->container->get('project.handler')->get($id))) {
+            if (!($project = $this->container->get('project.handler')->get($salt))) {
                 $statusCode = Codes::HTTP_CREATED;
-                $project = $this->container->get('project.handler')->post($request);
+                $project = $this->container->get('project.handler')->post($request, $this->getUser()->getCompany());
             } else {
                 $statusCode = Codes::HTTP_NO_CONTENT;
                 $project = $this->container->get('project.handler')->put($project, $request);
@@ -130,10 +130,10 @@ class ProjectRestController extends FOSRestController
      *
      * @throws NotFoundHttpException when project not exist
      */
-    public function patchProjectAction(Request $request, $id)
+    public function patchProjectAction(Request $request, $salt)
     {
         try {
-            if (($project = $this->container->get('project.handler')->get($id))) {
+            if (($project = $this->container->get('project.handler')->get($salt))) {
                 $statusCode = Codes::HTTP_ACCEPTED;
                 $project = $this->container->get('project.handler')->patch($project, $request);
             } else {
@@ -159,9 +159,9 @@ class ProjectRestController extends FOSRestController
      *
      * @throws NotFoundHttpException when project not exist
      */
-    public function deleteProjectAction(Request $request, $id)
+    public function deleteProjectAction(Request $request, $salt)
     {
-        if (($project = $this->container->get('project.handler')->get($id))) {
+        if (($project = $this->container->get('project.handler')->get($salt))) {
             $statusCode = Codes::HTTP_ACCEPTED;
             $project = $this->container->get('project.handler')->delete($project);
         } else {
@@ -175,18 +175,18 @@ class ProjectRestController extends FOSRestController
     /**
      * Fetch the Page or throw a 404 exception.
      *
-     * @param mixed $id
+     * @param mixed $salt
      *
      * @return PageInterface
      *
      * @throws NotFoundHttpException
      */
-    protected function getOr404($id)
+    protected function getOr404($salt)
     {
-        if (!($page = $this->container->get('project.handler')->get($id))) {
-            throw new NotFoundHttpException(projectf('The Project \'%s\' was not found.',$id));
+        if (!($project = $this->container->get('project.handler')->get($salt))) {
+            throw new NotFoundHttpException(projectf('The Project \'%s\' was not found.',$salt));
         }
 
-        return $page;
+        return $project;
     }
 }
