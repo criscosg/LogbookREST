@@ -1,12 +1,12 @@
 <?php
 
-namespace EasyScrumREST\FrontendBundle\DataTransformer
+namespace EasyScrumREST\FrontendBundle\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class SlugEntityTransformer implements DataTransformerInterface
+class SaltEntityTransformer implements DataTransformerInterface
 {
 	/**
 	 * @var \Doctrine\Common\Persistence\ObjectManager
@@ -36,11 +36,11 @@ class SlugEntityTransformer implements DataTransformerInterface
 	{
 		if (null === $entity || !$entity instanceof $this->entityClass) {
 			return '';
-		} elseif(!\method_exists($entity, 'getSlug')) {
-			return $entity->getId();
+		} elseif(!\method_exists($entity, 'get'.$this->entityType)) {
+			return $entity;
 		}
 
-		return $entity->getSlug();
+		return $entity;
 	}
 	
 	/**
@@ -50,19 +50,19 @@ class SlugEntityTransformer implements DataTransformerInterface
 	 *
 	 * @return mixed|object
 	 */
-	public function reverseTransform($slug)
+	public function reverseTransform($salt)
 	{
-		if (!$slug) {
+		if (!$salt) {
 			return null;
 		}
 	
-		$entity = $this->om->getRepository($this->entityRepository)->findOneBy(array("slug" => $slug));
-	
+		$entity = $this->om->getRepository($this->entityRepository)->findOneBy(array("salt" => $salt));
+
 		if (null === $entity) {
 			throw new TransformationFailedException(sprintf(
-					'A %s with slug "%s" does not exist!',
+					'A %s with salt "%s" does not exist!',
 					$this->entityType,
-					$slug
+					$salt
 			));
 		}
 	

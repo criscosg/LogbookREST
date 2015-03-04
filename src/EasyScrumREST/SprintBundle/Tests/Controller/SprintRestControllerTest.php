@@ -40,7 +40,8 @@ class SprintRestControllerTest extends CustomTestCase
     public function testJsonPostSprintAction()
     {
         $token=$this->loginOauth();
-        $param=array('sprint'=>array('title' => 'Rest test sprint', 'description' => 'Rest test description sprint', 'dateFrom' => '06/02/2015','dateTo' => '06/03/2015', 'project' => 1, 'hoursAvailable' => '30', 'focus'=>'60'));
+        $param=array('sprint'=>array('title' => 'Rest test sprint', 'description' => 'Rest test description sprint', 'dateFrom' => '06/02/2015','dateTo' => '06/03/2015', 'project' => 'xasdasdf34', 'hoursAvailable' => '30', 'focus'=>'60', 
+                'tasks'=>array(array('title' => 'Rest test task', 'description' => 'Rest test description task in sprint', 'hours' => '4', 'priority' => 'P0'))));
         $this->client->request('POST', '/security/sprints?access_token='.$token, $param, array(), array('CONTENT_TYPE' => 'application/json'));
         $this->assertEquals($this->client->getResponse()->getStatusCode(), 201);
         $this->assertNotEquals(null, $this->entityManager->getRepository('SprintBundle:Sprint')->findOneById(2));
@@ -49,7 +50,7 @@ class SprintRestControllerTest extends CustomTestCase
     public function testJsonPutSprintAction()
     {
         $token=$this->loginOauth();
-        $param=array('sprint'=>array('title' => 'Rest test sprint', 'description' => 'Rest test description sprint', 'dateFrom' => '06/02/2015','dateTo' => '06/03/2015', 'project' => 1, 'hoursAvailable' => '30', 'focus'=>'60'));
+        $param=array('sprint'=>array('title' => 'Rest test sprint', 'description' => 'Rest test description sprint', 'dateFrom' => '06/02/2015','dateTo' => '06/03/2015', 'project' => 'xasdasdf34', 'hoursAvailable' => '30', 'focus'=>'60'));
         $this->client->request('PUT', '/security/sprints/1?access_token='.$token, $param, array(), array('CONTENT_TYPE' => 'application/json'));
         $this->assertEquals($this->client->getResponse()->getStatusCode(), 204);
         $this->assertNotEquals(null, $this->entityManager->getRepository('SprintBundle:Sprint')->findOneById(1));

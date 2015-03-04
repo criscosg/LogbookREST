@@ -14,6 +14,7 @@ EasyScrumREST\ProjectBundle\Entity\Project:
     description: 'Proyecto de prueba'
     company: 'UserBundle:Company__id__1'
     owner: 'UserBundle:ApiUser__id__2'
+    salt: "xasdasdf34"
     
 EasyScrumREST\ProjectBundle\Entity\Backlog:
     created: "__date__2013-02-23"
@@ -21,6 +22,7 @@ EasyScrumREST\ProjectBundle\Entity\Backlog:
     description: 'Probar que tareas backlog'
     priority: 10
     project: 'ProjectBundle:Project__id__1'
+    salt: 'h2ndkfsfk'
 
 EasyScrumREST\ProjectBundle\Entity\Issue:
     created: "__date__2013-02-23"

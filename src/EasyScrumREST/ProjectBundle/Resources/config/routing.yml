@@ -5,3 +5,5 @@ projects:
 backlogs:
     type: rest
     resource: "EasyScrumREST\\ProjectBundle\\Controller\\BacklogController"
+    parent: projects
+    

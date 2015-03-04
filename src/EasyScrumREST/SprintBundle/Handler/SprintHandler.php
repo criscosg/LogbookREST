@@ -106,7 +106,7 @@ class SprintHandler
     {
         return $this->processForm($entity, $request, 'PATCH');
     }
-    
+
     /**
      * @param Sprint $sprint
      *
@@ -120,7 +120,7 @@ class SprintHandler
         $this->em->remove($entity);
         $this->em->flush();
     }
-    
+
     public function handleEdit(FormInterface $form, $request)
     {
         if($request->getMethod()=='POST') {
@@ -133,10 +133,10 @@ class SprintHandler
                 return true;
             }
         }
-    
+
         return null;
     }
-    
+
     /**
      * Processes the form.
      *
@@ -150,10 +150,13 @@ class SprintHandler
      */
     private function processForm(Sprint $entity, $request, $method = "PUT")
     {
-        $form = $this->factory->create(new SprintType(), $entity, array('method' => $method));
+        $form = $this->factory->create(new SprintType($this->em), $entity, array('method' => $method));
         $form->handleRequest($request);
-        if (!$form->getErrors()) {
+        if ($form->isValid()) {
             $sprint = $form->getData();
+            foreach($sprint->getTasks() as $task) {
+                $task->setSprint($sprint);
+            }
             $this->em->persist($sprint);
             $this->em->flush($sprint);
 
@@ -162,7 +165,7 @@ class SprintHandler
 
         throw new \Exception('Invalid submitted data');
     }
-    
+
     public function firstStep($request,Company $company)
     {
         $sprint = new Sprint();
@@ -179,7 +182,7 @@ class SprintHandler
         
             return $sprint;
         }
-        
+
         throw new \Exception($form->getErrorsAsString());
     }
     
