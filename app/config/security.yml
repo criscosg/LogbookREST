@@ -59,4 +59,6 @@ security:
         - { path: ^/logout, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login-check, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/recover-password, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/change-password, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/*, roles: ROLE_API_USER }

@@ -15,3 +15,4 @@ parameters:
     locale: en
     secret: 850219f8bb314766e666ebcc61d472b2d7336ae4
     database_path: null
+    noreply_email: easyscrumnoreply@gmail.com

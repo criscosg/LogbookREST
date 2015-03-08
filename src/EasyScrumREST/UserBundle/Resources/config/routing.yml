@@ -8,4 +8,4 @@ api_users:
     
 companies:
     type: rest
-    resource: "EasyScrumREST\UserBundle\Controller\CompanyController"    
+    resource: "EasyScrumREST\UserBundle\Controller\CompanyController"

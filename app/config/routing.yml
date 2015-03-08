@@ -52,6 +52,11 @@ project:
     resource: "@ProjectBundle/Resources/config/routing.yml"
     prefix:   /security    
 
+change_password:
+    type:     rest
+    resource: EasyScrumREST\UserBundle\Controller\PasswordController
+    prefix:   /
+
 synchonize:
     resource: "@SynchronizeBundle/Resources/config/routing.yml"
     prefix:   /security   
@@ -65,6 +70,14 @@ NelmioApiDocBundle:
     
 _liip_imagine:
     resource: "@LiipImagineBundle/Resources/config/routing.xml"
+    
+recover_password:
+    pattern: /recover-password
+    defaults: { _controller: UserBundle:UserNormal:recoverPassword }
+    
+change_password:
+    pattern: /change-password/{salt}
+    defaults: { _controller: UserBundle:UserNormal:changePassword }    
 
 login:
     pattern: /login

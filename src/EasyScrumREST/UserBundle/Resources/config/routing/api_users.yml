@@ -24,4 +24,4 @@ delete_normal_api_user:
     
 settings:
     pattern: /settings
-    defaults: { _controller: UserBundle:UserNormal:settings }  
+    defaults: { _controller: UserBundle:UserNormal:settings }

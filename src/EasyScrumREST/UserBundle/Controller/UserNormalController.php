@@ -1,14 +1,18 @@
 <?php
 namespace EasyScrumREST\UserBundle\Controller;
 
+use EasyScrumREST\UserBundle\Entity\RecoverPassword;
+
+use EasyScrumREST\UserBundle\Form\PasswordType;
+
+use EasyScrumREST\UserBundle\Form\RecoverPasswordType;
+
+use EasyScrumREST\UserBundle\Event\UserEvent;
+use EasyScrumREST\UserBundle\Event\UserEvents;
 use EasyScrumREST\UserBundle\Form\SettingsType;
-
 use EasyScrumREST\UserBundle\Form\ProfileType;
-
 use EasyScrumREST\UserBundle\Form\NormalUserType;
-
 use EasyScrumREST\UserBundle\Form\ApiUserType;
-
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use EasyScrumREST\UserBundle\Entity\ApiUser;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -127,6 +131,41 @@ class UserNormalController extends EasyScrumController
         $this->container->get('api.user.handler')->delete($user);
     
         return $this->redirect($this->generateUrl('api_users_list'));
+    }
+    
+    public function recoverPasswordAction(Request $request)
+    {
+        $form = $this->createForm(new RecoverPasswordType());
+        if ($request->getMethod() == 'POST') {
+            $newRecoveryPassword = $this->get('password.handler')->post($request);
+            $userEvent = new UserEvent($newRecoveryPassword);
+            $dispatcher = $this->get('event_dispatcher');
+            $dispatcher->dispatch(UserEvents::RECOVER_PASSWORD, $userEvent);
+
+            return $this->render('UserBundle:Password:forgotPasswordInstructions.html.twig', array('email'=>$newRecoveryPassword->getEmail()));
+        }
+
+        return $this->render('UserBundle:Password:recoverPassword.html.twig', array('formPass' => $form->createView()));
+    }
+    
+    /**
+     * @ParamConverter("recover", class="UserBundle:RecoverPassword")
+     */
+    public function ChangePasswordAction(Request $request, RecoverPassword $recover)
+    {
+        $form = $this->createForm(new PasswordType());
+        $user = $this->getDoctrine()->getRepository('UserBundle:ApiUser')->findOneBy(array('email'=>$recover->getEmail()));
+        if ($request->getMethod() == 'POST') {
+            $user = $this->get('password.handler')->changePassword($request, $recover);
+            if($user) {
+                $this->resetToken($user);
+                return $this->redirect($this->generateUrl('home'));
+            } else {
+                $this->setTranslatedFlashMessage('An error ocurred while trying to change your password.');
+            }
+        }
+
+        return $this->render('UserBundle:Password:newPassword.html.twig', array('form' => $form->createView(), 'saltform'=>$recover->getSalt(), 'user'=>$user));
     }
 
 }
