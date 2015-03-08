@@ -22,7 +22,6 @@ class ApiUser extends User
 {
     /**
      * @ORM\ManyToOne(targetEntity="Company", inversedBy="users", cascade={"persist"})
-     * @Expose
      */
     private $company;
 

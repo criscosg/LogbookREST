@@ -37,6 +37,7 @@ class Project
     /**
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="updated", type="datetime", nullable=true)
+     * @Expose
      */
     protected $updated;
 
@@ -55,28 +56,22 @@ class Project
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="EasyScrumREST\SprintBundle\Entity\Sprint", mappedBy="project", cascade={"persist", "merge", "remove"})
-     * @Expose
-     * @MaxDepth(0)
      */
     private $sprints;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="EasyScrumREST\ProjectBundle\Entity\Backlog", mappedBy="project", cascade={"persist", "merge", "remove"})
-     * @Expose
-     * @MaxDepth(0)
      */
     private $backlogs;
 
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\Company")
-     * @Expose
      */
     private $company;
 
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser")
-     * @Expose
      */
     private $owner;
 
