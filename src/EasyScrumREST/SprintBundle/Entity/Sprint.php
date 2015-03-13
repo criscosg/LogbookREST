@@ -1,11 +1,8 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Entity;
 use EasyScrumREST\SprintBundle\Util\DateHelper;
-
 use EasyScrumREST\ProjectBundle\Entity\Project;
-
 use EasyScrumREST\TaskBundle\Entity\Urgency;
-
 use Doctrine\ORM\Mapping as ORM;
 use EasyScrumREST\TaskBundle\Entity\Task;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -47,6 +44,7 @@ class Sprint
     /**
      * @ORM\Column(type="string", length=250, nullable=true)
      * @Expose
+     * @Assert\NotBlank
      */
     protected $title;
 
@@ -518,43 +516,38 @@ class Sprint
         $days=DateHelper::numberLaborableDays($this->dateFrom, $this->dateTo);
         $chartData= array();
         if($days>0){
-            $hoursDay=$this->hoursPlanified / $days;
+            $hoursDay=$this->getPlanificationHours() / $days;
             $cont=0;
 
             while ($date <= $this->dateTo) {
                 $day=$date->format('l');
                 if ($day!="Sunday" && $day!="Saturday" ) {
-                    $chartData[$date->format('d/m')] = $this->hoursPlanified - ($cont * $hoursDay);
+                    $chartData[$date->getTimestamp()*1000] = $this->getPlanificationHours() - ($cont * $hoursDay);
                     $cont++;
+                } else {
+                    $chartData[$date->getTimestamp()*1000] = $this->getPlanificationHours() - ($cont * $hoursDay);
                 }
                 $date->modify('+1 day');
             }
         }
-        
+
         return $chartData;
     }
 
     public function getChartHoursArray()
     {
         $chartData= array();
-        $chartData[$this->dateFrom->format('d/m')] = $this->getHoursPlanified();
+        $chartData[$this->dateFrom->getTimestamp()*1000] = $this->getPlanificationHours();
         foreach ($this->getListHours() as $listHour) {
             if($listHour->getDate() >= $this->getDateFrom() && $listHour->getDate() <= $this->getDateTo()){
                 $day=$listHour->getDate()->format('l');
-                if ($day!="Sunday" && $day!="Saturday" ) {
-                    $chartData[$listHour->getDate()->format('d/m')] = $listHour->getHours();
-                }
+                $chartData[$listHour->getDate()->getTimestamp()*1000] = $listHour->getHours();
             }
         }
         $today = new \DateTime('today');
         $day=$today->format('l');
-        if ($day=="Sunday" ) {
-            $today->sub(new \DateInterval('P2D'));
-        } else if ($day=="Saturday") {
-            $today->sub(new \DateInterval('P1D'));
-        }
-        if (!$this->getSprintHourbyDate($today)) {
-            $chartData[$today->format('d/m')] = $this->getHoursUndone();
+        if (!$this->getSprintHourbyDate($today) && $today >= $this->getDateFrom()) {
+            $chartData[$today->getTimestamp()*1000] = $this->getHoursUndone();
         }
 
         return $chartData;

@@ -6,7 +6,8 @@ parameters:
     user.provider.class: EasyScrumREST\UserBundle\Provider\UserProvider
     user.repository.class: EasyScrumREST\UserBundle\Entity\UserRepository
     company.handler.class: EasyScrumREST\UserBundle\Handler\CompanyHandler
-    
+    password.handler.class: EasyScrumREST\UserBundle\Handler\PasswordHandler
+    user.send_email.class: EasyScrumREST\UserBundle\EventListener\SendEmailListener
 
 services:
     user.handler:
@@ -36,4 +37,12 @@ services:
     company.handler:
         class: %company.handler.class%
         arguments: [@doctrine.orm.entity_manager, @form.factory]    
+    password.handler:
+        class: %password.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory, @security.encoder_factory]
+    user.send_email_listener:
+        class: %user.send_email.class%
+        arguments: [@mailer, @templating, @router, %noreply_email%]
+        tags:
+            - { name: kernel.event_subscriber }
         

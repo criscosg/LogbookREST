@@ -130,6 +130,7 @@
 {{ parent() }}
 <script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
 <script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
+<script src="http://www.flotcharts.org/flot/jquery.flot.time.js"></script>
 <script src="{{ asset('bundles/frontend/js/jquery.gritter.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){
@@ -171,7 +172,9 @@
         		},
         		grid: { hoverable: true, clickable: true, borderColor: "#eeeeee", borderWidth: 1, color: "#AAAAAA" },
         		xaxis: {
-        			mode: "categories",
+        			mode: "time",
+        			timeformat: "%Y/%m/%d",
+        			minTickSize: [1, "day"],
         			tickLength: 10
         		}
         	}); 
