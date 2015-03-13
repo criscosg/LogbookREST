@@ -72,6 +72,7 @@ class Project
 
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser")
+     * @Expose
      */
     private $owner;
 

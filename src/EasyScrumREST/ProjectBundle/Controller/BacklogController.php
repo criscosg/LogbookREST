@@ -21,7 +21,7 @@ class BacklogController extends FOSRestController
 {
     /**
      * @QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing pages.")
-     * @QueryParam(name="limit", requirements="\d+", nullable=true, default="20", description="How many pages to return.")
+     * @QueryParam(name="limit", requirements="\d+", nullable=true, default="50", description="How many pages to return.")
      * @QueryParam(name="search_backlog", array=true, nullable=true, description="The search.")
      * @View()
      *
@@ -35,8 +35,10 @@ class BacklogController extends FOSRestController
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
+		$search = $paramFetcher->get('search_backlog');
+        $search['project'] = $salt;
 
-        return $this->container->get('backlog.handler')->all($salt, $limit, $offset, null);
+        return $this->container->get('backlog.handler')->all($search, $limit, $offset, null);
     }
 
     /**
@@ -107,7 +109,7 @@ class BacklogController extends FOSRestController
                 $statusCode = Codes::HTTP_CREATED;
                 $backlog = $this->container->get('backlog.handler')->post($request);
             } else {
-                $statusCode = Codes::HTTP_NO_CONTENT;
+                $statusCode = Codes::HTTP_ACCEPTED;
                 $backlog = $this->container->get('backlog.handler')->put($backlog, $request);
             }
             $response = new Response('Error', $statusCode);

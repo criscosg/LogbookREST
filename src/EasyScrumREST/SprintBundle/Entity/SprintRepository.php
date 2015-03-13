@@ -23,6 +23,11 @@ class SprintRepository extends EntityRepository
             $qb->andWhere($qb->expr()->eq('s.project', $search['project']));
         }
 
+        if (isset($search['project_salt'])) {
+            $qb->join('s.project', 'p');
+            $qb->andWhere($qb->expr()->eq('p.salt', "'".$search['project_salt']."'"));
+        }
+
         $qb->andWhere($qb->expr()->isNull('s.deleted'));
         $qb->setFirstResult($offset);
         $qb->setMaxResults($limit);

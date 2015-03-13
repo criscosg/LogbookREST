@@ -13,6 +13,7 @@ use JMS\Serializer\Annotation\MaxDepth;
 /**
  * @ORM\Entity(repositoryClass="BacklogRepository")
  * @ExclusionPolicy("all")
+ * @ORM\HasLifecycleCallbacks()
  */
 
 class Backlog

@@ -20,7 +20,7 @@ class ProjectRestType extends AbstractType
     	$saltApiUserTransformer = new SaltEntityTransformer($this->em, "EasyScrumREST\\ProjectBundle\\Entity\\Project", 'UserBundle:ApiUser', 'Owner');
     	
         $builder->add('title', 'text', array('required' => true))
-                ->add('salt', 'text', array('required' => true))
+                ->add('salt', 'text', array('required' => false))
                 ->add('description', 'textarea', array('required' => true));
         $builder->add(
                 $builder->create('owner', 'text')

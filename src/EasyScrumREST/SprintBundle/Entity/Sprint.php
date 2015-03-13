@@ -29,7 +29,7 @@ class Sprint
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      * @Expose
-     * */
+     */
     protected $id;
 
     /**
@@ -74,7 +74,6 @@ class Sprint
 
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\Company", inversedBy="sprints")
-     * @Expose
      */
     private $company;
     
@@ -106,21 +105,25 @@ class Sprint
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Expose
      */
     protected $hoursAvailable;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Expose
      */
     protected $hoursPlanified;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Expose
      */
     protected $hoursSpent;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Expose
      */
     protected $finalFocus;
 
@@ -140,11 +143,13 @@ class Sprint
     
     /**
      * @ORM\Column(type="boolean", nullable=true)
+     * @Expose
      */
     protected $planified;
     
     /**
      * @ORM\Column(type="boolean", nullable=true)
+     * @Expose
      */
     protected $finalized;
 

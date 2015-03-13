@@ -35,12 +35,14 @@ class BacklogHandler
      *
      * @return array
      */
-    public function all($project, $limit = 20, $offset = 0, $orderby = null)
+    public function all($search, $limit = 20, $offset = 0, $orderby = null)
     {
-        $project=$this->em->getRepository('ProjectBundle:Project')->findOneBy(array('salt' => $project));
+        $project=$this->em->getRepository('ProjectBundle:Project')->findOneBy(array('salt' => $search['project']));
         if(!$project)
             return array();
-        
+        if(isset($search['state']))
+            return $this->em->getRepository('ProjectBundle:Backlog')->findBy(array('project' => $project->getId(), 'state'=>$search['state']));
+
         return $this->em->getRepository('ProjectBundle:Backlog')->findBy(array('project' => $project->getId()));
     }
 

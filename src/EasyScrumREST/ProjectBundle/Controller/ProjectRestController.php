@@ -107,10 +107,10 @@ class ProjectRestController extends FOSRestController
                 $statusCode = Codes::HTTP_CREATED;
                 $project = $this->container->get('project.handler')->post($request, $this->getUser()->getCompany());
             } else {
-                $statusCode = Codes::HTTP_NO_CONTENT;
+                $statusCode = Codes::HTTP_ACCEPTED;
                 $project = $this->container->get('project.handler')->put($project, $request);
             }
-            $response = new Response('Der Besitzer des Pferdes wurde erfolgreich gespeichert', $statusCode);
+            $response = new Response('The project has been updated', $statusCode);
 
             return $response;
         } catch (\Exception $exception) {
@@ -139,7 +139,7 @@ class ProjectRestController extends FOSRestController
             } else {
                 $statusCode = Codes::HTTP_NO_CONTENT;
             }
-            $response = new Response('Der Besitzer des Pferdes wurde erfolgreich gespeichert', $statusCode);
+            $response = new Response('The project has been updated', $statusCode);
 
             return $response;
         } catch (NotFoundHttpException $exception) {

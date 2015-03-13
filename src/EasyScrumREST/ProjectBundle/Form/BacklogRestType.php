@@ -12,7 +12,8 @@ class BacklogRestType extends AbstractType
         $builder->add('title', 'text', array('required' => true))
                 ->add('description', 'textarea', array('required' => false))
                 ->add('priority', 'number', array('required' => false))
-                ->add('salt', 'text', array('required' => true));
+                ->add('state', 'text', array('required' => false))
+                ->add('salt', 'text', array('required' => false));
     }
     
     public function getDefaultOptions(array $options)

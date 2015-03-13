@@ -50,7 +50,7 @@ class ProjectRestControllerTest extends CustomTestCase
         $token=$this->loginOauth();
         $param=array('project'=>array('title' => 'Rest test project', 'description' => 'Rest test description sprint', 'salt'=>'xxxxxxxxx', 'owner'=>'cf902b71f391a2a973cdb32ae3129655'));        
         $this->client->request('PUT', '/security/projects/xasdasdf34?access_token='.$token, $param, array(), array('CONTENT_TYPE' => 'application/json'));
-        $this->assertEquals($this->client->getResponse()->getStatusCode(), 204);
+        $this->assertEquals($this->client->getResponse()->getStatusCode(), 202);
         $this->assertNotEquals(null, $this->entityManager->getRepository('ProjectBundle:Project')->findOneById(1));
     }
     
