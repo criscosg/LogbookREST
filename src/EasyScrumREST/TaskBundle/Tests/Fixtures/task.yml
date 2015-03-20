@@ -5,7 +5,7 @@ EasyScrumREST\TaskBundle\Entity\Task:
     sprint: 'SprintBundle:Sprint__id__1'
     hours: 5
     state: TODO
-    
+
 EasyScrumREST\TaskBundle\Entity\Task:
     created: "__date__2013-02-23"
     title: 'Task test finalized'

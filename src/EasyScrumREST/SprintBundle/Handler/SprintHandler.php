@@ -31,6 +31,10 @@ class SprintHandler
 
     public function get($id)
     {
+        if(is_string($id)) {
+            return $this->em->getRepository('SprintBundle:Sprint')->findOneBy(array('salt'=>$id));
+        }
+
         return $this->em->getRepository('SprintBundle:Sprint')->find($id);
     }
     
@@ -154,6 +158,9 @@ class SprintHandler
         $form->handleRequest($request);
         if ($form->isValid()) {
             $sprint = $form->getData();
+            if($sprint->getProject()->getCompany()) {
+                $sprint->setCompany($sprint->getProject()->getCompany());
+            }
             foreach($sprint->getTasks() as $task) {
                 $task->setSprint($sprint);
             }

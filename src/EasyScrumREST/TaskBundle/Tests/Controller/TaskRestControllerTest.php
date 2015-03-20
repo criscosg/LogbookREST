@@ -41,7 +41,7 @@ class TaskRestControllerTest extends CustomTestCase
     public function testJsonPostTaskAction()
     {
         $token=$this->loginOauth();
-        $param=array('task'=>array('title' => 'Rest test task', 'description' => 'Rest test description task', 'hours' => '4','sprint' => '1', 'priority' => 'P0'));
+        $param=array('task'=>array('title' => 'Rest test task', 'description' => 'Rest test description task', 'hours' => '4','sprint' => 'lkjadlksjaie', 'priority' => 'P0'));
         $this->client->request('POST', '/security/tasks?access_token='.$token, $param, array(), array('CONTENT_TYPE' => 'application/json'));
         $this->assertEquals($this->client->getResponse()->getStatusCode(), 201);
         $this->assertNotEquals(null, $this->entityManager->getRepository('TaskBundle:Task')->findOneById(2));
@@ -50,7 +50,7 @@ class TaskRestControllerTest extends CustomTestCase
     public function testJsonPutTaskAction()
     {
         $token=$this->loginOauth();
-        $param=array('task'=>array('title' => 'Rest test task', 'description' => 'Rest test description task', 'hours' => '4','sprint' => '1', 'priority' => 'P0'));
+        $param=array('task'=>array('title' => 'Rest test task', 'description' => 'Rest test description task', 'hours' => '4','sprint' => 'lkjadlksjaie', 'priority' => 'P0'));
         $this->client->request('PUT', '/security/tasks/1?access_token='.$token, $param, array(), array('CONTENT_TYPE' => 'application/json'));
         $this->assertEquals($this->client->getResponse()->getStatusCode(), 204);
         $this->assertNotEquals(null, $this->entityManager->getRepository('TaskBundle:Task')->findOneById(1));

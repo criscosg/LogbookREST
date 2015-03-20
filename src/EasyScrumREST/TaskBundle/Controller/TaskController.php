@@ -15,13 +15,14 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Get;
+use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends FOSRestController{
 
     /**
      * @QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing pages.")
      * @QueryParam(name="limit", requirements="\d+", nullable=true, default="20", description="How many pages to return.")
-     *
+     * @QueryParam(name="search_tasks",array=true, nullable=true, description="The search.")
      * @View()
      *
      * @param Request               $request      the request object
@@ -34,8 +35,12 @@ class TaskController extends FOSRestController{
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
+        $search = $paramFetcher->get('search_tasks');
+        if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_API_USER'))) {
+            $search['company']=$this->getUser()->getCompany()->getId();
+        }
 
-        return $this->container->get('task.handler')->all($limit, $offset);
+        return $this->container->get('task.handler')->all($search, $limit, $offset);
     }
 
     /**
@@ -46,7 +51,7 @@ class TaskController extends FOSRestController{
      */
     public function getTaskAction($id)
     {
-        $task=$this->getOr404($id);
+        $task=$this->getOr404BySalt($id);
 
         return $task;
     }
@@ -100,18 +105,16 @@ class TaskController extends FOSRestController{
     public function putTaskAction(Request $request, $id)
     {
         try {
-            if (!($task = $this->container->get('task.handler')->get($id))) {
+            if (!($task = $this->container->get('task.handler')->getSalt($id))) {
                 $statusCode = Codes::HTTP_CREATED;
                 $task = $this->container->get('task.handler')->post($request);
             } else {
-                $statusCode = Codes::HTTP_NO_CONTENT;
+                $statusCode = Codes::HTTP_ACCEPTED;
                 $task = $this->container->get('task.handler')->put($task, $request);
             }
+            $response = new Response('The project has been updated', $statusCode);
 
-            $routeOptions = array('id' => $task->getId(), '_format' => $request->get('_format')
-            );
-
-            return $this->routeRedirectView('get_task', $routeOptions, $statusCode);
+            return $response;
         } catch (\Exception $exception) {
 
             return $exception->getMessage();
@@ -132,7 +135,7 @@ class TaskController extends FOSRestController{
     public function patchTaskAction(Request $request, $id)
     {
         try {
-            if (($task = $this->getOr404($id))) {
+            if (($task = $this->getOr404BySalt($id))) {
                 $statusCode = Codes::HTTP_ACCEPTED;
                 $task = $this->container->get('task.handler')->patch($task, $request);
             } else {

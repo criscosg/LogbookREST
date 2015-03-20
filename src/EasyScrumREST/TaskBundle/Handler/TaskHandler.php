@@ -19,7 +19,7 @@ class TaskHandler
 {
     private $em;
     private $factory;
-    
+
     public function __construct(EntityManager $em, FormFactoryInterface $formFactory)
     {
         $this->em = $em;
@@ -42,9 +42,9 @@ class TaskHandler
      *
      * @return array
      */
-    public function all($limit = 20, $offset = 0, $orderby = null)
+    public function all($search = array(), $limit = 50, $offset = 0, $orderby = null)
     {
-        return $this->em->getRepository('TaskBundle:Task')->findBy(array(), $orderby, $limit, $offset);
+        return $this->em->getRepository('TaskBundle:Task')->findTaskBySearch($search, $limit, $offset, $orderby);
     }
     
     public function search(FormInterface $form, Request $request, $company)
@@ -139,7 +139,7 @@ class TaskHandler
      */
     private function processForm(Task $task, $request, $method = "PUT")
     {
-        $form = $this->factory->create(new TaskType(), $task, array('method' => $method));
+        $form = $this->factory->create(new TaskType($this->em), $task, array('method' => $method));
         $form->handleRequest($request);
         if ($form->isValid()) {
             $task = $form->getData();

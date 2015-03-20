@@ -18,7 +18,6 @@ use JMS\Serializer\Annotation\MaxDepth;
  * @ORM\Entity(repositoryClass="SprintRepository")
  * @ExclusionPolicy("all")
  */
-
 class Sprint
 {
     /**
@@ -44,7 +43,6 @@ class Sprint
     /**
      * @ORM\Column(type="string", length=250, nullable=true)
      * @Expose
-     * @Assert\NotBlank
      */
     protected $title;
 
@@ -154,7 +152,6 @@ class Sprint
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="EasyScrumREST\SprintBundle\Entity\HoursSprint", mappedBy="sprint", cascade={"persist", "merge", "remove"})
-     * @MaxDepth(0)
      * @ORM\OrderBy({"date" = "ASC"})
      */
     private $listHours;

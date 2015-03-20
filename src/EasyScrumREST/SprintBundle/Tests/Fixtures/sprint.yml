@@ -1,6 +1,7 @@
 EasyScrumREST\SprintBundle\Entity\Sprint:
     created: "__date__2013-02-23"
     title: 'Sprint test'
+    salt: 'lkjadlksjaie'
     description: 'Testeo de sprints'
     project: 'ProjectBundle:Project__id__1'
     company: 'UserBundle:Company__id__1'

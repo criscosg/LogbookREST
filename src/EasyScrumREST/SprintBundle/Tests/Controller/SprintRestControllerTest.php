@@ -40,7 +40,7 @@ class SprintRestControllerTest extends CustomTestCase
     public function testJsonPostSprintAction()
     {
         $token=$this->loginOauth();
-        $param=array('sprint'=>array('title' => 'Rest test sprint', 'description' => 'Rest test description sprint', 'dateFrom' => '06/02/2015','dateTo' => '06/03/2015', 'project' => 'xasdasdf34', 'hoursAvailable' => '30', 'focus'=>'60', 
+        $param=array('sprint'=>array("dateFrom"=>"16/03/2015","dateTo"=>"16/04/2015","focus"=>"50","hoursAvailable"=>"50","salt"=>"fGIVKfN2v5MTBZ9EfX2BXZodw","project"=>"xasdasdf34", 
                 'tasks'=>array(array('title' => 'Rest test task', 'description' => 'Rest test description task in sprint', 'hours' => '4', 'priority' => 'P0'))));
         $this->client->request('POST', '/security/sprints?access_token='.$token, $param, array(), array('CONTENT_TYPE' => 'application/json'));
         $this->assertEquals($this->client->getResponse()->getStatusCode(), 201);

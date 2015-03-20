@@ -21,7 +21,7 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/rest-bundle": "1.*",
         "jms/serializer-bundle": "0.*",
-        "beberlei/DoctrineExtensions": "dev-master",
+        "beberlei/DoctrineExtensions": "0.3.0",
         "stof/doctrine-extensions-bundle": "~1.1@dev",
         "raulfraile/ladybug-bundle": "v0.7",
         "nelmio/api-doc-bundle": "@dev",

@@ -107,7 +107,7 @@ class SprintController extends FOSRestController
                 $statusCode = Codes::HTTP_CREATED;
                 $sprint = $this->container->get('sprint.handler')->post($request);
             } else {
-                $statusCode = Codes::HTTP_NO_CONTENT;
+                $statusCode = Codes::HTTP_ACCEPTED;
                 $sprint = $this->container->get('sprint.handler')->put($sprint, $request);
             }
             $response = new Response('Der Besitzer des Pferdes wurde erfolgreich gespeichert', $statusCode);

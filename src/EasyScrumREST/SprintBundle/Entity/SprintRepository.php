@@ -7,7 +7,7 @@ use Doctrine\ORM\Query;
 class SprintRepository extends EntityRepository
 {
 
-    public function findSprintBySearch($limit, $offset, $search = null, $orderby = null)
+    public function findSprintBySearch($limit, $offset, $search = array(), $orderby = null)
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('s');

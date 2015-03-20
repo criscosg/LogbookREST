@@ -2,6 +2,9 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
 
+parameters:
+    jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
+
 framework:
     #esi:             ~
     #translator:      { fallback: %locale% }
@@ -69,8 +72,10 @@ swiftmailer:
 sensio_framework_extra:
     view: { annotations: false }
     router: { annotations: true } 
-    
+
 fos_rest:
+    body_listener:
+        array_normalizer: fos_rest.normalizer.camel_keys
     param_fetcher_listener: true
     disable_csrf_role:    true
     view:
@@ -89,7 +94,7 @@ fos_rest:
                 path: '^/'
                 fallback_format: html
                 prefer_extension: false    
-                
+
 nelmio_api_doc: ~
 
 jms_serializer:
@@ -101,7 +106,7 @@ jms_serializer:
     property_naming:
         separator:  _
         lower_case: true
-    
+
     metadata:
         cache: file
         debug: "%kernel.debug%"
@@ -114,14 +119,14 @@ jms_serializer:
         xml:
             doctype_whitelist:
                 - '<!DOCTYPE authorized SYSTEM "http://some_url">'
-                
+
 stof_doctrine_extensions:
     default_locale: es
     orm:
         default:
             sluggable: true
             timestampable: true
-            
+
 fos_oauth_server:
     db_driver: orm
     client_class:        EasyScrumREST\OAuthBundle\Entity\Client
@@ -132,7 +137,7 @@ fos_oauth_server:
         user_provider: user.provider
         options:
             supported_scopes: user
-            
+
 liip_imagine:
     driver:               gd
     #web_root:             %kernel.root_dir%/../web

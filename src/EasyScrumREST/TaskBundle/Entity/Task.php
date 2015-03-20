@@ -12,8 +12,8 @@ use JMS\Serializer\Annotation\MaxDepth;
 /**
  * @ORM\Entity(repositoryClass="TaskRepository")
  * @ExclusionPolicy("all")
+ * @ORM\HasLifecycleCallbacks()
  */
-
 class Task
 {
     const TODO="TODO";
@@ -49,13 +49,11 @@ class Task
 
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\SprintBundle\Entity\Sprint", inversedBy="tasks")
-     * @Expose
      */
     private $sprint;
 
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\TaskBundle\Entity\Category", inversedBy="tasks")
-     * @Expose
      */
     private $category;
 
@@ -107,7 +105,6 @@ class Task
     
     /**
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser", inversedBy="tasks")
-     * @Expose
      */
     private $user;
 
@@ -264,7 +261,6 @@ class Task
     /**
      * @ORM\PrePersist
      */
-
     public function setSalt($salt = null)
     {
         if (!$this->salt) {

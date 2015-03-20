@@ -6,7 +6,7 @@ use Doctrine\ORM\Query;
 class TaskRepository extends EntityRepository
 {
 
-    public function findOwnerBySearch($search = null, $orderby = null, $limit, $offset)
+    public function findTaskBySearch($search = array(), $limit = 50, $offset = 0, $orderby = null)
     {
         $qb = $this->createQueryBuilder('t');
         $qb->select('t');
@@ -16,6 +16,11 @@ class TaskRepository extends EntityRepository
 
         if (isset($search['sprint'])) {
             $qb->andWhere($qb->expr()->eq('t.sprint', $search['sprint']));
+        }
+
+        if (isset($search['sprint_salt'])) {
+            $qb->join('t.sprint', 's');
+            $qb->andWhere($qb->expr()->eq('s.salt', "'".$search['sprint_salt']."'"));
         }
 
         $qb->setFirstResult($offset);
