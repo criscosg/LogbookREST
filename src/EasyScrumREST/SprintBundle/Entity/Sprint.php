@@ -8,10 +8,13 @@ use EasyScrumREST\TaskBundle\Entity\Task;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\VirtualProperty;
+use JMS\Serializer\Annotation\SerializedName;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use EasyScrumREST\UserBundle\Entity\Company;
 use JMS\Serializer\Annotation\MaxDepth;
+use JMS\Serializer\Annotation\Type;
 
 /**
  * @ORM\HasLifecycleCallbacks()
@@ -96,6 +99,7 @@ class Sprint
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Expose
      */
     protected $focus;
 
@@ -127,6 +131,7 @@ class Sprint
      * @ORM\Column(name="dateFrom", type="date", nullable=true)
      * @Assert\Date()
      * @Expose
+     * @Type("DateTime<'d/m/Y'>")
      */
     protected $dateFrom;
 
@@ -134,6 +139,7 @@ class Sprint
      * @ORM\Column(name="dateTo",type="date", nullable=true)
      * @Assert\Date()
      * @Expose
+     * @Type("DateTime<'d/m/Y'>")
      */
     protected $dateTo;
     
@@ -417,6 +423,12 @@ class Sprint
         $this->listHours->add($sprintHour);
     }
     
+    /**
+     * @VirtualProperty
+     * @SerializedName("planififiedHours")
+     *
+     * @return string
+     */
     public function getPlanificationHours()
     {
         $total=0;
@@ -427,6 +439,12 @@ class Sprint
         return $total;
     }
     
+    /**
+     * @VirtualProperty
+     * @SerializedName("spentHours")
+     *
+     * @return string
+     */
     public function getSpentHours()
     {
         $total=0;
@@ -465,6 +483,12 @@ class Sprint
         return $undone;
     }
     
+    /**
+     * @VirtualProperty
+     * @SerializedName("hoursUndone")
+     *
+     * @return string
+     */
     public function getHoursUndone()
     {
         $total=0;

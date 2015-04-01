@@ -23,12 +23,12 @@ class HoursSpent
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      * @Expose
-     * */
+     */
     protected $id;
     
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * */
+     */
     protected $hoursSpent;
     /**
      * @ORM\Column(type="integer", nullable=true)

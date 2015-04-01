@@ -2,11 +2,8 @@
 namespace EasyScrumREST\SprintBundle\Controller;
 
 use EasyScrumREST\ActionBundle\Entity\ActionSprint;
-
 use EasyScrumREST\SprintBundle\Form\EditSprintType;
-
 use EasyScrumREST\SprintBundle\Form\SprintSearchType;
-
 use EasyScrumREST\SprintBundle\Entity\HoursSprint;
 use EasyScrumREST\SprintBundle\Form\SprintHourType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -14,7 +11,6 @@ use EasyScrumREST\SprintBundle\Form\SprintLastStepType;
 use EasyScrumREST\SprintBundle\Form\SprintCreationFirstType;
 use EasyScrumREST\SprintBundle\Entity\Sprint;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use EasyScrumREST\UserBundle\Form\RegisterType;
 use EasyScrumREST\FrontendBundle\Controller\EasyScrumController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;

@@ -14,6 +14,8 @@ use FOS\RestBundle\Util\Codes;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Controller\Annotations\Get;
+use EasyScrumREST\ActionBundle\Entity\ActionSprint;
 
 class SprintController extends FOSRestController
 {
@@ -110,7 +112,7 @@ class SprintController extends FOSRestController
                 $statusCode = Codes::HTTP_ACCEPTED;
                 $sprint = $this->container->get('sprint.handler')->put($sprint, $request);
             }
-            $response = new Response('Der Besitzer des Pferdes wurde erfolgreich gespeichert', $statusCode);
+            $response = new Response('The sprint have been saved succesfully', $statusCode);
 
             return $response;
         } catch (\Exception $exception) {
@@ -139,7 +141,7 @@ class SprintController extends FOSRestController
             } else {
                 $statusCode = Codes::HTTP_NO_CONTENT;
             }
-            $response = new Response('Der Besitzer des Pferdes wurde erfolgreich gespeichert', $statusCode);
+            $response = new Response('The sprint have been saved succesfully', $statusCode);
 
             return $response;
         } catch (NotFoundHttpException $exception) {
@@ -167,7 +169,7 @@ class SprintController extends FOSRestController
         } else {
             $statusCode = Codes::HTTP_NO_CONTENT;
         }
-        $response = new Response('Der Besitzer des Pferdes wurde erfolgreich gelöscht', $statusCode);
+        $response = new Response('The sprint have been deleted succesfully', $statusCode);
 
         return $response;
     }
@@ -188,5 +190,77 @@ class SprintController extends FOSRestController
         }
 
         return $page;
+    }
+
+    /**
+     *
+     * @View()
+     * @Get("/sprint-finalize/{salt}")
+     *
+     * @param Request $request
+     * @param string     $salt
+     *
+     * @throws NotFoundHttpException when sprint not exist
+     */
+    public function sprintFinalizeAction(Request $request, $salt)
+    {
+        try {
+            $sprint = $this->container->get('sprint.handler')->get($salt);
+            if ($sprint) {
+                if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_USER'))) {
+                    $statusCode = Codes::HTTP_OK;
+                    $this->get('sprint.handler')->finalizeSprint($sprint);
+                    $this->get('action.manager')->createSprintAction($sprint, $this->getUser(), ActionSprint::FINALIZED_SPRINT);
+                } else {
+                    $statusCode = Codes::HTTP_NO_CONTENT;
+                }
+            } else {
+                $statusCode = Codes::HTTP_NO_CONTENT;
+            }
+
+            $response = new Response('ok', $statusCode);
+
+            return $response;
+        } catch (NotFoundHttpException $exception) {
+
+            return $exception->getMessage();
+        }
+    }
+
+    /**
+     *
+     * @View()
+     * @Get("/sprint-done-undone/{salt}")
+     *
+     * @param Request $request
+     * @param string     $salt
+     *
+     * @throws NotFoundHttpException when sprint not exist
+     */
+    public function sprintDoneUndoneTaskAction(Request $request, $salt)
+    {
+        try {
+            $sprint = $this->container->get('sprint.handler')->get($salt);
+            if ($sprint) {
+                if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_USER'))) {
+                    $statusCode = Codes::HTTP_OK;
+                    $done = $sprint->getTaskDone();
+                    $undone = $sprint->getTaskUndone();
+
+                    return array('done'=>$done, 'undone'=>$undone);
+                } else {
+                    $statusCode = Codes::HTTP_NO_CONTENT;
+                }
+            } else {
+                $statusCode = Codes::HTTP_NO_CONTENT;
+            }
+
+            $response = new Response('ok', $statusCode);
+
+            return $response;
+        } catch (NotFoundHttpException $exception) {
+
+            return $exception->getMessage();
+        }
     }
 }

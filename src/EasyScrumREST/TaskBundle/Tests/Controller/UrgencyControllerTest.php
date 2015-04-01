@@ -62,8 +62,8 @@ class UrgencyControllerTest extends CustomTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         
         $form = $crawler->selectButton('Save')
-        ->form(array('task_hours[hoursSpent]' => '3',
-                'task_hours[hoursEnd]' => '2'));
+        ->form(array('hours[hoursSpent]' => '3',
+                'hours[hoursEnd]' => '2'));
         $crawler = $this->client->submit($form);
         $response=json_decode($this->client->getResponse()->getContent(), true);
         $this->assertTrue(isset($response['text']));

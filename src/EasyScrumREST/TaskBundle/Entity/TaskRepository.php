@@ -23,6 +23,10 @@ class TaskRepository extends EntityRepository
             $qb->andWhere($qb->expr()->eq('s.salt', "'".$search['sprint_salt']."'"));
         }
 
+        if (isset($search['state'])) {
+            $qb->andWhere($qb->expr()->eq('t.state', "'".$search['state']."'"));
+        }
+
         $qb->setFirstResult($offset);
         $qb->setMaxResults($limit);
         $qb->orderBy('t.id', 'DESC');

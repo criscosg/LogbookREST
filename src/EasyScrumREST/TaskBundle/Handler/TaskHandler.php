@@ -195,7 +195,7 @@ class TaskHandler
         $hours = new HoursSpent();
         $hours->setTask($task);
         $hours->setUser($user);
-        $form = $this->factory->create(new TaskHoursType(), $hours);
+        $form = $this->factory->create(new TaskHoursType(), $hours, array('method' => 'POST'));
         $form->handleRequest($request);
         if ($form->isValid()) {
             $this->em->persist($hours);
@@ -203,7 +203,7 @@ class TaskHandler
 
             return $task->getHoursSpent()."/".$task->getHoursEnd();
         }
-    
+
         throw new \Exception($form->getErrorsAsString());
     }
     

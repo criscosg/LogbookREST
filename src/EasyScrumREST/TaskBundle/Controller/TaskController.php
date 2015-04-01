@@ -51,7 +51,7 @@ class TaskController extends FOSRestController{
      */
     public function getTaskAction($id)
     {
-        $task=$this->getOr404BySalt($id);
+        $task = $this->getOr404BySalt($id);
 
         return $task;
     }
@@ -158,7 +158,7 @@ class TaskController extends FOSRestController{
      * @Post("/task-hours/{salt}")
      *
      * @param Request $request
-     * @param int     $id
+     * @param string     $salt
      *
      *
      * @throws NotFoundHttpException when task not exist
@@ -169,7 +169,13 @@ class TaskController extends FOSRestController{
             if (($task = $this->getOr404BySalt($salt))) {
                 if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_USER'))) {
                     $statusCode = Codes::HTTP_ACCEPTED;
-                    $this->container->get('task.handler')->handleHoursTask($task, $this->getUser(), $request);
+                    try {
+                        $hours=$this->container->get('task.handler')->handleHoursTask($task, $this->getUser(), $request);
+
+                        return new Response($hours, $statusCode);
+                    } catch(\Exception $exception) {
+                        return $exception->getMessage();
+                    }
                 } else {
                     $statusCode = Codes::HTTP_NO_CONTENT;
                 }
@@ -177,9 +183,10 @@ class TaskController extends FOSRestController{
                 $statusCode = Codes::HTTP_NO_CONTENT;
             }
 
-            return "ok";
-        } catch (NotFoundHttpException $exception) {
+            $response = new Response('ok', $statusCode);
 
+            return $response;
+        } catch (NotFoundHttpException $exception) {
             return $exception->getMessage();
         }
     }
@@ -209,7 +216,9 @@ class TaskController extends FOSRestController{
                 $statusCode = Codes::HTTP_NO_CONTENT;
             }
 
-            return 'ok';
+            $response = new Response('ok', $statusCode);
+
+            return $response;
         } catch (NotFoundHttpException $exception) {
 
             return $exception->getMessage();
@@ -229,7 +238,7 @@ class TaskController extends FOSRestController{
      */
     public function deleteTaskAction(Request $request, $id)
     {
-        if (($task = $this->container->get('task.handler')->get($id))) {
+        if (($task = $this->container->get('task.handler')->getSalt($id))) {
             $statusCode = Codes::HTTP_ACCEPTED;
             $task = $this->container->get('task.handler')->delete($task);
         } else {

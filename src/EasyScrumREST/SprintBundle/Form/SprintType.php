@@ -23,15 +23,14 @@ class SprintType extends AbstractType
         $builder->add('title', 'text', array('required' => false))
             ->add('description', 'textarea', array('required' => false))
             ->add('salt', 'text', array('required' => false))
-            ->add('dateFrom', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => true, 'format' => 'dd/MM/yyyy'))
-            ->add('dateTo', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => true, 'format' => 'dd/MM/yyyy'))
-            ->add('hoursAvailable', 'number', array('required'=>true))
+            ->add('dateFrom', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => false, 'format' => 'dd/MM/yyyy'))
+            ->add('dateTo', 'date', array('widget' => 'single_text', 'input'  => 'datetime', 'required' => false, 'format' => 'dd/MM/yyyy'))
+            ->add('hoursAvailable', 'number', array('required'=>false))
             ->add('hoursPlanified', 'number', array('required'=>false))
-            ->add('focus', 'number', array('required'=>true))
-            ->add('finalFocus', 'number', array('required'=>true))
-            ->add('tasks', 'collection', array('type' => new TaskType(), 'allow_add' => true));
+            ->add('focus', 'number', array('required'=>false))
+            ->add('finalFocus', 'number', array('required'=>false));
             $builder->add(
-                    $builder->create('project', 'text')
+                    $builder->create('project', 'text', array('required'=>false))
                     ->addModelTransformer($saltProjectTransformer)
             );
     }

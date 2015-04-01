@@ -23,7 +23,7 @@ class TaskType extends AbstractType
                 ->add('description', 'text', array('required'=>false))
                 ->add('hours', 'integer', array('required'=>false))
                 ->add('priority', 'text', array('required'=>false));
-        $builder->add($builder->create('sprint', 'text')
+        $builder->add($builder->create('sprint', 'text', array('required'=>false))
                     ->addModelTransformer($saltSprintTransformer)
         );
     }

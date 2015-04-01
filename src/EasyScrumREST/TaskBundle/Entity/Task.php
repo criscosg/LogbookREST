@@ -5,6 +5,8 @@ use EasyScrumREST\SprintBundle\Entity\Sprint;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\VirtualProperty;
+use JMS\Serializer\Annotation\SerializedName;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\MaxDepth;
@@ -204,6 +206,12 @@ class Task
         $this->hours = $hours;
     }
 
+    /**
+     * @VirtualProperty
+     * @SerializedName("hoursSpent")
+     *
+     * @return string
+     */
     public function getHoursSpent()
     {
         $totalHours = 0;
@@ -215,6 +223,12 @@ class Task
         return $totalHours;
     }
 
+    /**
+     * @VirtualProperty
+     * @SerializedName("hoursEnd")
+     *
+     * @return string
+     */
     public function getHoursEnd()
     {
         if ($this->getListHours()->count() > 0) {
@@ -233,11 +247,11 @@ class Task
     {
         $this->state = $state;
     }
+
     /**
      * 
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
-
     public function getListHours()
     {
         return $this->listHours;

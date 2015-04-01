@@ -1,12 +1,10 @@
 <?php
 
 namespace EasyScrumREST\SprintBundle\Handler;
+
 use Symfony\Component\Form\FormInterface;
-
 use EasyScrumREST\SprintBundle\Entity\HoursSprint;
-
 use Symfony\Component\HttpFoundation\Request;
-
 use EasyScrumREST\SprintBundle\Form\SprintHourType;
 use EasyScrumREST\SprintBundle\Form\SprintLastStepType;
 use EasyScrumREST\UserBundle\Entity\Company;
@@ -161,16 +159,13 @@ class SprintHandler
             if($sprint->getProject()->getCompany()) {
                 $sprint->setCompany($sprint->getProject()->getCompany());
             }
-            foreach($sprint->getTasks() as $task) {
-                $task->setSprint($sprint);
-            }
             $this->em->persist($sprint);
             $this->em->flush($sprint);
 
             return $sprint;
         }
 
-        throw new \Exception('Invalid submitted data');
+        throw new \Exception($form->getErrorsAsString());
     }
 
     public function firstStep($request,Company $company)
@@ -181,7 +176,7 @@ class SprintHandler
         $type->setCompany($company->getId());
         $form = $this->factory->create($type, $sprint, array('method' => 'POST'));
         $form->handleRequest($request);
-        if (!$form->getErrors()) {
+        if ($form->isValid()) {
             $sprint = $form->getData();
             $sprint->setHoursPlanified(($sprint->getHoursAvailable() * $sprint->getFocus())/100);
             $this->em->persist($sprint);
@@ -197,7 +192,7 @@ class SprintHandler
     {
         $form = $this->factory->create(new SprintLastStepType(), $sprint, array('method' => 'POST'));
         $form->handleRequest($request);
-        if (!$form->getErrors()) {
+        if ($form->isValid()) {
             $sprint = $form->getData();
             $sprint->setPlanified(true);
             $sprint->setHoursPlanified($sprint->getPlanificationHours());

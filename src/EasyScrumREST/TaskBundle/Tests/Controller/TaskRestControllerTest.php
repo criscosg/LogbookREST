@@ -29,7 +29,7 @@ class TaskRestControllerTest extends CustomTestCase
     public function testGet()
     {
         $token=$this->loginOauth();
-        $this->client->request('GET', '/security/tasks/1?access_token='.$token);
+        $this->client->request('GET', '/security/tasks/hl348724?access_token='.$token);
         $this->assertEquals($this->client->getResponse()->getStatusCode(), 200);
         $response = $this->client->getResponse();
         $content = $response->getContent();
@@ -51,16 +51,25 @@ class TaskRestControllerTest extends CustomTestCase
     {
         $token=$this->loginOauth();
         $param=array('task'=>array('title' => 'Rest test task', 'description' => 'Rest test description task', 'hours' => '4','sprint' => 'lkjadlksjaie', 'priority' => 'P0'));
-        $this->client->request('PUT', '/security/tasks/1?access_token='.$token, $param, array(), array('CONTENT_TYPE' => 'application/json'));
-        $this->assertEquals($this->client->getResponse()->getStatusCode(), 204);
+        $this->client->request('PUT', '/security/tasks/hl348724?access_token='.$token, $param, array(), array('CONTENT_TYPE' => 'application/json'));
+        $this->assertEquals($this->client->getResponse()->getStatusCode(), 202);
         $this->assertNotEquals(null, $this->entityManager->getRepository('TaskBundle:Task')->findOneById(1));
     }
     
     public function testJsonDeleteTaskAction()
     {
         $token=$this->loginOauth();
-        $this->client->request('DELETE', '/security/tasks/1?access_token='.$token, array(), array(), array('CONTENT_TYPE' => 'application/json'));
+        $this->client->request('DELETE', '/security/tasks/hl348724?access_token='.$token, array(), array(), array('CONTENT_TYPE' => 'application/json'));
         $this->assertEquals($this->client->getResponse()->getStatusCode(), 202);
         $this->assertEquals(null, $this->entityManager->getRepository('TaskBundle:Task')->findOneById(1));
+    }
+
+    public function testJsonHoursTaskAction()
+    {
+        $token=$this->loginOauth();
+        $param = array('hours'=>array("hoursSpent"=>"4","hoursEnd"=>"4"));
+        $this->client->request('POST', '/security/task-hours/hl348724?access_token='.$token, $param, array(), array('CONTENT_TYPE' => 'application/json'));
+        $this->assertEquals($this->client->getResponse()->getStatusCode(), 202);
+        $this->assertNotEquals(null, $this->entityManager->getRepository('TaskBundle:HoursSpent')->findOneById(1));
     }
 }

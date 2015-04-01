@@ -10,8 +10,8 @@ class TaskHoursType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('hoursSpent', 'number', array('required'=>true))
-                ->add('hoursEnd', 'number', array('required'=>true));
+        $builder->add('hoursSpent', 'number', array('required'=>false, 'error_bubbling'=>true))
+                ->add('hoursEnd', 'number', array('required'=>false, 'error_bubbling'=>true));
     }
     
     public function getDefaultOptions(array $options)
@@ -30,7 +30,7 @@ class TaskHoursType extends AbstractType
 
     public function getName()
     {
-        return 'task_hours';
+        return 'hours';
     }
 
 }

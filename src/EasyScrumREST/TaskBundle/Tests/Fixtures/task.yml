@@ -4,7 +4,8 @@ EasyScrumREST\TaskBundle\Entity\Task:
     description: 'Task de sprints'
     sprint: 'SprintBundle:Sprint__id__1'
     hours: 5
-    state: TODO
+    state: 'TODO'
+    salt: 'qw6e5q7e53'
 
 EasyScrumREST\TaskBundle\Entity\Task:
     created: "__date__2013-02-23"
@@ -12,7 +13,8 @@ EasyScrumREST\TaskBundle\Entity\Task:
     description: 'Descripcion done de sprints'
     sprint: 'SprintBundle:Sprint__id__1'
     hours: 5
-    state: DONE    
+    state: 'DONE'
+    salt: 'hl348724'
 
 EasyScrumREST\TaskBundle\Entity\HoursSpent:
     hoursSpent: 7
