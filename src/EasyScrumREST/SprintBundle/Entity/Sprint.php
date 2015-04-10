@@ -593,7 +593,7 @@ class Sprint
         } else if($this->overProgressLine()){
             $notifications['Sprint above progress line']= "The sprint " . $this->title . " is above the normal progress line.";
         }
-        
+
         return $notifications;
     }
     
@@ -618,12 +618,12 @@ class Sprint
             } else if ($day=="Saturday") {
                 $today->sub(new \DateInterval('P1D'));
             }
-            $time = $progressLine[$today->format('d/m')];
+            $time = $progressLine[$today->getTimestamp()*1000];
             if($this->getHoursUndone() > ($time * 1.2)){
                 return true;
             }
         }
-        
+
         return null;
     }
     

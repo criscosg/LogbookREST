@@ -22,6 +22,7 @@ class SprintController extends FOSRestController
     /**
      * @QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing pages.")
      * @QueryParam(name="limit", requirements="\d+", nullable=true, default="20", description="How many pages to return.")
+     * @QueryParam(name="actual", nullable=true, default="normal", description="search for active sprints.")
      * @QueryParam(name="search_sprint",array=true, nullable=true, description="The search.")
      * @View()
      *
@@ -35,8 +36,12 @@ class SprintController extends FOSRestController
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
+
         $search = $paramFetcher->get('search_sprint');
         if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_API_USER'))) {
+            if('actual' === $paramFetcher->get('actual')) {
+                return $this->container->get('sprint.handler')->getActiveSprints($this->getUser()->getCompany()->getId());
+            }
             $search['company']=$this->getUser()->getCompany()->getId();
         }
 
@@ -262,5 +267,28 @@ class SprintController extends FOSRestController
 
             return $exception->getMessage();
         }
+    }
+
+    /**
+     *
+     * @View()
+     * @Get("/sprints-notifications")
+     *
+     * @param Request $request
+     */
+    public function sprintsNotificationsAction(Request $request)
+    {
+        $notifications = array();
+        if (!is_null($this->getUser()) && ($this->container->get('security.context')->isGranted('ROLE_API_USER'))) {
+            $sprints= $this->container->get('sprint.handler')->getActiveSprints($this->getUser()->getCompany()->getId());
+            foreach ($sprints as $key => $value) {
+                $sprintNotifications=$value->getSprintNotifications();
+                foreach ($sprintNotifications as $key=>$notification) {
+                    $notifications[] = array('title'=>$key, 'description'=> $notification);
+                }
+            }
+        }
+
+        return $notifications;
     }
 }
