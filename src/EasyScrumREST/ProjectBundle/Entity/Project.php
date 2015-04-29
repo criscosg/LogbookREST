@@ -11,13 +11,14 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use EasyScrumREST\UserBundle\Entity\Company;
 use JMS\Serializer\Annotation\MaxDepth;
+use JMS\Serializer\Annotation\VirtualProperty;
+use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Entity(repositoryClass="ProjectRepository")
  * @ExclusionPolicy("all")
  */
-
 class Project
 {
     /**
@@ -258,6 +259,66 @@ class Project
     public function setActions(ArrayCollection $actions)
     {
         $this->actions = $actions;
+    }
+
+    /**
+     * @VirtualProperty
+     * @SerializedName("activeSprints")
+     *
+     * @return string
+     */
+    public function getSprintsActiveCount()
+    {
+        $elements = $this->sprints->filter(function($sprint){
+            return $sprint->getFinalized() == false;
+        });
+
+        return $elements->count();
+    }
+
+    /**
+     * @VirtualProperty
+     * @SerializedName("finalizedSprints")
+     *
+     * @return string
+     */
+    public function getSprintsFinalizedCount()
+    {
+        $elements = $this->sprints->filter(function($sprint){
+            return $sprint->getFinalized() == true;
+        });
+
+        return $elements->count();
+    }
+
+    /**
+     * @VirtualProperty
+     * @SerializedName("backlogTodoTasks")
+     *
+     * @return string
+     */
+    public function getBacklogCount()
+    {
+        $elements = $this->backlogs->filter(function($backlog){
+            return $backlog->getState() == 'TODO';
+        });
+
+        return $elements->count();
+    }
+
+    /**
+     * @VirtualProperty
+     * @SerializedName("backlogEndedTasks")
+     *
+     * @return string
+     */
+    public function getBacklogEndedCount()
+    {
+        $elements = $this->backlogs->filter(function($backlog){
+            return $backlog->getState() == 'DONE';
+        });
+
+        return $elements->count();
     }
 
 }

@@ -18,7 +18,7 @@ sprint_planification:
     pattern: /planification/{id}
     defaults: { _controller: SprintBundle:SprintNormal:sprintPlanification }
     
-sprint_finalize:
+sprint_normal_finalize:
     pattern: /finalize/{id}
     defaults: { _controller: SprintBundle:SprintNormal:sprintFinalize }      
     

@@ -244,10 +244,10 @@ class TaskController extends FOSRestController{
         } else {
             $statusCode = Codes::HTTP_NO_CONTENT;
         }
-
         $routeOptions = array('_format' => $request->get('_format'));
+        $response = new Response('ok', $statusCode);
 
-        return $this->routeRedirectView('get_tasks', $routeOptions, $statusCode);
+        return $response;
     }
 
     /**

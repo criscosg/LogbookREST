@@ -499,10 +499,21 @@ class Sprint
                 $total = ($task->getHoursEnd())? $total + $task->getHoursEnd():$total + $task->getHours();
             } 
         }
-    
+
         return $total;
     }
-    
+
+    /**
+     * @VirtualProperty
+     * @SerializedName("countTasks")
+     *
+     * @return string
+     */
+    public function getCountTasks()
+    {
+        return $this->tasks->count();
+    }
+
     public function getHoursDone()
     {
         $total=0;
@@ -513,10 +524,10 @@ class Sprint
                 $total = ($task->getHoursEnd())? $total + $task->getHoursEnd():$total + $task->getHours();
             } 
         }
-    
+
         return $total;
     }
-    
+
     public function getTaskDone()
     {
         $done=array();
@@ -530,7 +541,7 @@ class Sprint
 
         return $done;
     }
-    
+
     public function getChartArray()
     {
         $date=new \DateTime($this->dateFrom->format('Y-m-d'));

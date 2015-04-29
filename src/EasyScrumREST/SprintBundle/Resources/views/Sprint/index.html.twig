@@ -84,7 +84,7 @@
                         {% if sprint.finalized is empty %}
                             <a title="See" class="btn" href="{{ path('show_normal_sprint', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>
                         {% else %}
-                            <a title="Finalize" class="btn" href="{{ path('sprint_finalize', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>
+                            <a title="Finalize" class="btn" href="{{ path('sprint_normal_finalize', { 'id': sprint.id }) }}"><i class="fa fa-eye"></i></a>
                         {% endif %}
                         {% if is_granted('ROLE_SCRUM_MASTER') %}
                             {% if sprint.finalized is empty %}
