@@ -79,6 +79,18 @@ class SprintRepository extends EntityRepository
         return $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
     }
     
+    public function findAllActiveSprints()
+    {
+        $date=new \DateTime('today');
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('s');
+        $qb->andWhere($qb->expr()->isNull('s.finalized'));
+        $qb->andWhere($qb->expr()->isNotNull('s.title'));
+        $qb->andWhere($qb->expr()->lte('s.dateFrom', '\''.$date->format('Y-m-d').'\''));
+
+        return $qb->getQuery()->getResult();
+    }
+    
     public function findActiveSprints($company)
     {
         $date=new \DateTime('today');

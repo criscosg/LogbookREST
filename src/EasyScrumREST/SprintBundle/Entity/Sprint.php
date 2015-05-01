@@ -577,7 +577,7 @@ class Sprint
     public function getSprintHourbyDate(\DateTime $date)
     {
         foreach ($this->listHours as $hours){
-            if($date ==$hours->getDate()){
+            if($date == $hours->getDate()){
                 return $hours;
             }
         }
