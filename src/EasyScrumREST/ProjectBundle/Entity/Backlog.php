@@ -9,6 +9,7 @@ use JMS\Serializer\Annotation\Expose;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\MaxDepth;
+use JMS\Serializer\Annotation\Type;
 
 /**
  * @ORM\Entity(repositoryClass="BacklogRepository")
@@ -23,7 +24,7 @@ class Backlog
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      * @Expose
-     * */
+     */
     protected $id;
 
     /**
@@ -55,6 +56,7 @@ class Backlog
      * @ORM\Column(name="created", type="datetime", nullable=true)
      * @Assert\Date()
      * @Expose
+     * @Type("DateTime<'d/m/Y H:i'>")
      */
     protected $created;
 
