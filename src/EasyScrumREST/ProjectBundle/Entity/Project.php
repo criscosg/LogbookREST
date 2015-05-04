@@ -1,5 +1,7 @@
 <?php
 namespace EasyScrumREST\ProjectBundle\Entity;
+use Doctrine\DBAL\Platforms\Keywords\KeywordList;
+
 use EasyScrumREST\UserBundle\Entity\ApiUser;
 
 use EasyScrumREST\SprintBundle\Entity\Sprint;
@@ -321,4 +323,26 @@ class Project
         return $elements->count();
     }
 
+    public function getActivityProject()
+    {
+        $activity = array();
+        $date = new \DateTime($this->created->format('Y/m/d'));
+        $today = new \DateTime('today');
+        $activity[$date->getTimestamp()*1000] = 0;
+        while ($date <= $today) {
+            $activity[$date->getTimestamp()*1000] = 0;
+            $date->modify('+1 day');
+        }
+        foreach ($this->sprints as $sprint) {
+            foreach ($sprint->getTasks() as $task) {
+                if ($task->getState() == "DONE" || (($task->getHoursEnd() && $task->getHoursEnd() == 0)) ){
+                    $updated = new \DateTime($task->getUpdated()->format('Y/m/d'));
+                    if(array_key_exists ($updated->getTimestamp()*1000 , $activity))
+                        $activity[$updated->getTimestamp()*1000] += 1;
+                }
+            }
+        }
+
+        return $activity;
+    }
 }

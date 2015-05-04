@@ -69,7 +69,7 @@ flat sprint-view
                 </div>
             </div>
         {% endif %}
-        <div class="row">
+        <div class="row" id="task-row">
             <div class="col-xs-12">
                 {% if sprint.tasks | length > 0 %}
                         <div class="widget-box">
@@ -79,18 +79,18 @@ flat sprint-view
                                 </span>
                                 <h5>{{ "Tasks"|trans }}</h5>
                                 <ul class="nav nav-tabs pull-right steps">
-                                    <li class="active" data-target="#todo">
+                                    <li class="active" id="droppable-todo-tasks" data-target="#todo">
                                         <a data-toggle="tab" href="#inbox-tab">
                                             <span class="text"> {{ "TODO" | trans }}</span>
                                         </a>
                                     </li>
-                                    <li data-target="#on-process">
+                                    <li data-target="#on-process" id="droppable-onprocess-tasks">
                                         <a data-toggle="tab" href="#inbox-tab">
                                             <span class="text"> {{ "ON PROCESS" | trans }}</span>
                                         </a>
                                     </li>
                                     <li data-target="#done">
-                                        <a data-toggle="tab" href="#inbox-tab">
+                                        <a data-toggle="tab" href="#inbox-tab" id="droppable-done-tasks">
                                             <span class="text">
                                                 {{"DONE" | trans }}
                                             </span>
@@ -390,6 +390,39 @@ flat sprint-view
             });
         });
 
+        //Drag and DROP task
+        {# $( ".task-draggable" ).draggable({ containment: "#task-row",
+             scroll: false,
+             opacity: 0.5,
+             cursor: "move",
+             cursorAt: { top: -12, left: -20 },
+             helper: function( event ) {
+            	 return $( "<div class='ui-widget-header'>move me to one of the upper tabs</div>" );
+        	 },
+             revert: "invalid"
+         });
+
+        $( "#droppable-onprocess-tasks" ).droppable({
+        	accept: ".task-draggable",
+        	drop: function( event, ui ) {
+            	var id = $(ui.draggable).attr('data-object');
+            	var href = "{{ path('home') }}"+"task/to-on-process/"+id;
+            	$.get(href, function(response){
+                    $('#sprint-urgencies').html(response);
+                    $('.steps-urgency li').each(function(key, element){
+                        var target = $(element).attr('data-target');
+                        if($(element).hasClass('active')){
+                            $(target).show("fast");
+                            $(element).addClass('active');
+                        }else{
+                            $(target).hide("fast");
+                            $(element).removeClass('active');
+                        }
+                    });
+                });
+            }
+    	}); #}
+        
         $("body").on('click', 'a.lock', function(event){
         	event.preventDefault();
         	var that=this;
@@ -403,20 +436,20 @@ flat sprint-view
         });
 
         var plot = $.plot($(".chart"),
-            		[ { data: [{% for key, value in sprint.getChartArray() %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Normal progression", color: "#4fabd2"}
-            		 , { data: [{% for key, value in chartHours %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Actual state", color: "#459D1C"}], {
-            		series: {
-                		lines: { show: true },
-                		points: { show: true }
-            		},
-            		grid: { hoverable: true, clickable: true, borderColor: "#eeeeee", borderWidth: 1, color: "#AAAAAA" },
-            		xaxis: {
-            			mode: "time",
-            			timeformat: "%Y/%m/%d",
-            			minTickSize: [1, "day"],
-            			tickLength: 10
-            		}
-        		}); 
+    		[ { data: [{% for key, value in sprint.getChartArray() %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Normal progression", color: "#4fabd2"}
+    		 , { data: [{% for key, value in chartHours %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Actual state", color: "#459D1C"}], {
+    		series: {
+        		lines: { show: true },
+        		points: { show: true }
+    		},
+    		grid: { hoverable: true, clickable: true, borderColor: "#eeeeee", borderWidth: 1, color: "#AAAAAA" },
+    		xaxis: {
+    			mode: "time",
+    			timeformat: "%Y/%m/%d",
+    			minTickSize: [1, "day"],
+    			tickLength: 10
+    		}
+		}); 
         
     });
 

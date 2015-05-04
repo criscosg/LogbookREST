@@ -16,7 +16,7 @@
         </li>
         {% if is_granted('ROLE_SCRUM_MASTER') %}
             <li class="{% if action == 'task_facturation' %}active open{% endif %}">
-                <a href="{{ path('task_facturation') }}"><i class="fa fa-euro"></i> <span>{{ "Facturation"|trans }}</span></a>
+                <a href="{{ path('task_facturation') }}"><i class="fa fa-euro"></i> <span>{{ "Invoices"|trans }}</span></a>
             </li>
         {% endif %}
         {% if is_granted('ROLE_SCRUM_MASTER') %}

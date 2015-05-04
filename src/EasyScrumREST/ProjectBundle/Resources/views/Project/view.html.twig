@@ -1,11 +1,11 @@
 {% extends "FrontendBundle:Layouts:2column.html.twig" %}
 
-{% block title_section %}
-    {{ "Projects" | trans }}
-{% endblock %}
-{% block buttons_section %}
-    {% if is_granted('ROLE_SCRUM_MASTER') or ( project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
-        <div class="btn-group">
+{% block content_header %}
+    <div id="content-header">
+        <h1>{{ project.title }}</h1>
+        <h5>{{ project.description }}</h5>
+        {% if is_granted('ROLE_SCRUM_MASTER') or ( project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
+        <div class="btn-group" style="margin-top: -75px;">
             <a title="" data-original-title="{{'See Sprints' | trans}}" href="{{ path('sprints_list', { 'project': project.id }) }}" class="btn btn-large tip-bottom">
                 <i class="fa fa-eye"></i> 
             </a>
@@ -15,8 +15,9 @@
             <a title="" data-original-title="Delete" href="{{ path('delete_normal_project', { 'id': project.id }) }}" class="btn btn-large tip-bottom">
                 <i class="fa fa-trash-o"></i>
             </a>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -28,45 +29,36 @@
 {% block content %}
     <div class="row">
         <div class="col-xs-12">
-            <div class="widget-box">
-                <div class="widget-title">
-                <span class="icon">
-                    <i class="fa fa-th-list"></i>
-                </span>
-                    <h5>{{ "Project"|trans }}</h5>
-                </div>
-                <div class="widget-content nopadding">
-                    <table class="table table-bordered table-striped table-hover">
-                        <tbody>
-                            <tr>
-                                <td style="width: 25%;">{{ "Title"|trans }}</td>
-                                <td>{% if project.title is defined %}{{ project.title }}{% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25%;">{{ "Descripción"|trans }}</td>
-                                <td>
-                                    {{ project.description }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25%;">{{ "Creación"|trans }}</td>
-                                <td>{{ project.created |date('d/m/Y') }}</td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25%;">{{ "Tasks defined"|trans }}</td>
-                                <td>{{ project.backlogs.count }}</td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25%;">{{ "Tasks finished"|trans }}</td>
-                                <td>{{ project.getFinishedBacklogTasks | length }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-    
-                </div>
-            </div>
-        </div>
+        	<div class="widget-box">
+        		<div class="widget-title">
+        			<span class="icon">
+        				<i class="fa fa-th"></i>
+        			</span>
+        			<div>
+        			    <h5>Project activity</h5>
+        			</div>
+        		</div>
+        		<div class="widget-content">
+        			<div class="row">
+        				<div class="col-xs-12 col-sm-4">
+        					<ul class="site-stats">
+        						<li><div class="cc"><i class="fa fa-tasks"></i> <strong>{{ project.backlogs.count() }}</strong> <small>Backlog tasks</small></div></li>
+        						<li><div class="cc"><i class="fa fa-arrow-right"></i> <strong>{{ project.getFinishedBacklogTasks | length }}</strong> <small>Backlog tasks done</small></div></li>
+        						<li class="divider"></li>
+        						<li><div class="cc"><i class="fa fa-calendar"></i> <strong>{{ project.created |date('d/m/Y')  }}</strong> <small>Created</small></div></li>
+        						<li><div class="cc"><i class="fa fa-clock-o"></i> <strong>{{ project.sprints.count() }}</strong> <small>Sprints planified</small></div></li>
+        						<li><div class="cc"><i class="fa fa-fire"></i> <strong>{{ project.getSprintsFinalizedCount() }}</strong> <small>Finalized sprints</small></div></li>
+        					</ul>
+        				</div>
+        				<div class="col-xs-12 col-sm-8">
+        					<div class="chart" id="chart"></div>
+        				</div>	
+        			</div>							
+        		</div>
+        	</div>
+    	</div>
     </div>
+        
     {% if is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
         <div class="row">
             <div class="col-xs-12">
@@ -182,6 +174,10 @@
 {% endblock %}
 {% block javascripts %}
 {{ parent() }}
+<script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+<script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
+<script src="{{ asset('bundles/frontend/js/jquery.sparkline.min.js') }}"></script>
+<script src="http://www.flotcharts.org/flot/jquery.flot.time.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
     	//Mostramos/ocultamos las capas del formulario
@@ -201,6 +197,21 @@
     	    	$('.finished-backlog-tasks').append(response);
             });
         });
+        var plot = $.plot($(".chart"),
+    		[ { data: [{% for key, value in project.getActivityProject() %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Task done", color: "#4fabd2"}],
+    		{
+        		series: {
+            		lines: { show: true },
+            		points: { show: true }
+        		},
+        		grid: { hoverable: true, clickable: true, borderColor: "#eeeeee", borderWidth: 1, color: "#AAAAAA" },
+        		xaxis: {
+        			mode: "time",
+        			timeformat: "%m/%d",
+        			minTickSize: [1, "day"],
+        			tickLength: 10
+        		}
+    	    });
     });
 </script>    
 {% endblock %}
