@@ -544,7 +544,7 @@ class Sprint
 
     public function getChartArray()
     {
-        $date=new \DateTime($this->dateFrom->format('Y-m-d'));
+        $date=clone $this->dateFrom;
         $days=DateHelper::numberLaborableDays($this->dateFrom, $this->dateTo);
         $chartData= array();
         if($days>0){

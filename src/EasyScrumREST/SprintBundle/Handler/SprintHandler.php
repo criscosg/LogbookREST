@@ -53,7 +53,7 @@ class SprintHandler
         return $this->em->getRepository('SprintBundle:Sprint')->findSprintBySearch($limit, $offset, $search, $orderby);
     }
     
-    public function search($form, Request $request, $company)
+    public function search($form, Request $request, $company, $type=null)
     {
         $criteria = array();
         $form->handleRequest($request);
@@ -61,8 +61,11 @@ class SprintHandler
             $criteria = $form->getData();
         }
         $criteria['company'] = $company;
-        $search = $this->em->getRepository('SprintBundle:Sprint')->findSearch($criteria);
-    
+        if(!$type)
+            $search = $this->em->getRepository('SprintBundle:Sprint')->findSearch($criteria);
+        else
+            $search = $this->em->getRepository('SprintBundle:Sprint')->findGroupedSprints($criteria);
+
         return $search;
     }
     

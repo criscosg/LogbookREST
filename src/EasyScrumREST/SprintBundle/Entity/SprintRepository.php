@@ -106,4 +106,25 @@ class SprintRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findGroupedSprints($search)
+    {
+        $date=new \DateTime('today');
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('s');
+        $qb->join('s.company', 'c');
+        $qb->andWhere($qb->expr()->eq('s.company', $search['company']));
+        $qb->andWhere($qb->expr()->isNull('s.finalized'));
+        $qb->andWhere($qb->expr()->isNotNull('s.title'));
+        $qb->andWhere($qb->expr()->isNotNull('s.dateTo'));
+        $qb->andWhere($qb->expr()->gte('s.dateTo', '\''.$date->format('Y-m-d').'\''));
+        if (isset($search['from'])) {
+            $qb->andWhere($qb->expr()->lte('s.dateFrom', '\''.$search['from']->format('Y-m-d').'\''));
+        }
+        if (isset($search['to'])) {
+            $qb->andWhere($qb->expr()->gte('s.dateTo', '\''.$search['to']->format('Y-m-d').'\''));
+        }
+
+
+        return $qb->getQuery()->getResult();
+    }
 }

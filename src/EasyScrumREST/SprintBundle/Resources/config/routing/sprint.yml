@@ -32,4 +32,8 @@ hours_sprint:
     
 save_hours_sprint:
     pattern: /save-hours/{id}
-    defaults: { _controller: SprintBundle:SprintNormal:saveHoursSprint }    
+    defaults: { _controller: SprintBundle:SprintNormal:saveHoursSprint }
+
+grouped_sprint:
+    pattern: /grouped-sprints
+    defaults: { _controller: SprintBundle:SprintNormal:groupSprints }
