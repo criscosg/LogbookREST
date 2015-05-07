@@ -123,6 +123,18 @@ class TaskNormalController extends EasyScrumController
     /**
      * @Template("TaskBundle:Task:sprint-tasks.html.twig")
      *
+     * @ParamConverter("sprint", class="SprintBundle:Sprint")
+     *
+     * @return array
+     */
+    public function refreshTasksAction(Sprint $sprint)
+    {
+        return array('sprint'=> $sprint);
+    }
+
+    /**
+     * @Template("TaskBundle:Task:sprint-tasks.html.twig")
+     *
      * @ParamConverter("task", class="TaskBundle:Task")
      *
      * @return array

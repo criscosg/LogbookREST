@@ -37,3 +37,11 @@ save_hours_sprint:
 grouped_sprint:
     pattern: /grouped-sprints
     defaults: { _controller: SprintBundle:SprintNormal:groupSprints }
+
+refresh_grouped_tasks:
+    pattern: /grouped-sprints-tasks
+    defaults: { _controller: SprintBundle:SprintNormal:refreshGroupedTasks }
+
+refresh_grouped_urgencies:
+    pattern: /grouped-sprints-tasks
+    defaults: { _controller: SprintBundle:SprintNormal:refreshGroupedUrgencies }

@@ -116,6 +116,21 @@ class UrgencyNormalController extends EasyScrumController
     /**
      * @Template("TaskBundle:Urgency:urgencies.html.twig")
      *
+     * @ParamConverter("sprint", class="SprintBundle:Sprint", options={"id" = "sprint"})
+     *
+     * @return array
+     */
+    public function refreshUrgenciesAction(Sprint $sprint)
+    {
+        $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('project'=>$sprint->getProject()->getId(),'sprint'=>null));
+        $doneUrgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
+
+        return array('urgencies'=> $urgencies, 'sprint'=>$sprint, 'doneUrgencies'=>$doneUrgencies);
+    }
+
+    /**
+     * @Template("TaskBundle:Urgency:urgencies.html.twig")
+     *
      * @ParamConverter("urgency", class="TaskBundle:Urgency")
      * @ParamConverter("sprint", class="SprintBundle:Sprint", options={"id" = "sprint"})
      *

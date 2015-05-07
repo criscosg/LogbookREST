@@ -6,7 +6,7 @@
         <h5>{{ project.description }}</h5>
         {% if is_granted('ROLE_SCRUM_MASTER') or ( project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(project.owner)) %}
         <div class="btn-group" style="margin-top: -75px;">
-            <a title="" data-original-title="{{'See Sprints' | trans}}" href="{{ path('sprints_list', { 'project': project.id }) }}" class="btn btn-large tip-bottom">
+            <a title="" data-original-title="{{'See Sprints' | trans}}" href="{{ path('sprints_list', { 'sprint_search[project]': project.id }) }}" class="btn btn-large tip-bottom">
                 <i class="fa fa-eye"></i> 
             </a>
             <a title="" data-original-title="Edit" href="{{ path('project_edit', { 'id': project.id }) }}" class="btn btn-large tip-bottom">

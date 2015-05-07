@@ -220,7 +220,7 @@ flat sprint-view
                     <div class="widget-content nopadding" id="sprint-urgencies">
                         <div class="row" id="urgencies-todo">
                         {% for urgency in urgencies if urgency.state == "TODO" %}
-                            {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+                            {% include "TaskBundle:Urgency:urgencyBoxGroup.html.twig" with {urgency:urgency, ended: true} %}
                         {% else %}
                             <div class="alert alert-info mt">
                                 <strong>{{"Information!" | trans }}</strong>
@@ -230,7 +230,7 @@ flat sprint-view
                         </div>
                         <div class="row" id="urgencies-on-process" style="display: none;">
                         {% for urgency in urgencies if urgency.state == "ONPROCESS" %}
-                            {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+                            {% include "TaskBundle:Urgency:urgencyBoxGroup.html.twig" with {urgency:urgency, ended: true} %}
                         {% else %}
                             <div class="alert alert-info mt">
                                 <strong>{{"Information!" | trans }}</strong>
@@ -240,7 +240,7 @@ flat sprint-view
                         </div>
                         <div class="row" id="urgencies-done" style="display: none;">
                         {% for urgency in doneUrgencies if urgency.state == "DONE" %}
-                            {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+                            {% include "TaskBundle:Urgency:urgencyBoxGroup.html.twig" with {urgency:urgency, ended: true} %}
                         {% else %}
                             <div class="alert alert-info mt">
                                 <strong>{{"Information!" | trans }}</strong>
@@ -272,7 +272,7 @@ flat sprint-view
     $(document).ready(function(){
 
         $(".unlock").tooltip({trigger:'hover'});
-        
+
     	$("body").on('click', '.hours-sprint', function(event){
     	    event.preventDefault();
     	    $.get($(this).attr('href'), function(response){
@@ -328,7 +328,6 @@ flat sprint-view
                 });
     	    });
     	});
-    	
 
     	//Mostramos/ocultamos las capas del formulario
         $('.steps li').click(function() {
@@ -377,34 +376,38 @@ flat sprint-view
 
         $("body").on('click', '.move', function(event){
         	event.preventDefault();
-    	    $.get($(this).attr('href'), function(response){
-                $('#sprint-tasks').html(response);
-                $('.steps li').each(function(key, element){
-                    var target = $(element).attr('data-target');
-                    if($(element).hasClass('active')){
-                        $(target).show("fast");
-                        $(element).addClass('active');
-                    }else{
-                        $(target).hide("fast");
-                        $(element).removeClass('active');
-                    }
-                });
+    	    $.get($(this).attr('href'), function(result){
+                $.get("{{ path('refresh_grouped_tasks', app.request.query.all) }}", function(response){
+                    $('#sprint-tasks').html(response);
+                    $('.steps-urgency li').each(function(key, element){
+                        var target = $(element).attr('data-target');
+                        if($(element).hasClass('active')){
+                            $(target).show("fast");
+                            $(element).addClass('active');
+                        }else{
+                            $(target).hide("fast");
+                            $(element).removeClass('active');
+                        }
+                    });
+                })
             });
         });
 
         $("body").on('click', '.move-urgency', function(event){
         	event.preventDefault();
-    	    $.get($(this).attr('href'), function(response){
-                $('#sprint-urgencies').html(response);
-                $('.steps-urgency li').each(function(key, element){
-                    var target = $(element).attr('data-target');
-                    if($(element).hasClass('active')){
-                        $(target).show("fast");
-                        $(element).addClass('active');
-                    }else{
-                        $(target).hide("fast");
-                        $(element).removeClass('active');
-                    }
+    	    $.get($(this).attr('href'), function(result){
+                $.get("{{ path('refresh_grouped_urgencies', app.request.query.all) }}", function(response){
+                    $('#sprint-urgencies').html(response);
+                    $('.steps-urgency li').each(function(key, element){
+                        var target = $(element).attr('data-target');
+                        if($(element).hasClass('active')){
+                            $(target).show("fast");
+                            $(element).addClass('active');
+                        }else{
+                            $(target).hide("fast");
+                            $(element).removeClass('active');
+                        }
+                    });
                 });
             });
         });
@@ -493,6 +496,42 @@ flat sprint-view
         $('span.input-group-addon-click').click(function(){
             $(this).prev('input').focus();
         });
+
+        (function poll() {
+            setTimeout(function() {
+                $.get("{{ path('refresh_grouped_tasks', app.request.query.all) }}", function(response){
+                    $('#sprint-tasks').html(response);
+                    $('.steps-urgency li').each(function(key, element){
+                        var target = $(element).attr('data-target');
+                        if($(element).hasClass('active')){
+                            $(target).show("fast");
+                            $(element).addClass('active');
+                        }else{
+                            $(target).hide("fast");
+                            $(element).removeClass('active');
+                        }
+                    });
+                }).done(poll);
+            }, 30000);
+        })();
+        // Refresh urgencies
+        (function poll() {
+            setTimeout(function() {
+                $.get("{{ path('refresh_grouped_urgencies', app.request.query.all) }}", function(response){
+                    $('#sprint-urgencies').html(response);
+                    $('.steps-urgency li').each(function(key, element){
+                        var target = $(element).attr('data-target');
+                        if($(element).hasClass('active')){
+                            $(target).show("fast");
+                            $(element).addClass('active');
+                        }else{
+                            $(target).hide("fast");
+                            $(element).removeClass('active');
+                        }
+                    });
+                }).done(poll);
+            }, 30000);
+        })();
         
     });
 

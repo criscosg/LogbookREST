@@ -377,7 +377,7 @@ flat sprint-view
                 });
             });
         });
-        
+
         $("body").on('click', 'a.unlock', function(event){
         	event.preventDefault();
         	var that=this;
@@ -422,7 +422,7 @@ flat sprint-view
                 });
             }
     	}); #}
-        
+
         $("body").on('click', 'a.lock', function(event){
         	event.preventDefault();
         	var that=this;
@@ -449,8 +449,46 @@ flat sprint-view
     			minTickSize: [1, "day"],
     			tickLength: 10
     		}
-		}); 
-        
+		});
+
+        // Refresh tasks
+        (function poll() {
+            setTimeout(function() {
+                $.get("{{ path('refresh_tasks', {id: sprint.id}) }}", function(response){
+                    $('#sprint-tasks').html(response);
+                    $('.steps-urgency li').each(function(key, element){
+                        var target = $(element).attr('data-target');
+                        if($(element).hasClass('active')){
+                            $(target).show("fast");
+                            $(element).addClass('active');
+                        }else{
+                            $(target).hide("fast");
+                            $(element).removeClass('active');
+                        }
+                    });
+                }).done(poll);
+            }, 30000);
+        })();
+        // Refresh urgencies
+        (function poll() {
+            setTimeout(function() {
+                $.get("{{ path('refresh_urgencies', {id: sprint.id}) }}", function(response){
+                    $('#sprint-urgencies').html(response);
+                    $('.steps-urgency li').each(function(key, element){
+                        var target = $(element).attr('data-target');
+                        if($(element).hasClass('active')){
+                            $(target).show("fast");
+                            $(element).addClass('active');
+                        }else{
+                            $(target).hide("fast");
+                            $(element).removeClass('active');
+                        }
+                    });
+                }).done(poll);
+            }, 30000);
+        })();
+
+
     });
 
 </script>

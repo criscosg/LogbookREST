@@ -28,19 +28,24 @@
                         <small>Spent hours</small>
                     </div>
                 </li>
-                <li class="popover-visits" data-original-title="" data-content="<span class='content-big'>{{ ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') }}%</span> <span class='content-small'>Final focus factor</span><br /><span class='content-big'>{{ sprint.focus | round(0, 'floor')}}%</span><span class='content-small'> Initial focus factor</span>" title=''>
+                {% if sprint.getHoursDone() > 0 and sprint.getSpentHours() > 0 %}
+                    {% set finalFocus = ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') %}
+                {% else %}
+                    {% set finalFocus = 0 %}
+                {% endif %}
+                <li class="popover-visits" data-original-title="" data-content="<span class='content-big'>{{ sprint.focus | round(0, 'floor')}}%</span> <span class='content-small'>Final focus factor</span><br /><span class='content-big'>{{ finalFocus }}%</span><span class='content-small'> Initial focus factor</span>" title=''>
                     <div class="left 
-                    {% if (sprint.getHoursDone() is not empty and sprint.getSpentHours()) and sprint.focus < ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') %}
+                    {% if sprint.focus < finalFocus %}
                         sparkline_bar_good
-                    {% elseif (sprint.getHoursDone() is not empty and sprint.getSpentHours()) and sprint.focus == ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') %}
+                    {% elseif (sprint.getHoursDone() is not empty and sprint.getSpentHours()) and sprint.focus == finalFocus %}
                         sparkline_bar_neutral
                     {% else %}sparkline_bar_bad{% endif %}">
-                        <span class="inlinebar">{{ sprint.focus | round(0, 'floor') }},{{ ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') }}</span>
+                        <span class="inlinebar">{{ sprint.focus | round(0, 'floor') }},{{ finalFocus }}</span>
                         <i class="fa fa-double-angle-up"></i>
-                            {{ (((sprint.getHoursDone() / sprint.getSpentHours()) * 100) - sprint.focus) | round(0, 'floor') }}%
+                            {{ (finalFocus - sprint.focus) | round(0, 'floor') }}%
                     </div>
                     <div class="right">
-                        <strong>{{ ((sprint.getHoursDone() / sprint.getSpentHours()) * 100) | round(0, 'floor') }}%</strong>
+                        <strong>{{ finalFocus }}%</strong>
                         <small>Real focus</small>
                     </div>
                 </li>

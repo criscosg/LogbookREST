@@ -36,7 +36,19 @@
                  </div>    
              </form>
         </div>
-    </div>
+   </div>
+    {# socket io chat system
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-th-list"></i>
+            </span>
+            <h5>{{ "Messages"|trans }}</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <iframe src="http://127.0.0.1:1337/message/chat?id={{ app.user.id }}" seamless="seamless" height="500px" width="100%"></iframe>
+        </div>
+    </div> #}
 {% endblock %}
 {% block javascripts %}
 {{ parent() }}

@@ -11,8 +11,15 @@
         <li class="{% if action == 'projects_list' or action == 'show_normal_project' or action == 'project_creation' or action == 'project_edit' %}active open{% endif %}">
             <a href="{{ path('projects_list') }}"><i class="fa fa-suitcase"></i> <span>{{ "Projects"|trans }}</span></a>
         </li>
-        <li class="{% if action == 'sprints_list' or action == 'sprint_creation_first' or action == 'sprint_planification' or action == 'show_normal_sprint' %}active open{% endif %}">
-            <a href="{{ path('sprints_list') }}"><i class="fa fa-tasks"></i> <span>{{ "Sprints"|trans }}</span></a>
+        <li class="submenu {% if action == 'sprints_list' or action == 'sprint_creation_first' or action == 'sprint_planification' or action == 'show_normal_sprint' or action == 'grouped_sprint' %}open{% endif %}">
+            <a href="#">
+                <i class="fa fa-tasks"></i> <span>{{ "Sprints"|trans }}</span>
+                <i class="arrow fa fa-chevron-right"></i>
+            </a>
+            <ul>
+                <li {% if action == 'sprints_list' %}class="active"{% endif %}><a href="{{ path('sprints_list') }}">{{ "List"|trans }}</a></li>
+                <li {% if action == 'grouped_sprint' %}class="active"{% endif %}><a href="{{ path('grouped_sprint') }}">{{ "Group sprints"|trans }}</a></li>
+            </ul>
         </li>
         {% if is_granted('ROLE_SCRUM_MASTER') %}
             <li class="{% if action == 'task_facturation' %}active open{% endif %}">

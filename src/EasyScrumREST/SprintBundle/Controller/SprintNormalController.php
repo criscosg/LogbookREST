@@ -230,6 +230,7 @@ class SprintNormalController extends EasyScrumController
         foreach ($sprints as $sprint) {
             $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('project'=>$sprint->getProject()->getId(),'sprint'=>null));
             foreach ($urgencies as $urgency) {
+                $urgency->setSprint($sprint);
                 $finalUrgencies[] = $urgency;
             }
         }
@@ -248,5 +249,36 @@ class SprintNormalController extends EasyScrumController
         }
 
         return $finalUrgencies;
+    }
+
+    /**
+     * @Template("TaskBundle:Task:sprints-grouped-tasks.html.twig")
+     *
+     * @return array
+     */
+    public function refreshGroupedTasksAction(Request $request)
+    {
+        $form = $this->createForm(new SprintSearchGroupType());
+        $company = $this->getUser()->getCompany()->getId();
+        $sprints = $this->get('sprint.handler')->search($form, $request, $company, "group");
+        $tasks = $this->mergeTasks($sprints);
+
+        return array('tasks'=> $tasks);
+    }
+
+    /**
+     * @Template("TaskBundle:Urgency:urgencies.html.twig")
+     *
+     * @return array
+     */
+    public function refreshGroupedUrgenciesAction(Request $request)
+    {
+        $form = $this->createForm(new SprintSearchGroupType());
+        $company = $this->getUser()->getCompany()->getId();
+        $sprints = $this->get('sprint.handler')->search($form, $request, $company, "group");
+        $urgencies = $this->todoUrgencies($sprints);
+        $doneUrgencies = $this->doneUrgencies($sprints);
+
+        return array('urgencies'=> $urgencies, 'doneUrgencies'=>$doneUrgencies);
     }
 }

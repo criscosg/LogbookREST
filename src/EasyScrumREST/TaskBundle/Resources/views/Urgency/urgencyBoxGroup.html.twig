@@ -1,0 +1,42 @@
+<div class="col-sm-4 col-md-4 col-lg-3">
+    <div class="task-box">
+        <div class="top">
+            {% if (is_granted('ROLE_SCRUM_MASTER') or is_granted('ROLE_TEAM')) and ended %}
+                <button class="actions-task" data-toggle="popover" data-shown="false" data-placement="left" data-html="true" type="button"
+                    {% if urgency.state == "TODO" %}
+                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_on_process_urgency', {id: urgency.id, sprint: urgency.sprint.id}) }}' class='btn btn-block btn-info move-urgency'>{{"to on process"}}</a></li> <li><a href='{{ path('move_done_urgency', {id: urgency.id, sprint:urgency.sprint.id}) }}' class='btn btn-small btn-info move-urgency'>{{"move to done"}}</a></li><li><a href='{{ path('delete_normal_urgency', {id: urgency.id}) }}' class='btn btn-block btn-danger move-urgency'>{{"drop urgency"}}</a></li></ul>"
+                    {% elseif urgency.state == "ONPROCESS" %}
+                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_todo_urgency', {id: urgency.id, sprint: urgency.sprint.id}) }}' class='btn btn-block btn-info move-urgency'>{{"move to todo"}}</a></li> <li><a href='{{ path('move_done_urgency', {id: urgency.id, sprint:urgency.sprint.id}) }}' class='btn btn-small btn-info move-urgency'>{{"move to done"}}</a></li><li><a href='{{ path('delete_normal_urgency', {id: urgency.id}) }}' class='btn btn-block btn-danger move-urgency'>{{"drop urgency"}}</a></li></ul>"
+                    {% elseif urgency.state == "DONE" %}
+                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_todo_urgency', {id: urgency.id, sprint: urgency.sprint.id}) }}' class='btn btn-block btn-info move-urgency'>{{"move to todo"}}</a></li> <li><a href='{{ path('move_on_process_urgency', {id: urgency.id, sprint: urgency.sprint.id}) }}' class='btn btn-small btn-block btn-info move-urgency'>{{"to on process"}}</a></li></ul>"
+                    {% endif %}
+                >
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            {% endif %}
+            <p class="priority">
+            </p>
+        </div>
+        <a class="urgency" id="urgency_{{ urgency.id }}" {% if ended %} href="{{ path('hours_urgency', {'id':urgency.id}) }}" {% else %}href="{{ path('edit_normal_urgency', {'id':urgency.id}) }}"{% endif %}>
+            <div class="bottom">
+                <div class="hours-task">
+                    <span class="spent-end">
+                        {% if urgency.hoursSpent is not empty and urgency.hoursEnd is not empty %}
+                            {{ urgency.hoursSpent ~ "/" ~ urgency.hoursEnd }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="description">
+                    <h4 class="title">
+                    {{ urgency.title }}
+                    </h4>
+                    <p>
+                    {{ urgency.description }}
+                    </p>
+                </div>
+            </div> 
+        </a>   
+    </div>
+</div>

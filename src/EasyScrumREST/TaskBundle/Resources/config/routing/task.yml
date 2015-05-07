@@ -48,4 +48,8 @@ task_lock:
     
 task_unlock:
     pattern: /task-unlock/{id}
-    defaults: { _controller: TaskBundle:TaskNormal:taskUnlock }      
+    defaults: { _controller: TaskBundle:TaskNormal:taskUnlock }
+
+refresh_tasks:
+    pattern: /task-refresh/{id}
+    defaults: { _controller: TaskBundle:TaskNormal:refreshTasks }

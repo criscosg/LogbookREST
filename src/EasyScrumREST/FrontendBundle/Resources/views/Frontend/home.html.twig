@@ -14,7 +14,11 @@
         <div class="btn-group">
             <a title="" data-original-title="{{ "Show notifications" | trans }}" href="#" class="btn btn-large tip-bottom notifications">
                 <i class="fa fa-bell"></i>
-                <span class="label label-danger">{% if app.user.notification and app.user.notification | length > 0 %}{{ app.user.notification | length }}{% endif %}</span>
+                {% set notifications = 0 %}
+                {% for sprint in sprints %}
+                    {% set notifications = notifications + sprint.getSprintNotifications| length %}
+                {% endfor %}
+                <span class="label label-danger">{% if app.user.notification and notifications > 0 %}{{ notifications }}{% endif %}</span>
             </a>
         </div>
     {% endif %}
