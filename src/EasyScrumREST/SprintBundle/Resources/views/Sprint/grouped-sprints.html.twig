@@ -2,21 +2,7 @@
 
 {% block content_header %}
     <div id="content-header">
-        <h1>{{ sprint.title }}</h1>
-        <div class="btn-group">
-            {% if is_granted('ROLE_SCRUM_MASTER') %}
-                <a title="" data-original-title="Set hours state" href="{{ path('hours_sprint', { 'id': sprint.id }) }}" class="btn btn-large hours-sprint tip-bottom">
-                   <i class="fa fa-clock-o"></i>
-                </a>
-                <a title="" data-original-title="Finalize sprint" href="{{ path('sprint_normal_finalize', { 'id': sprint.id }) }}" class="btn btn-large tip-bottom">
-                   <i class="fa fa-stop"></i>
-                </a>
-                <a title="" data-original-title="Delete" href="{{ path('delete_normal_sprint', { 'id': sprint.id }) }}" class="btn btn-large tip-bottom">
-                    <i class="fa fa-trash-o"></i>
-                </a>
-            {% endif %}
-        </div>
-        <h5>{{ sprint.description }}</h5>
+        <h1>{{ "Grouped sprints" }}</h1>
     </div>
 {% endblock %}
 {% block stylesheets %}
@@ -26,7 +12,7 @@
 {% endblock %}
 
 {% block breadcrumb %}
-    {% set crumbs = {'Sprints':path('sprints_list'), (sprint.title): ''} %}
+    {% set crumbs = {'Sprints':path('sprints_list'), 'Grouped sprints': ''} %}
     {{ setCrumbs(crumbs) }}
     {{ parent() }}
 {% endblock %}
@@ -34,14 +20,88 @@
 flat sprint-view
 {% endblock %}
 {% block content %}
-    {% set params = {'title':'Register sprint state', 'text':'<div class="hours-sprint-modal"></div>', 'btn-close':false} %}
-    {{ makeModal('modalSprintHours', params) }}
     {% set params = {'title':'Introduce time spent on this task', 'text':'<div class="hours"></div>', 'btn-close':false} %}
     {{ makeModal('modalHours', params) }}
     {% set params = {'title':'Introduce time spent on this urgency', 'text':'<div class="hours-urgency"></div>', 'btn-close':false} %}
     {{ makeModal('modalUrgencyHours', params) }}
 
-    {% if sprint %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="fa fa-search"></i>
+                    </span>
+                    <h5>{{ "Group sprint"|trans }}</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <div class="row">
+                        <form action="{{ path('grouped_sprint') }}" method="get" class="form-inline" role="form">
+                            <div class="form-group">
+                                <div class="col-sm-12 input-group">
+                                    {{ form_widget(form.from, { 'attr':{ 'class':'form-control datepicker-from', 'autocomplete':'off', 'placeholder':"From"} }) }}
+                                    <span class="input-group-addon input-group-addon-click">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12 input-group">
+                                    {{ form_widget(form.to, { 'attr':{ 'class':'form-control datepicker-to','autocomplete':'off', 'placeholder':"To"} }) }}
+                                    <span class="input-group-addon input-group-addon-click">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{ form_rest(form) }}
+                            <button id="search" type="submit" class="btn btn-large btn-primary">
+                                {{ "Search"|trans }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if sprints %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon">
+                            <i class="fa fa-eye"></i>
+                        </span>
+                        <h5>Sprints grouped</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Project</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sprint in sprints %}
+                                <tr>
+                                    <td>{{ sprint.title }}</td>
+                                    <td>{{ sprint.project.title }}</td>
+                                    <td>{{ sprint.dateFrom | date }}</td>
+                                    <td>{{ sprint.dateTo | date }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if sprints %}
         <div class="row">
             <div class="col-xs-12">
                 <div class="widget-box">
@@ -50,7 +110,6 @@ flat sprint-view
                             <i class="fa fa-bar-chart-o"></i>
                         </span>
                         <h5>Progression line</h5>
-                        <span class="label label-info tip-left" title="" data-original-title="{{ sprint.getSpentHours() ~ " hours spent" }}">{{ sprint.getSpentHours()~ " / " ~ sprint.getHoursUndone() }}</span>
                     </div>
                     <div class="widget-content">
                         <div class="chart" style="padding: 0px; position: relative;">
@@ -60,18 +119,9 @@ flat sprint-view
                 </div>
             </div>
         </div>
-        {% if is_granted('ROLE_SCRUM_MASTER') %}
-            <div class="row">
-                <div class="col-xs-12">
-                    <a title="Add task" href="{{ path('new_normal_task', { 'id': sprint.id }) }}" class="btn btn-primary btn-s">
-                        <i class="fa fa-pencil"></i> {{"Add task" | trans}}
-                    </a>
-                </div>
-            </div>
-        {% endif %}
         <div class="row" id="task-row">
             <div class="col-xs-12">
-                {% if sprint.tasks | length > 0 %}
+                {% if tasks | length > 0 %}
                         <div class="widget-box">
                             <div class="widget-title">
                                 <span class="icon">
@@ -100,7 +150,7 @@ flat sprint-view
                             </div>
                             <div class="widget-content nopadding" id="sprint-tasks">
                                 <div class="row" id="todo">
-                                {% for task in sprint.tasks if task.state == "TODO" %}
+                                {% for task in tasks if task.state == "TODO" %}
                                     {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: true} %}
                                 {% else %}
                                     <div class="alert alert-info mt">
@@ -110,7 +160,7 @@ flat sprint-view
                                 {% endfor %}
                                 </div>
                                 <div class="row" id="on-process" style="display: none;">
-                                {% for task in sprint.tasks if task.state == "ONPROCESS" %}
+                                {% for task in tasks if task.state == "ONPROCESS" %}
                                     {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: true} %}
                                 {% else %}
                                     <div class="alert alert-info mt">
@@ -120,7 +170,7 @@ flat sprint-view
                                 {% endfor %}
                                 </div>
                                 <div class="row" id="done" style="display: none;">
-                                {% for task in sprint.tasks if task.state == "DONE" %}
+                                {% for task in tasks if task.state == "DONE" %}
                                     {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: true} %}
                                 {% else %}
                                     <div class="alert alert-info mt">
@@ -139,15 +189,6 @@ flat sprint-view
                 {% endif %}
             </div>
         </div>
-        {% if is_granted('ROLE_SCRUM_MASTER') or is_granted('ROLE_TEAM_MEMBER') %}
-            <div class="row">
-                <div class="col-xs-12">
-                    <a title="Add urgency" href="{{ path('new_normal_urgency', { 'id': sprint.id }) }}" class="btn btn-primary btn-s">
-                        <i class="fa fa-pencil"></i> {{"Add urgency" | trans}}
-                    </a>
-                </div>
-            </div>
-        {% endif %}
         <div class="row">
             <div class="col-xs-12">
                 <div class="widget-box">
@@ -179,7 +220,7 @@ flat sprint-view
                     <div class="widget-content nopadding" id="sprint-urgencies">
                         <div class="row" id="urgencies-todo">
                         {% for urgency in urgencies if urgency.state == "TODO" %}
-                            {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+                            {% include "TaskBundle:Urgency:urgencyBoxGroup.html.twig" with {urgency:urgency, ended: true} %}
                         {% else %}
                             <div class="alert alert-info mt">
                                 <strong>{{"Information!" | trans }}</strong>
@@ -189,7 +230,7 @@ flat sprint-view
                         </div>
                         <div class="row" id="urgencies-on-process" style="display: none;">
                         {% for urgency in urgencies if urgency.state == "ONPROCESS" %}
-                            {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+                            {% include "TaskBundle:Urgency:urgencyBoxGroup.html.twig" with {urgency:urgency, ended: true} %}
                         {% else %}
                             <div class="alert alert-info mt">
                                 <strong>{{"Information!" | trans }}</strong>
@@ -199,7 +240,7 @@ flat sprint-view
                         </div>
                         <div class="row" id="urgencies-done" style="display: none;">
                         {% for urgency in doneUrgencies if urgency.state == "DONE" %}
-                            {% include "TaskBundle:Urgency:urgencyBox.html.twig" with {urgency:urgency, ended: true} %}
+                            {% include "TaskBundle:Urgency:urgencyBoxGroup.html.twig" with {urgency:urgency, ended: true} %}
                         {% else %}
                             <div class="alert alert-info mt">
                                 <strong>{{"Information!" | trans }}</strong>
@@ -226,22 +267,12 @@ flat sprint-view
 <script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
 <script src="http://www.flotcharts.org/flot/jquery.flot.time.js"></script>
 <script src="{{ asset('bundles/frontend/js/jquery.gritter.min.js') }}"></script>
+<script src="{{ asset('bundles/frontend/js/bootstrap-datepicker.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-    	{% if app.user.notification %}
-        	{% for task in sprint.tasks %}
-    	        {% for key, notification in task.getTaskNotifications %}
-                	$.gritter.add({
-                		title:	'{{ key }}',
-                		text:	'{{ notification }}',
-                		sticky: false
-                	});
-        	    {% endfor %}
-    	    {% endfor %}
-	    {% endif %}
 
         $(".unlock").tooltip({trigger:'hover'});
-        
+
     	$("body").on('click', '.hours-sprint', function(event){
     	    event.preventDefault();
     	    $.get($(this).attr('href'), function(response){
@@ -297,7 +328,6 @@ flat sprint-view
                 });
     	    });
     	});
-    	
 
     	//Mostramos/ocultamos las capas del formulario
         $('.steps li').click(function() {
@@ -346,38 +376,42 @@ flat sprint-view
 
         $("body").on('click', '.move', function(event){
         	event.preventDefault();
-    	    $.get($(this).attr('href'), function(response){
-                $('#sprint-tasks').html(response);
-                $('.steps li').each(function(key, element){
-                    var target = $(element).attr('data-target');
-                    if($(element).hasClass('active')){
-                        $(target).show("fast");
-                        $(element).addClass('active');
-                    }else{
-                        $(target).hide("fast");
-                        $(element).removeClass('active');
-                    }
-                });
+    	    $.get($(this).attr('href'), function(result){
+                $.get("{{ path('refresh_grouped_tasks', app.request.query.all) }}", function(response){
+                    $('#sprint-tasks').html(response);
+                    $('.steps-urgency li').each(function(key, element){
+                        var target = $(element).attr('data-target');
+                        if($(element).hasClass('active')){
+                            $(target).show("fast");
+                            $(element).addClass('active');
+                        }else{
+                            $(target).hide("fast");
+                            $(element).removeClass('active');
+                        }
+                    });
+                })
             });
         });
 
         $("body").on('click', '.move-urgency', function(event){
         	event.preventDefault();
-    	    $.get($(this).attr('href'), function(response){
-                $('#sprint-urgencies').html(response);
-                $('.steps-urgency li').each(function(key, element){
-                    var target = $(element).attr('data-target');
-                    if($(element).hasClass('active')){
-                        $(target).show("fast");
-                        $(element).addClass('active');
-                    }else{
-                        $(target).hide("fast");
-                        $(element).removeClass('active');
-                    }
+    	    $.get($(this).attr('href'), function(result){
+                $.get("{{ path('refresh_grouped_urgencies', app.request.query.all) }}", function(response){
+                    $('#sprint-urgencies').html(response);
+                    $('.steps-urgency li').each(function(key, element){
+                        var target = $(element).attr('data-target');
+                        if($(element).hasClass('active')){
+                            $(target).show("fast");
+                            $(element).addClass('active');
+                        }else{
+                            $(target).hide("fast");
+                            $(element).removeClass('active');
+                        }
+                    });
                 });
             });
         });
-
+        
         $("body").on('click', 'a.unlock', function(event){
         	event.preventDefault();
         	var that=this;
@@ -422,7 +456,7 @@ flat sprint-view
                 });
             }
     	}); #}
-
+        
         $("body").on('click', 'a.lock', function(event){
         	event.preventDefault();
         	var that=this;
@@ -436,7 +470,7 @@ flat sprint-view
         });
 
         var plot = $.plot($(".chart"),
-    		[ { data: [{% for key, value in sprint.getChartArray() %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Normal progression", color: "#4fabd2"}
+    		[ { data: [{% for key, value in chart %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Normal progression", color: "#4fabd2"}
     		 , { data: [{% for key, value in chartHours %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Actual state", color: "#459D1C"}], {
     		series: {
         		lines: { show: true },
@@ -451,10 +485,21 @@ flat sprint-view
     		}
 		});
 
-        // Refresh tasks
+        $('.datepicker-from').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $('.datepicker-to').datepicker({
+            format: 'dd/mm/yyyy',
+            startDate: '+1d'
+        });
+
+        $('span.input-group-addon-click').click(function(){
+            $(this).prev('input').focus();
+        });
+
         (function poll() {
             setTimeout(function() {
-                $.get("{{ path('refresh_tasks', {id: sprint.id}) }}", function(response){
+                $.get("{{ path('refresh_grouped_tasks', app.request.query.all) }}", function(response){
                     $('#sprint-tasks').html(response);
                     $('.steps-urgency li').each(function(key, element){
                         var target = $(element).attr('data-target');
@@ -472,7 +517,7 @@ flat sprint-view
         // Refresh urgencies
         (function poll() {
             setTimeout(function() {
-                $.get("{{ path('refresh_urgencies', {id: sprint.id}) }}", function(response){
+                $.get("{{ path('refresh_grouped_urgencies', app.request.query.all) }}", function(response){
                     $('#sprint-urgencies').html(response);
                     $('.steps-urgency li').each(function(key, element){
                         var target = $(element).attr('data-target');
@@ -487,8 +532,7 @@ flat sprint-view
                 }).done(poll);
             }, 30000);
         })();
-
-
+        
     });
 
 </script>

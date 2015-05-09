@@ -496,7 +496,7 @@ class Sprint
             if($task->getState() == "UNDONE") {
                 $total = ($task->getHoursEnd())? $total + $task->getHoursEnd():$total + $task->getHours();
             } else if ($task->getState() != "DONE" && (($task->getHoursEnd() && $task->getHoursEnd() != 0) || !$task->getHoursEnd()) ){
-                $total = ($task->getHoursEnd())? $total + $task->getHoursEnd():$total + $task->getHours();
+                $total = ($task->getHoursEnd() !== null)? $total + $task->getHoursEnd():$total + $task->getHours();
             } 
         }
 
@@ -544,7 +544,7 @@ class Sprint
 
     public function getChartArray()
     {
-        $date=new \DateTime($this->dateFrom->format('Y-m-d'));
+        $date=clone $this->dateFrom;
         $days=DateHelper::numberLaborableDays($this->dateFrom, $this->dateTo);
         $chartData= array();
         if($days>0){
@@ -566,7 +566,7 @@ class Sprint
         return $chartData;
     }
 
-    public function getChartHoursArray()
+    public function getChartHoursArray($printToday = true)
     {
         $chartData= array();
         $chartData[$this->dateFrom->getTimestamp()*1000] = $this->getPlanificationHours();
@@ -578,8 +578,10 @@ class Sprint
         }
         $today = new \DateTime('today');
         $day=$today->format('l');
-        if (!$this->getSprintHourbyDate($today) && $today >= $this->getDateFrom()) {
+        if ($printToday ===true && !$this->getSprintHourbyDate($today) && $today >= $this->getDateFrom()) {
             $chartData[$today->getTimestamp()*1000] = $this->getHoursUndone();
+        } else if($printToday === false) {
+            $chartData[$this->getDateTo()->getTimestamp()*1000] = $this->getHoursUndone();
         }
 
         return $chartData;

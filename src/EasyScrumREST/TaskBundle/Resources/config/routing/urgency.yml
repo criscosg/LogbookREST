@@ -32,4 +32,8 @@ move_done_urgency:
     
 move_undone_urgency:
     pattern: /to-undone/{id}/{sprint}
-    defaults: { _controller: TaskBundle:UrgencyNormal:moveToUndone }    
+    defaults: { _controller: TaskBundle:UrgencyNormal:moveToUndone }
+
+refresh_urgencies:
+    pattern: /refresh_urgencies/{id}
+    defaults: { _controller: TaskBundle:UrgencyNormal:refreshUrgencies }

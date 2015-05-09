@@ -1,0 +1,30 @@
+<div class="row" id="todo">
+{% for task in tasks if task.state == "TODO" %}
+    {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: true} %}
+{% else %}
+    <div class="alert alert-info mt">
+        <strong>{{"Information!" | trans }}</strong>
+        {{"There is no tasks on this state" | trans }}
+    </div>    
+{% endfor %}
+</div>
+<div class="row" id="on-process" style="display: none;">
+{% for task in tasks if task.state == "ONPROCESS" %}
+    {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: true} %}
+{% else %}
+    <div class="alert alert-info mt">
+        <strong>{{"Information!" | trans }}</strong>
+        {{"There is no tasks on this state" | trans }}
+    </div>    
+{% endfor %}
+</div>
+<div class="row" id="done" style="display: none;">
+{% for task in tasks if task.state == "DONE" %}
+    {% include "TaskBundle:Task:taskBox.html.twig" with {task:task, ended: true} %}
+{% else %}
+    <div class="alert alert-info mt">
+        <strong>{{"Information!" | trans }}</strong>
+        {{"There is no tasks on this state" | trans }}
+    </div>    
+{% endfor %}
+</div>

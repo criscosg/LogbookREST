@@ -392,3 +392,8 @@ i.icon-caret-right{
     padding: 6px;
     text-shadow: 0 1px 0 #FFFFFF;
 }
+
+.icon .label {
+    float: none !important;
+    margin: 0 !important;
+}

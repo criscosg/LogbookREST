@@ -3,6 +3,7 @@ namespace EasyScrumREST\SprintBundle\Controller;
 
 use EasyScrumREST\ActionBundle\Entity\ActionSprint;
 use EasyScrumREST\SprintBundle\Form\EditSprintType;
+use EasyScrumREST\SprintBundle\Form\SprintSearchGroupType;
 use EasyScrumREST\SprintBundle\Form\SprintSearchType;
 use EasyScrumREST\SprintBundle\Entity\HoursSprint;
 use EasyScrumREST\SprintBundle\Form\SprintHourType;
@@ -161,5 +162,123 @@ class SprintNormalController extends EasyScrumController
         }
 
         return $this->redirect($this->generateUrl('show_normal_sprint', array('id'=>$sprint->getId())));
+    }
+
+    public function groupSprintsAction(Request $request)
+    {
+        $form = $this->createForm(new SprintSearchGroupType());
+        $company = $this->getUser()->getCompany()->getId();
+        $sprints = $this->get('sprint.handler')->search($form, $request, $company, "group");
+        $chart = $this->mergeStatistic($sprints);
+        $tasks = $this->mergeTasks($sprints);
+        $urgencies = $this->todoUrgencies($sprints);
+        $doneUrgencies = $this->doneUrgencies($sprints);
+        $chartHours = $this->mergeHoursStatistic($sprints);
+
+        return $this->render('SprintBundle:Sprint:grouped-sprints.html.twig', array('form' => $form->createView(), 'chartHours' => $chartHours,
+            'company'=>$company, 'sprints'=>$sprints, 'chart'=>$chart, 'tasks'=>$tasks, 'urgencies'=>$urgencies, 'doneUrgencies'=>$doneUrgencies));
+    }
+
+    private function mergeStatistic($sprints)
+    {
+        $definitiveChart = array();
+        foreach($sprints as $sprint) {
+            foreach ($sprint->getChartArray() as $key=>$value) {
+                if(array_key_exists($key, $definitiveChart)) {
+                    $definitiveChart[$key] += $value;
+                } else {
+                    $definitiveChart[$key] = $value;
+                }
+            }
+        }
+
+        return $definitiveChart;
+    }
+
+    private function mergeHoursStatistic($sprints)
+    {
+        $definitiveChart = array();
+        foreach($sprints as $sprint) {
+            foreach ($sprint->getChartHoursArray() as $key=>$value) {
+                if(array_key_exists($key, $definitiveChart)) {
+                    $definitiveChart[$key] += $value;
+                } else {
+                    $definitiveChart[$key] = $value;
+                }
+            }
+        }
+        ksort($definitiveChart);
+
+        return $definitiveChart;
+    }
+
+    private function mergeTasks($sprints)
+    {
+        $tasks = array();
+        foreach ($sprints as $sprint) {
+            foreach ($sprint->getTasks() as $task) {
+                $tasks[] =  $task;
+            }
+        }
+
+        return $tasks;
+    }
+
+    private function todoUrgencies($sprints)
+    {
+        $finalUrgencies = array();
+        foreach ($sprints as $sprint) {
+            $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('project'=>$sprint->getProject()->getId(),'sprint'=>null));
+            foreach ($urgencies as $urgency) {
+                $urgency->setSprint($sprint);
+                $finalUrgencies[] = $urgency;
+            }
+        }
+
+        return $finalUrgencies;
+    }
+
+    private function doneUrgencies($sprints)
+    {
+        $finalUrgencies = array();
+        foreach ($sprints as $sprint) {
+            $urgencies = $this->getDoctrine()->getRepository('TaskBundle:Urgency')->findBy(array('sprint'=>$sprint->getId()));
+            foreach ($urgencies as $urgency) {
+                $finalUrgencies[] = $urgency;
+            }
+        }
+
+        return $finalUrgencies;
+    }
+
+    /**
+     * @Template("TaskBundle:Task:sprints-grouped-tasks.html.twig")
+     *
+     * @return array
+     */
+    public function refreshGroupedTasksAction(Request $request)
+    {
+        $form = $this->createForm(new SprintSearchGroupType());
+        $company = $this->getUser()->getCompany()->getId();
+        $sprints = $this->get('sprint.handler')->search($form, $request, $company, "group");
+        $tasks = $this->mergeTasks($sprints);
+
+        return array('tasks'=> $tasks);
+    }
+
+    /**
+     * @Template("TaskBundle:Urgency:urgencies.html.twig")
+     *
+     * @return array
+     */
+    public function refreshGroupedUrgenciesAction(Request $request)
+    {
+        $form = $this->createForm(new SprintSearchGroupType());
+        $company = $this->getUser()->getCompany()->getId();
+        $sprints = $this->get('sprint.handler')->search($form, $request, $company, "group");
+        $urgencies = $this->todoUrgencies($sprints);
+        $doneUrgencies = $this->doneUrgencies($sprints);
+
+        return array('urgencies'=> $urgencies, 'doneUrgencies'=>$doneUrgencies);
     }
 }

@@ -10,49 +10,52 @@
 {% endblock %}
 
 {% block breadcrumb %}
-    {% set crumbs = {'Tareas':''} %}
+    {% set crumbs = {'Invoices':''} %}
     {{ setCrumbs(crumbs) }}
     {{ parent() }}
 {% endblock %}
 
 {% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="fa fa-search"></i>
+                    </span>
+                    <h5>{{ "Task search"|trans }}</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <form action="{{ path('task_facturation') }}" method="get" class="form-inline" role="form">
+                        <div class="form-group">
+                            <div class="col-sm-12 input-group">
+                                {{ form_widget(form.from, { 'attr':{ 'class':'form-control datepicker-from', 'autocomplete':'off', 'placeholder':"From"} }) }}
+                                <span class="input-group-addon input-group-addon-click">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12 input-group">
+                                {{ form_widget(form.to, { 'attr':{ 'class':'form-control datepicker-to','autocomplete':'off', 'placeholder':"To"} }) }}
+                                <span class="input-group-addon input-group-addon-click">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                {{ form_widget(form.project, { 'attr': { 'class': 'form-control'} }) }}
+                            </div>
+                        </div>
 
-    <div class="widget-box">
-        <div class="widget-title">
-            <span class="icon">
-                <i class="fa fa-search"></i>
-            </span>
-            <h5>{{ "Task search"|trans }}</h5>
-        </div>
-        <div class="widget-content nopadding">
-            <form action="{{ path('task_facturation') }}" method="get" class="form-inline" role="form">
-                <div class="form-group">
-                    <div class="col-sm-12 input-group">
-                        {{ form_widget(form.from, { 'attr':{ 'class':'form-control datepicker-from', 'autocomplete':'off', 'placeholder':"From"} }) }}
-                        <span class="input-group-addon input-group-addon-click">
-                            <i class="fa fa-calendar"></i>
-                        </span>
-                    </div>
+                        {{ form_rest(form) }}
+                        <button id="search" type="submit" class="btn btn-large btn-primary">
+                            {{ "Calcule"|trans }}
+                        </button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <div class="col-sm-12 input-group">
-                        {{ form_widget(form.to, { 'attr':{ 'class':'form-control datepicker-to','autocomplete':'off', 'placeholder':"To"} }) }}
-                        <span class="input-group-addon input-group-addon-click">
-                            <i class="fa fa-calendar"></i>
-                        </span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-12">
-                        {{ form_widget(form.project, { 'attr': { 'class': 'form-control'} }) }}
-                    </div>
-                </div>
-
-                {{ form_rest(form) }}
-                <button id="search" type="submit" class="btn btn-large btn-primary">
-                    {{ "Calcule"|trans }}
-                </button>
-            </form>
+            </div>
         </div>
     </div>
     {% if noSearch is not defined %}
@@ -98,8 +101,9 @@
                 </ul>
             </div>
         </div>
-    
-        
+
+<div class="row">
+    <div class="col-sm-12">
         {% if tasks | length > 0 %}
         <div class="widget-box">
             <div class="widget-title">
@@ -138,7 +142,7 @@
                                     <td>
                                         {{ task.getHoursSpent }}
                                     </td>
-                                    <td>
+                                    <td class="total-amount" style="text-align: right;">
                                         {% if company.pricePerHour is not empty %}
                                             {{ task.getHoursSpent * company.pricePerHour }}€
                                         {% endif %}
@@ -148,8 +152,8 @@
                         {% endfor %}
                         <tfoot>
                             <tr>
-                                <th class="total-label" colspan="6" style="text-align: right;"> Total: </th>
-                                <th class="total-amount"> {{ totals.hours * company.pricePerHour }}€ </th>
+                                <th class="total-label" colspan="6" style="text-align: right; font-size: 16px;"> Total: </th>
+                                <th class="total-amount" style="text-align: right; font-size: 16px;"> {{ totals.hours * company.pricePerHour }}€ </th>
                             </tr>
                         </tfoot>
                         
@@ -178,7 +182,8 @@
             {{"Make a search to display the results" | trans }}
         </div>
     {% endif %}
-    
+    </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}

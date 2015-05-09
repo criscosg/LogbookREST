@@ -1,14 +1,14 @@
-<div class="col-sm-4 col-md-4 col-lg-3">
+<div class="col-sm-4 col-md-4 col-lg-3 task-draggable" data-object="{{ task.id }}">
     <div class="task-box">
         <div class="top">
             {% if (is_granted('ROLE_SCRUM_MASTER') or (is_granted('ROLE_TEAM') and (task.user is not empty and (app.user.isEqualTo(task.user)) or task.user is empty))) and ended %}
                 <button class="actions-task" data-toggle="popover" data-shown="false" data-placement="left" data-html="true" type="button"
                     {% if task.state == "TODO" %}
-                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_on_process', {id: task.id}) }}' class='btn btn-block btn-info move'>{{"to on process"}}</a></li> <li><a href='{{ path('move_done', {id: task.id}) }}' class='btn btn-block btn-info move'>{{"move to done"}}</a></li><li><a href='{{ path('move_undone', {id: task.id}) }}' class='btn btn-danger move'>{{"drop from sprint"}}</a></li></ul>" 
+                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_on_process', {id: task.id}) }}' class='btn btn-block btn-info move move-onprocess'>{{"to on process"}}</a></li> <li><a href='{{ path('move_done', {id: task.id}) }}' class='btn btn-block btn-info move move-done'>{{"move to done"}}</a></li><li><a href='{{ path('move_undone', {id: task.id}) }}' class='btn btn-danger move'>{{"drop from sprint"}}</a></li></ul>" 
                     {% elseif task.state == "ONPROCESS" %}
-                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_todo', {id: task.id}) }}' class='btn btn-block btn-info move'>{{"move to todo"}}</a></li> <li><a href='{{ path('move_done', {id: task.id}) }}' class='btn btn-block btn-info move'>{{"move to done"}}</a></li><li><a href='{{ path('move_undone', {id: task.id}) }}' class='btn btn-danger move'>{{"drop from sprint"}}</a></li></ul>"
+                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_todo', {id: task.id}) }}' class='btn btn-block btn-info move move-todo'>{{"move to todo"}}</a></li> <li><a href='{{ path('move_done', {id: task.id}) }}' class='btn btn-block btn-info move move-done'>{{"move to done"}}</a></li><li><a href='{{ path('move_undone', {id: task.id}) }}' class='btn btn-danger move'>{{"drop from sprint"}}</a></li></ul>"
                     {% elseif task.state == "DONE" %}
-                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_todo', {id: task.id}) }}' class='btn btn-block btn-info move'>{{"move to todo"}}</a></li> <li><a href='{{ path('move_on_process', {id: task.id}) }}' class='btn btn-block btn-info move'>{{"to on process"}}</a></li></ul>"
+                    data-content="<ul class='list-unstyled'><li><a href='{{ path('move_todo', {id: task.id}) }}' class='btn btn-block btn-info move move-todo'>{{"move to todo"}}</a></li> <li><a href='{{ path('move_on_process', {id: task.id}) }}' class='btn btn-block btn-info move move-onprocess'>{{"to on process"}}</a></li></ul>"
                     {% endif %}
                 >
                     <span class="icon-bar"></span>

@@ -20,12 +20,6 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="row">
-        <div class="col-xs-12">
-        
-        </div>
-    </div>
     <div class="row">
         <div class="col-xs-12">
             <div class="widget-box">
@@ -67,12 +61,22 @@
     {% set inside = false %}
     {% for sprint in sprints if not is_granted('ROLE_PRODUCT_OWNER') or ( sprint.project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(sprint.project.owner)) %}
         {% set inside = true %}
-        <div class="col-xs-12 col-sm-6 col-md-4">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
         	<div class="widget-box">
         		<div class="widget-title">
+                    {% if sprint.finalized is empty %}
+                        {% set notifications = sprint.getSprintNotifications| length %}
+                        {% for task in sprint.tasks %}
+                            {% set notifications = notifications + task.getTaskNotifications| length %}
+                        {% endfor %}
+                    {% endif %}
         			<span class="icon">
         			    {% if sprint.finalized is empty %}
-        				    <i class="fa fa-play"></i>
+                            {% if notifications is defined and notifications  > 0 and is_granted('ROLE_SCRUM_MASTER') %}
+                                <span class="label label-danger tip-right" title="" data-original-title="{{ notifications }} notifications in this sprint, that require your atention">{{ notifications }}</span>
+                            {% else %}
+        				        <i class="fa fa-play"></i>
+                            {% endif %}
     				    {% else %}
     				        <i class="fa fa-stop"></i>
         				{% endif %}    
