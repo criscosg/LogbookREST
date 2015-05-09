@@ -41,7 +41,7 @@ class ApiUser extends User
      * @ORM\Column(type="string", length=250, nullable=true)
      * @Expose
      */
-    private $roles;
+    private $role;
 
     /**
      * @var ArrayCollection
@@ -103,16 +103,21 @@ class ApiUser extends User
 
     public function getRoles()
     {
-        if ($this->roles) {
-            return array('ROLE_API_USER', $this->roles);
+        if ($this->role) {
+            return array('ROLE_API_USER', $this->role);
         }
 
         return array('ROLE_API_USER');
     }
 
-    public function setRoles($roles)
+    public function setRole($role)
     {
-        $this->roles = $roles;
+        $this->role = $role;
+    }
+
+	public function getRole()
+    {
+        return $this->role;
     }
 
     public function getTasks()

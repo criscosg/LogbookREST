@@ -15,7 +15,7 @@ class NormalUserType extends AbstractType
             ->add('password', 'password', array('required'=>false))
             ->add('name', 'text', array('required'=>false))
             ->add('lastName', 'text', array('required'=>false))
-            ->add('roles', 'choice', array('choices'=>array('ROLE_TEAM'=>'Team member',
+            ->add('role', 'choice', array('choices'=>array('ROLE_TEAM'=>'Team member',
                     'ROLE_PRODUCT_OWNER'=>'Product owner',
                     'ROLE_SCRUM_MASTER'=>'Scrum master'), 'required'=>false));
     }

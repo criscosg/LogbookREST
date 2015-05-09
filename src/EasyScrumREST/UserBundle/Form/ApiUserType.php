@@ -11,9 +11,23 @@ class ApiUserType extends AdminUserType
     {
         parent::buildForm($builder, $options);
         $builder->add('company', 'entity', array('class'=>'UserBundle:Company', 'required'=>false))
-                ->add('roles', 'choice', array('choices'=>array('ROLE_TEAM'=>'Team member',
+                ->add('role', 'choice', array('choices'=>array('ROLE_TEAM'=>'Team member',
                                                                 'ROLE_PRODUCT_OWNER'=>'Product owner',
-                                                                'ROLE_SCRUM_MASTER'=>'Scrum master'), 'required'=>false));
+                                                                'ROLE_SCRUM_MASTER'=>'Scrum master'), 'multiple'=>false, 'required'=>false));
+    }
+
+	public function getDefaultOptions(array $options)
+    {
+        return array(
+                'data_class' => 'EasyScrumREST\UserBundle\Entity\ApiUser',
+        );
+    }
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+                'data_class' => 'EasyScrumREST\UserBundle\Entity\ApiUser'
+        ));
     }
 
     public function getName()
