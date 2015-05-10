@@ -1,0 +1,277 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+
+{% block title_section %}
+	Company statistics
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/jquery.gritter.css') }}" />
+{% endblock %}
+
+{% block breadcrumb %}
+  {% set crumbs = {'statistics':'#'} %}
+  {{ setCrumbs(crumbs) }}
+  {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+		<div class="col-xs-12">
+			<div class="widget-box widget-plain">
+				<div class="widget-content center">
+					<ul class="stats-plain">
+						<li>										
+							<h4>{{ general['averageFocus'] }}%</h4>
+							<span>Average focus</span>
+						</li>
+						<li>										
+							<h4>{{ general['sprintsFinalized'] }}</h4>
+							<span>Sprints completed</span>
+						</li>
+						<li>										
+							<h4>{{ general['spentHours'] }}</h4>
+							<span>Tasks spent hours</span>
+						</li>
+						<li>										
+							<h4>{{ general['spentHoursUrgency'] }}</h4>
+							<span>Urgencies spent hours</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 col-md-6">
+			<div class="widget-box">
+				<div class="widget-title">
+					<span class="icon">
+						<i class="fa fa-bar-chart-o"></i>
+					</span>
+					<h5>{{ "Focus factor by team member" }}</h5>
+				</div>
+				<div class="widget-content">
+					<div class="bars" id="bar-focus"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12 col-md-6">
+			<div class="widget-box">
+				<div class="widget-title">
+					<span class="icon">
+						<i class="fa fa-bar-chart-o"></i>
+					</span>
+					<h5>{{ "Focus factor progression" }}</h5>
+				</div>
+				<div class="widget-content">
+					<div class="chart" id="focus-progression"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-12 col-md-6">
+			<div class="widget-box">
+				<div class="widget-title">
+					<span class="icon">
+						<i class="fa fa-bar-chart-o"></i>
+					</span>
+					<h5>{{ "Planification accuracy" }}</h5>
+				</div>
+				<div class="widget-content">
+					<div class="pie" id="pie-accuracy"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12 col-md-6">
+			<div class="widget-box">
+				<div class="widget-title">
+					<span class="icon">
+						<i class="fa fa-bar-chart-o"></i>
+					</span>
+					<h5>{{ "Time spent by project" }}</h5>
+				</div>
+				<div class="widget-content">
+					<div class="pie" id="pie-proyect"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 col-md-6">
+			<div class="widget-box">
+				<div class="widget-title">
+					<span class="icon">
+						<i class="fa fa-bar-chart-o"></i>
+					</span>
+					<h5>{{ "Useful hours spent by team" }}</h5>
+				</div>
+				<div class="widget-content">
+					<div class="pie" id="pie-hours"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12 col-md-6">
+			<div class="widget-box">
+				<div class="widget-title">
+					<span class="icon">
+						<i class="fa fa-bar-chart-o"></i>
+					</span>
+					<h5>{{ "Hours spent by team" }}</h5>
+				</div>
+				<div class="widget-content">
+					<div class="pie" id="pie-hours-spent"></div>
+				</div>
+			</div>
+		</div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+    <script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
+    <script src="http://www.flotcharts.org/flot/jquery.flot.time.js"></script>
+    <script src="http://www.flotcharts.org/flot/jquery.flot.pie.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+        	var plot = $.plot($("#focus-progression"),
+            		[ { data: [{% for key, value in general['focusProgression'] %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Focus factor progression", color: "#4fabd2"}], {
+            		series: {
+                		lines: { show: true },
+                		points: { show: true }
+            		},
+            		grid: { hoverable: true, clickable: true, borderColor: "#eeeeee", borderWidth: 1, color: "#AAAAAA" },
+            		xaxis: {
+            			mode: "time",
+            			timeformat: "%Y/%m",
+            			minTickSize: [1, "day"],
+            			tickLength: 10
+            		},
+            		yaxis: {
+            			min: 0
+            		}
+        		}); 
+            
+        	var data = [{% for key, value in focusMembers %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}];
+        	$.plot("#bar-focus", [data], {
+        		series: {
+        			bars: {
+        				show: true,
+        				barWidth: 0.5,
+        				align: "center"
+        			}
+        		},
+        		xaxis: {
+        			mode: "categories",
+        			tickLength: 10
+        		}
+        	});
+
+        	var dataPie = [{% for key, value in spentTimeProjects %}{ label: "{{ key }}", data: {{ value }} }{% if not loop.last %},{% endif %}{% endfor %}];
+        	
+        	var pie = $.plot($("#pie-proyect"), dataPie,{
+                series: {
+                    pie: {
+                        show: true,
+                        radius: 3/4,
+                        label: {
+                            show: true,
+                            radius: 3/4,
+                            formatter: function(label, series){
+                                return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                            },
+                            background: {
+                                opacity: 0.5,
+                                color: '#000'
+                            }
+                        },
+                        innerRadius: 0.2
+                    },
+        			legend: {
+        				show: false
+        			}
+        		}
+        	});
+
+            var dataPie = [{% for key, value in hoursData %}{ label: "{{ key }}", data: {{ value['hours'] }} }{% if not loop.last %},{% endif %}{% endfor %}];
+        	
+        	var pie = $.plot($("#pie-hours"), dataPie,{
+                series: {
+                    pie: {
+                        show: true,
+                        radius: 3/4,
+                        label: {
+                            show: true,
+                            radius: 3/4,
+                            formatter: function(label, series){
+                                return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+series.data[0][1]+'</div>';
+                            },
+                            background: {
+                                opacity: 0.5,
+                                color: '#000'
+                            }
+                        },
+                        innerRadius: 0.2
+                    },
+        			legend: {
+        				show: false
+        			}
+        		}
+        	});
+
+            var dataPie = [{% for key, value in hoursData %}{ label: "{{ key }}", data: {{ value['hours_spent'] }} }{% if not loop.last %},{% endif %}{% endfor %}];
+        	
+        	var pie = $.plot($("#pie-hours-spent"), dataPie,{
+                series: {
+                    pie: {
+                        show: true,
+                        radius: 3/4,
+                        label: {
+                            show: true,
+                            radius: 3/4,
+                            formatter: function(label, series){
+                                return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+series.data[0][1]+'</div>';
+                            },
+                            background: {
+                                opacity: 0.5,
+                                color: '#000'
+                            }
+                        },
+                        innerRadius: 0.2
+                    },
+        			legend: {
+        				show: false
+        			}
+        		}
+        	});
+
+            var dataAccuracy = [{% for key, value in accuracy %}{ label: "{{ key }}", data: {{ value }} }{% if not loop.last %},{% endif %}{% endfor %}];
+        	
+        	var pie = $.plot($("#pie-accuracy"), dataAccuracy,{
+                series: {
+                    pie: {
+                        show: true,
+                        radius: 3/4,
+                        label: {
+                            show: true,
+                            radius: 3/4,
+                            formatter: function(label, series){
+                                return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                            },
+                            background: {
+                                opacity: 0.5,
+                                color: '#000'
+                            }
+                        },
+                        innerRadius: 0.2
+                    },
+        			legend: {
+        				show: false
+        			}
+        		}
+        	});
+        });
+    </script>    
+{% endblock %}

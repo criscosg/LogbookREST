@@ -17,4 +17,14 @@ class UserRepository extends EntityRepository
 
         return $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
     }
+
+    public function findMembersUsers($company)
+    {
+        $qb = $this->createQueryBuilder('u');
+        $qb->select('u');
+        $qb->andWhere($qb->expr()->eq('u.company', $company));
+        $qb->andWhere($qb->expr()->neq('u.role', 'ROLE_PRODUCT_OWNER'));
+
+        return $qb->getQuery()->getResult();
+    }
 }

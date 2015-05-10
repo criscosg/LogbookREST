@@ -139,6 +139,9 @@ abstract class User implements UserInterface, \Serializable, EquatableInterface
 
     public function __toString()
     {
+        if($this->getName() && $this->getLastName())
+            return $this->getName() . " ". $this->getLastName();
+        
         return $this->getEmail();
     }
 

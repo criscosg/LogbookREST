@@ -33,15 +33,15 @@ class FocusFactorMembers
                     if($cont > 0){
                         if($hours[$cont]->getHoursEnd() <= $hour->getHoursEnd()){
                             $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours'][]=0;
-                            $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours_spent'][] = 0;
+                            $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours_spent'][] = $hour->getHoursSpent();
                         } else {
-                            $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours'][] = $hours[$cont]->getHoursEnd() - $hour->getHoursEnd();
+                            $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours'][] = $hours[$cont-1]->getHoursEnd() - $hour->getHoursEnd();
                             $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours_spent'][] = $hour->getHoursSpent();
                         }
                     } else {
                         if($hour->getTask()->getHours() <= $hour->getHoursEnd()){
                             $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours'][]=0;
-                            $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours_spent'][] = 0;
+                            $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours_spent'][] = $hour->getHoursSpent();
                         } else {
                             $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours'][] = $hour->getTask()->getHours() - $hour->getHoursEnd();
                             $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours_spent'][] = $hour->getHoursSpent();
@@ -77,6 +77,60 @@ class FocusFactorMembers
         }
 
         return $chartData;
+    }
+    
+    public function getFocusFactorWhole($company, $project)
+    {
+        if($project)
+            $sprints = $this->em->getRepository('SprintBundle:Sprint')->findBy(array('planified'=>true, 'company'=>$company, 'project'=>$project));
+        else
+            $sprints = $this->em->getRepository('SprintBundle:Sprint')->findBy(array('planified'=>true, 'company'=>$company));
+        $focusChart = array();
+        $chartData = array();
+        foreach ($sprints as $sprint) {
+            foreach ($sprint->getTasks() as $task) {
+                $cont = 0;
+                foreach ($task->getListHours() as $hour) {
+                    if(!array_key_exists($hour->getUser()->__toString(), $focusChart)) {
+                        $focusChart[$hour->getUser()->__toString()]['hours'] = 0;
+                        $focusChart[$hour->getUser()->__toString()]['hours_spent'] = 0;
+                    }
+
+                    if($cont > 0){
+                        if($hour->getTask()->getHours() <= $hour->getHoursEnd()){
+                            $focusChart[$hour->getUser()->__toString()]['hours']+=0;
+                            $focusChart[$hour->getUser()->__toString()]['hours_spent'] += $hour->getHoursSpent();
+                        } else {
+                            $focusChart[$hour->getUser()->__toString()]['hours'] += ($hours[$cont-1]->getHoursEnd() - $hour->getHoursEnd());
+                            $focusChart[$hour->getUser()->__toString()]['hours_spent'] += $hour->getHoursSpent();
+                        }
+                    } else {
+                        if($hour->getTask()->getHours() <= $hour->getHoursEnd()){
+                            $focusChart[$hour->getUser()->__toString()]['hours']+=0;
+                            $focusChart[$hour->getUser()->__toString()]['hours_spent'] += $hour->getHoursSpent();
+                        } else {
+                            $focusChart[$hour->getUser()->__toString()]['hours'] += ($task->getHours() - $hour->getHoursEnd());
+                            $focusChart[$hour->getUser()->__toString()]['hours_spent'] += $hour->getHoursSpent();
+                        }
+                    }
+                    $cont++;
+                }
+            }
+        }
+
+        foreach ($focusChart as $key => $userChart){
+            if(isset($userChart['hours']) && isset($userChart['hours_spent'])){
+                $totalFocus=0;
+                if($userChart['hours'] > 0 && $userChart['hours_spent'] > 0) {
+                    $totalFocus = $userChart['hours']/$userChart['hours_spent'];
+                }
+                $chartData[$key] = $totalFocus*100;
+            } else {
+                $chartData[$key] = 0;
+            }
+        }
+
+        return array($chartData, $focusChart);
     }
 
 }

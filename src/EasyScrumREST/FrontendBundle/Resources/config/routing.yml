@@ -8,4 +8,8 @@ calendar:
     
 register:
     pattern:  /register
-    defaults: { _controller: UserBundle:UserNormal:register }    
+    defaults: { _controller: UserBundle:UserNormal:register }
+
+statistics:
+    pattern: /statistics/{project}
+    defaults: { _controller: FrontendBundle:Frontend:statistics, project: null }

@@ -30,4 +30,16 @@ class FrontendController extends EasyScrumController
         
         return $this->render('FrontendBundle:Frontend:calendar.html.twig', array('sprints'=>$sprints));
     }
+    
+    public function statisticsAction($project = null)
+    {
+        $company = $this->getUser()->getCompany()->getId();
+        list($focusCharts, $hoursData) = $this->get('sprint.focus_member')->getFocusFactorWhole($company, $project);
+        $projects = $this->get('statistics')->getTimeSpentByProject($company);
+        $accuracy = $this->get('statistics')->getPlanificationAccuracy($company);
+        $generalStatistics = $this->get('statistics')->getGeneralStatistics($company, $project);
+
+        return $this->render('FrontendBundle:Frontend:statistics.html.twig', array('focusMembers'=>$focusCharts,
+                'spentTimeProjects'=>$projects, 'accuracy'=>$accuracy, 'general'=>$generalStatistics, 'hoursData'=>$hoursData));
+    }
 }

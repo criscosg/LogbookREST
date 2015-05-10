@@ -3,9 +3,7 @@
 namespace EasyScrumREST\TaskBundle\Entity;
 
 use EasyScrumREST\ProjectBundle\Entity\Project;
-
 use EasyScrumREST\SprintBundle\Entity\Sprint;
-
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\ExclusionPolicy;
@@ -15,8 +13,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\MaxDepth;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="EasyScrumREST\TaskBundle\Entity\UrgencyRepository")
  * @ExclusionPolicy("all")
+ * @ORM\HasLifecycleCallbacks()
  */
 
 class Urgency

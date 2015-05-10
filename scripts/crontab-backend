@@ -1,0 +1,8 @@
+MAILTO=soporte@iventiajobs.com
+BASE=/var/www/easyscrum/
+LOGS=$BASE/app/logs/crontab-easyscrum-backend.log
+PHP=/usr/bin/php
+PATH=/usr/local/bin:/usr/bin:/bin
+
+# CADA DIA (UNA VEZ)
+30 23 * * *     iventia /usr/local/bin/lockrun --quiet --lockfile=/tmp/easyscrum.lockrun --  $PHP $BASE/app/console easyscrum:sprint:hours --env=prod

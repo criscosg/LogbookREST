@@ -6,6 +6,20 @@ use Doctrine\ORM\Query;
 class UrgencyRepository extends EntityRepository
 {
 
+    public function findAllUrgenciesCompany($company, $project = null)
+    {
+        $qb = $this->createQueryBuilder('u');
+        $qb->select('u');
+        $qb->join('u.project', 'p');
+        $qb->andWhere($qb->expr()->like('u.state', '\''."DONE".'\''));
+        $qb->andWhere($qb->expr()->eq('p.company', $company));
+        if($project) {
+            $qb->andWhere($qb->expr()->eq('p.id', $project));
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
     /*public function findOwnerBySearch($search = null, $orderby = null, $limit, $offset)
     {
         $qb = $this->createQueryBuilder('t');
