@@ -23,14 +23,18 @@ class Statistics
             $sprints = $this->em->getRepository('SprintBundle:Sprint')->findBy(array('finalized'=>true, 'company'=>$company, 'project'=>$project));
         else
             $sprints = $this->em->getRepository('SprintBundle:Sprint')->findBy(array('finalized'=>true, 'company'=>$company));
+
         $averageFocus = 0;
+        $averageDroppedTasks = 0;
         $focusProgression = array();
         foreach ($sprints as $sprint) {
             $averageFocus += $sprint->getHoursDone() / $sprint->getSpentHours();
+            $averageDroppedTasks += count($sprint->getTaskUndone());
             $focusProgression[$sprint->getDateTo()->getTimestamp()*1000] = ($sprint->getHoursDone() / $sprint->getSpentHours()) * 100;
         }
         ksort($focusProgression);
         $averageFocus = $averageFocus / count($sprints);
+        $averageDroppedTasks = $averageDroppedTasks / count($sprints);
         
         $tasks = $this->em->getRepository('TaskBundle:Task')->findAllTasksCompany($company, $project);
         $spenthours = 0;
@@ -44,7 +48,7 @@ class Statistics
             $spenthoursUrgencies += $urgency->getHoursSpent();
         }
 
-        return array('averageFocus'=> intval($averageFocus*100), 'sprintsFinalized'=>count($sprints),
+        return array('averageFocus'=> intval($averageFocus*100), 'sprintsFinalized'=>count($sprints), 'droppedTasks'=>$averageDroppedTasks,
                 'spentHours'=>$spenthours, 'spentHoursUrgency'=>$spenthoursUrgencies, 'focusProgression'=>$focusProgression);
     }
 

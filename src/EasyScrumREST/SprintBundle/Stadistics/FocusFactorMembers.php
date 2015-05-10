@@ -31,7 +31,7 @@ class FocusFactorMembers
                 $cont = 0;
                 foreach ($hours as $hour) {
                     if($cont > 0){
-                        if($hours[$cont]->getHoursEnd() <= $hour->getHoursEnd()){
+                        if($hours[$cont-1]->getHoursEnd() <= $hour->getHoursEnd()){
                             $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours'][]=0;
                             $focusChart[$hour->getUser()->getId()][$date->format('d/m')]['hours_spent'][] = $hour->getHoursSpent();
                         } else {
@@ -90,14 +90,15 @@ class FocusFactorMembers
         foreach ($sprints as $sprint) {
             foreach ($sprint->getTasks() as $task) {
                 $cont = 0;
-                foreach ($task->getListHours() as $hour) {
+                $hours = $task->getListHours();
+                foreach ($hours as $hour) {
                     if(!array_key_exists($hour->getUser()->__toString(), $focusChart)) {
                         $focusChart[$hour->getUser()->__toString()]['hours'] = 0;
                         $focusChart[$hour->getUser()->__toString()]['hours_spent'] = 0;
                     }
 
                     if($cont > 0){
-                        if($hour->getTask()->getHours() <= $hour->getHoursEnd()){
+                        if($hours[$cont-1]->getHoursEnd() <= $hour->getHoursEnd()){
                             $focusChart[$hour->getUser()->__toString()]['hours']+=0;
                             $focusChart[$hour->getUser()->__toString()]['hours_spent'] += $hour->getHoursSpent();
                         } else {
