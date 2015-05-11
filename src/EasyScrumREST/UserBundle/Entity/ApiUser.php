@@ -34,6 +34,7 @@ class ApiUser extends User
     /**
      * @var ImageProfile
      * @ORM\OneToOne(targetEntity="EasyScrumREST\ImageBundle\Entity\ImageProfile", mappedBy="user", cascade={"persist", "merge", "remove"})
+	 * @Expose
      */
     private $profileImage;
 
@@ -59,6 +60,11 @@ class ApiUser extends User
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $notification;
+
+	/**
+	 * @Expose
+	 */
+	private $thumbnail;
 
     public function __construct()
     {
@@ -150,4 +156,13 @@ class ApiUser extends User
         $this->notification = $notification;
     }
 
+	public function getThumbnail()
+    {
+        return $this->thumbnail;
+    }
+    
+    public function setThumbnail($thumbnail)
+    {
+        $this->thumbnail = $thumbnail;
+    }
 }

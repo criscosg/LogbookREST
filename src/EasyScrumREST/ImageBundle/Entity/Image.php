@@ -8,6 +8,8 @@ use EasyScrumREST\ImageBundle\Util\FileHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\VirtualProperty;
+use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Table()
@@ -158,7 +160,13 @@ abstract class Image
         return $this->subdirectory . '/'
                 . FileHelper::getDirectoryNameFromId($this->id);
     }
-
+	
+	/**
+     * @VirtualProperty
+     * @SerializedName("webFilePath")
+     *
+     * @return string
+     */
     public function getWebFilePath()
     {
         return self::UPLOAD_DIR . '/' . $this->getSubdirectory() . '/'
