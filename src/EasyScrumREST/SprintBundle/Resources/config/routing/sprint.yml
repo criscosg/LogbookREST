@@ -43,5 +43,5 @@ refresh_grouped_tasks:
     defaults: { _controller: SprintBundle:SprintNormal:refreshGroupedTasks }
 
 refresh_grouped_urgencies:
-    pattern: /grouped-sprints-tasks
+    pattern: /grouped-sprints-urgencies
     defaults: { _controller: SprintBundle:SprintNormal:refreshGroupedUrgencies }
