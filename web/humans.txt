@@ -1,0 +1,5 @@
+/* SITE */
+    Last update: Every 2 weeks
+    Language: Español
+    Doctype: XHTML 1.0 Transitional/Strict
+    Built with: Scrum, Linux, Eclipse, PHP, Symfony2, Twig, Solr, Jquery,Firefox & Chrome (Firebug, Page Speed, Web Developer

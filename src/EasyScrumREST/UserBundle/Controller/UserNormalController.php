@@ -27,7 +27,7 @@ class UserNormalController extends EasyScrumController
     public function registerAction()
     {
         $user = new ApiUser();
-        $user->setRoles('ROLE_SCRUM_MASTER');
+        $user->setRole('ROLE_SCRUM_MASTER');
         $request=$this->getRequest();
         $form = $this->createForm(new RegisterType(), $user);
         if($request->getMethod()=='POST'){
