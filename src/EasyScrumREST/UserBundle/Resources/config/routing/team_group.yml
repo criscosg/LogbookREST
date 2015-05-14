@@ -1,0 +1,19 @@
+team_group_list:
+    pattern: /
+    defaults: { _controller: UserBundle:TeamGroup:list }
+    
+show_team_group:
+    pattern: /team_group/{id}
+    defaults: { _controller: UserBundle:TeamGroup:show }
+    
+new_team_group:
+    pattern: /new
+    defaults: { _controller: UserBundle:TeamGroup:new }
+    
+edit_team_group:
+    pattern: /edit/{id}
+    defaults: { _controller: UserBundle:TeamGroup:edit }
+    
+delete_team_group:
+    pattern: /delete/{id}
+    defaults: { _controller: UserBundle:TeamGroup:delete }

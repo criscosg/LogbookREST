@@ -1,0 +1,74 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+{%  set edit = "Edit team group"|trans %}
+{%  set create = "Create team group"|trans %}
+
+{% block title_section %}
+    {% if edition is defined %}
+        {{ edit }}
+    {% else %}
+        {{ create }}
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% if edition is defined %}
+        {% set crumbs = {'Team groups': path('team_group_list'), (edit):''} %}
+    {% else %}
+        {% set crumbs = {'Team groups': path('team_group_list'), (create):''} %}
+    {% endif %}
+
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon">
+                <i class="fa fa-pencil"></i>
+            </span>
+            {% if edition is defined %}
+                <h5>{{ edit }}</h5>
+            {% else %}
+                <h5>{{ create }}</h5>
+            {% endif %}
+        </div>
+        <div class="widget-content nopadding">
+            <form class="form-horizontal" id="form-create-item" role="form"
+                  action="{% if edition is defined %}{{ path('edit_team_group',{'id':group.id}) }} {% else %} {{ path('new_team_group') }} {% endif %}"
+                  method="post" xmlns="http://www.w3.org/1999/html">
+                
+                <div class="form-group">
+                    <label id="label_name" for="team_group_name" class="col-sm-3 control-label user-active is-public"><span class="red">*</span> {{ "Name" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.name, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="label_lastname" for="team_group_lastname" class="col-sm-3 control-label user-active"><span class="red">*</span> {{ "Users" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.users, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                {{ form_rest(form) }}
+                <div class="form-actions">
+                    <button id="register" type="submit" class="btn btn-large btn-primary">
+                        {{ "Save"|trans }}
+                    </button>
+                    <img style="display:none;" src="{{ asset('bundles/frontend/img/spinner.gif') }}">
+                    <div class="help-block mt10">
+                        <span class="red">*</span> {{"Required fields" | trans }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

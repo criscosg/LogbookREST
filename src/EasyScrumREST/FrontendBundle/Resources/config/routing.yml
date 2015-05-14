@@ -11,5 +11,5 @@ register:
     defaults: { _controller: UserBundle:UserNormal:register }
 
 statistics:
-    pattern: /statistics/{project}
-    defaults: { _controller: FrontendBundle:Frontend:statistics, project: null }
+    pattern: /statistics
+    defaults: { _controller: FrontendBundle:Frontend:statistics }

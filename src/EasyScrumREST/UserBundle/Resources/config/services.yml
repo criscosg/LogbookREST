@@ -8,6 +8,7 @@ parameters:
     company.handler.class: EasyScrumREST\UserBundle\Handler\CompanyHandler
     password.handler.class: EasyScrumREST\UserBundle\Handler\PasswordHandler
     user.send_email.class: EasyScrumREST\UserBundle\EventListener\SendEmailListener
+    team_group.handler.class: EasyScrumREST\UserBundle\Handler\TeamGroupHandler
 
 services:
     user.handler:
@@ -45,4 +46,7 @@ services:
         arguments: [@mailer, @templating, @router, %noreply_email%]
         tags:
             - { name: kernel.event_subscriber }
+    team_group.handler:
+        class: %team_group.handler.class%
+        arguments: [@doctrine.orm.entity_manager, @form.factory]
         

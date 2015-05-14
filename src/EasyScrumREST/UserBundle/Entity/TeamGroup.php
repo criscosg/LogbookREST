@@ -13,7 +13,7 @@ use EasyScrumREST\SprintBundle\Entity\Sprint;
  * @ExclusionPolicy("all")
  */
 
-class Company
+class TeamGroup
 {
     /**
      * @ORM\Id
@@ -45,38 +45,26 @@ class Company
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="ApiUser", mappedBy="company", cascade={"persist", "merge", "remove"})
+     * @ORM\ManyToMany(targetEntity="ApiUser", inversedBy="teamGroups")
      */
     private $users;
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="TeamGroup", mappedBy="company", cascade={"persist", "merge", "remove"})
-     */
-    private $teamGroups;
-
-    /**
-     * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="EasyScrumREST\SprintBundle\Entity\Sprint", mappedBy="company", cascade={"persist", "merge", "remove"})
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\SprintBundle\Entity\Sprint", mappedBy="teamGroup", cascade={"persist", "merge", "remove"})
      * @Expose
      */
     private $sprints;
-    
+
     /**
-     * @ORM\Column(type="float", precision=2, nullable=true)
+     * @ORM\ManyToOne(targetEntity="Company", inversedBy="teamGroups", cascade={"persist"})
      */
-    private $pricePerHour;
-    
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $hoursPerDay=8;
+    private $company;
 
     public function __construct()
     {
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
         $this->sprints = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->teamGroups = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -170,19 +158,18 @@ class Company
     }
 
     /**
-     * @param \Doctrine\Common\Collections\ArrayCollection $teamGroups
+     * @param mixed $company
      */
-    public function setTeamGroups($teamGroups)
+    public function setCompany($company)
     {
-        $this->teamGroups = $teamGroups;
+        $this->company = $company;
     }
 
     /**
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return mixed
      */
-    public function getTeamGroups()
+    public function getCompany()
     {
-        return $this->teamGroups;
+        return $this->company;
     }
-
 }

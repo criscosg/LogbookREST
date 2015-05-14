@@ -79,15 +79,21 @@ class TaskRepository extends EntityRepository
         return $qb->getQuery();
     }
 
-    public function findAllTasksCompany($company, $project = null)
+    public function findTasksForStatistics($search)
     {
         $qb = $this->createQueryBuilder('t');
         $qb->select('t');
         $qb->join('t.sprint', 's');
         $qb->andWhere($qb->expr()->like('t.state', '\''."DONE".'\''));
-        $qb->andWhere($qb->expr()->eq('s.company', $company));
-        if($project) {
-            $qb->andWhere($qb->expr()->eq('s.project', $project));
+        $qb->andWhere($qb->expr()->eq('s.company', $search->getCompany()));
+        if ($search->getFrom()) {
+            $qb->andWhere($qb->expr()->gte('s.dateFrom', '\''.$search->getFrom()->format('Y-m-d').'\''));
+        }
+        if ($search->getTo()) {
+            $qb->andWhere($qb->expr()->lte('s.dateTo', '\''.$search->getTo()->format('Y-m-d').'\''));
+        }
+        if ($search->getProject()) {
+            $qb->andWhere($qb->expr()->eq('s.project', $search->getProject()->getId()));
         }
 
         return $qb->getQuery()->getResult();

@@ -21,6 +21,10 @@ user:
 users_normal:
     resource: "@UserBundle/Resources/config/routing/api_users.yml"
     prefix:   /users
+
+team_group:
+    resource: "@UserBundle/Resources/config/routing/team_group.yml"
+    prefix:   /group
     
 sprint_normal:
     resource: "@SprintBundle/Resources/config/routing/sprint.yml"

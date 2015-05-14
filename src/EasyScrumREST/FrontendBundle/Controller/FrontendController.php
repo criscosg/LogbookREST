@@ -2,6 +2,8 @@
 namespace EasyScrumREST\FrontendBundle\Controller;
 
 use EasyScrumREST\FrontendBundle\Controller\EasyScrumController;
+use EasyScrumREST\FrontendBundle\Form\StatisticSearchType;
+use EasyScrumREST\FrontendBundle\Util\StatisticSearchHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
@@ -10,8 +12,6 @@ class FrontendController extends EasyScrumController
 {
     public function homeAction()
     {
-        $request=$this->getRequest();
-        $session = $request->getSession();
         $sprints = $this->get('sprint.handler')->getActiveSprints($this->getUser()->getCompany()->getId());
         $actions = $this->get('action.manager')->getLastUpdates($this->getUser());
         $today = new \DateTime('today');
@@ -31,15 +31,18 @@ class FrontendController extends EasyScrumController
         return $this->render('FrontendBundle:Frontend:calendar.html.twig', array('sprints'=>$sprints));
     }
     
-    public function statisticsAction($project = null)
+    public function statisticsAction(Request $request)
     {
         $company = $this->getUser()->getCompany()->getId();
-        list($focusCharts, $hoursData) = $this->get('sprint.focus_member')->getFocusFactorWhole($company, $project);
-        $projects = $this->get('statistics')->getTimeSpentByProject($company);
-        $accuracy = $this->get('statistics')->getPlanificationAccuracy($company);
-        $generalStatistics = $this->get('statistics')->getGeneralStatistics($company, $project);
+        $search = new StatisticSearchHelper($company);
+        $form = $this->createForm(new StatisticSearchType($company), $search);
+        $form->handleRequest($request);
+        list($focusCharts, $hoursData) = $this->get('sprint.focus_member')->getFocusFactorWhole($search);
+        $projects = $this->get('statistics')->getTimeSpentByProject($search);
+        $accuracy = $this->get('statistics')->getPlanificationAccuracy($search);
+        $generalStatistics = $this->get('statistics')->getGeneralStatistics($search);
 
-        return $this->render('FrontendBundle:Frontend:statistics.html.twig', array('focusMembers'=>$focusCharts,
+        return $this->render('FrontendBundle:Frontend:statistics.html.twig', array('focusMembers'=>$focusCharts, 'form' =>$form->createView(),
                 'spentTimeProjects'=>$projects, 'accuracy'=>$accuracy, 'general'=>$generalStatistics, 'hoursData'=>$hoursData));
     }
 }

@@ -65,7 +65,7 @@ class SprintNormalController extends EasyScrumController
      */
     public function sprintPlanificationAction(Sprint $sprint)
     {
-        $form = $this->createForm(new SprintLastStepType(), $sprint);
+        $form = $this->createForm(new SprintLastStepType($sprint->getCompany()->getId()), $sprint);
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
             $sprint = $this->get('sprint.handler')->endPlanificationSprint($request, $sprint);

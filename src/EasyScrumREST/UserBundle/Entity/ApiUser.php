@@ -66,10 +66,17 @@ class ApiUser extends User
 	 */
 	private $thumbnail;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="TeamGroup", mappedBy="users")
+     */
+    private $teamGroups;
+
     public function __construct()
     {
         $this->messages = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->teamGroups = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function setCompany(Company $company)
@@ -165,4 +172,26 @@ class ApiUser extends User
     {
         $this->thumbnail = $thumbnail;
     }
+
+    /**
+     * @param \Doctrine\Common\Collections\ArrayCollection $teamGroups
+     */
+    public function setTeamGroups($teamGroups)
+    {
+        $this->teamGroups = $teamGroups;
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getTeamGroups()
+    {
+        return $this->teamGroups;
+    }
+
+    public function addTeamGroup(TeamGroup $teamGroup)
+    {
+        $this->teamGroups->add($teamGroup);
+    }
+
 }

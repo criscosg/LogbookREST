@@ -1,5 +1,6 @@
 <?php
 namespace EasyScrumREST\SprintBundle\Entity;
+use EasyScrumREST\FrontendBundle\Util\StatisticSearchHelper;
 use EasyScrumREST\UserBundle\Entity\ApiUser;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
@@ -124,6 +125,28 @@ class SprintRepository extends EntityRepository
             $qb->andWhere($qb->expr()->gte('s.dateTo', '\''.$search['to']->format('Y-m-d').'\''));
         }
 
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findSprintsForStatistics(StatisticSearchHelper $search)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('s');
+        $qb->join('s.company', 'c');
+        $qb->andWhere($qb->expr()->eq('s.company', $search->getCompany()));
+        $qb->andWhere($qb->expr()->isNotNull('s.title'));
+        $qb->andWhere($qb->expr()->isNotNull('s.dateTo'));
+        $qb->andWhere($qb->expr()->eq('s.finalized', true));
+        if ($search->getFrom()) {
+            $qb->andWhere($qb->expr()->gte('s.dateFrom', '\''.$search->getFrom()->format('Y-m-d').'\''));
+        }
+        if ($search->getTo()) {
+            $qb->andWhere($qb->expr()->lte('s.dateTo', '\''.$search->getTo()->format('Y-m-d').'\''));
+        }
+        if ($search->getProject()) {
+            $qb->andWhere($qb->expr()->eq('s.project', $search->getProject()->getId()));
+        }
 
         return $qb->getQuery()->getResult();
     }

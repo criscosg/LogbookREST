@@ -79,12 +79,9 @@ class FocusFactorMembers
         return $chartData;
     }
     
-    public function getFocusFactorWhole($company, $project)
+    public function getFocusFactorWhole($search)
     {
-        if($project)
-            $sprints = $this->em->getRepository('SprintBundle:Sprint')->findBy(array('planified'=>true, 'company'=>$company, 'project'=>$project));
-        else
-            $sprints = $this->em->getRepository('SprintBundle:Sprint')->findBy(array('planified'=>true, 'company'=>$company));
+        $sprints = $this->em->getRepository('SprintBundle:Sprint')->findSprintsForStatistics($search);
         $focusChart = array();
         $chartData = array();
         foreach ($sprints as $sprint) {

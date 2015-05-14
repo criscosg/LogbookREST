@@ -17,32 +17,41 @@ class Statistics
         $this->em = $em;
     }
 
-    public function getGeneralStatistics($company, $project)
+    public function getGeneralStatistics($search)
     {
-        if($project)
-            $sprints = $this->em->getRepository('SprintBundle:Sprint')->findBy(array('finalized'=>true, 'company'=>$company, 'project'=>$project));
-        else
-            $sprints = $this->em->getRepository('SprintBundle:Sprint')->findBy(array('finalized'=>true, 'company'=>$company));
-
+        $sprints = $this->em->getRepository('SprintBundle:Sprint')->findSprintsForStatistics($search);
         $averageFocus = 0;
         $averageDroppedTasks = 0;
         $focusProgression = array();
         foreach ($sprints as $sprint) {
-            $averageFocus += $sprint->getHoursDone() / $sprint->getSpentHours();
+            if($sprint->getHoursDone() > 0 && $sprint->getSpentHours() > 0) {
+                $finalFocus = $sprint->getHoursDone() / $sprint->getSpentHours();
+                $averageFocus += $finalFocus;
+            } else {
+                $finalFocus = 0;
+            }
             $averageDroppedTasks += count($sprint->getTaskUndone());
-            $focusProgression[$sprint->getDateTo()->getTimestamp()*1000] = ($sprint->getHoursDone() / $sprint->getSpentHours()) * 100;
+            if(!array_key_exists($sprint->getDateTo()->getTimestamp()*1000, $focusProgression))
+                $focusProgression[$sprint->getDateTo()->getTimestamp()*1000] = ($finalFocus) * 100;
+            else
+                $focusProgression[$sprint->getDateTo()->getTimestamp()*1000] += ($finalFocus) * 100;
         }
         ksort($focusProgression);
-        $averageFocus = $averageFocus / count($sprints);
-        $averageDroppedTasks = $averageDroppedTasks / count($sprints);
+        if(count($sprints)>0) {
+            $averageFocus = $averageFocus / count($sprints);
+            $averageDroppedTasks = $averageDroppedTasks / count($sprints);
+        } else {
+            $averageFocus = 0;
+            $averageDroppedTasks = 0;
+        }
         
-        $tasks = $this->em->getRepository('TaskBundle:Task')->findAllTasksCompany($company, $project);
+        $tasks = $this->em->getRepository('TaskBundle:Task')->findTasksForStatistics($search);
         $spenthours = 0;
         foreach ($tasks as $task) {
             $spenthours += $task->getHoursSpent();
         }
         
-        $urgencies = $this->em->getRepository('TaskBundle:Urgency')->findAllUrgenciesCompany($company, $project);
+        $urgencies = $this->em->getRepository('TaskBundle:Urgency')->findUrgenciesForStatistics($search);
         $spenthoursUrgencies = 0;
         foreach ($urgencies as $urgency) {
             $spenthoursUrgencies += $urgency->getHoursSpent();
@@ -52,23 +61,23 @@ class Statistics
                 'spentHours'=>$spenthours, 'spentHoursUrgency'=>$spenthoursUrgencies, 'focusProgression'=>$focusProgression);
     }
 
-    public function getTimeSpentByProject($company)
+    public function getTimeSpentByProject($search)
     {
-        $projects = $this->em->getRepository('ProjectBundle:Project')->findBy(array('company'=>$company));
+        $sprints = $this->em->getRepository('SprintBundle:Sprint')->findSprintsForStatistics($search);
         $chart = array();
-        foreach ($projects as $project) {
-            $chart[$project->getTitle()]=0;
-            foreach ($project->getSprints() as $sprint) {
-                $chart[$project->getTitle()] += $sprint->getSpentHours();               
-            }
+
+        foreach ($sprints as $sprint) {
+            if(!array_key_exists($sprint->getProject()->getTitle(), $chart))
+                $chart[$sprint->getProject()->getTitle()]=0;
+            $chart[$sprint->getProject()->getTitle()] += $sprint->getSpentHours();
         }
-        
+
         return $chart;
     }
 
-    public function getPlanificationAccuracy($company)
+    public function getPlanificationAccuracy($search)
     {
-        $tasks = $this->em->getRepository('TaskBundle:Task')->findAllTasksCompany($company);
+        $tasks = $this->em->getRepository('TaskBundle:Task')->findTasksForStatistics($search);
         $data = array('exact planification' => 0, 'took from 0 to 25% more time' => 0, 'took over 25% more time' => 0, 'took over 25% less time' => 0, 'took from 0 to 25% less time' => 0);
         foreach ($tasks as $task) {
             if($task->getHoursSpent() == $task->getHours()) {

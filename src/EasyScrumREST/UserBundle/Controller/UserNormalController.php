@@ -2,17 +2,13 @@
 namespace EasyScrumREST\UserBundle\Controller;
 
 use EasyScrumREST\UserBundle\Entity\RecoverPassword;
-
 use EasyScrumREST\UserBundle\Form\PasswordType;
-
 use EasyScrumREST\UserBundle\Form\RecoverPasswordType;
-
 use EasyScrumREST\UserBundle\Event\UserEvent;
 use EasyScrumREST\UserBundle\Event\UserEvents;
 use EasyScrumREST\UserBundle\Form\SettingsType;
 use EasyScrumREST\UserBundle\Form\ProfileType;
 use EasyScrumREST\UserBundle\Form\NormalUserType;
-use EasyScrumREST\UserBundle\Form\ApiUserType;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use EasyScrumREST\UserBundle\Entity\ApiUser;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -47,7 +43,7 @@ class UserNormalController extends EasyScrumController
     
     public function listApiUsersAction()
     {
-        $users=$this->getUser()->getCompany()->getUsers();
+        $users = $this->getUser()->getCompany()->getUsers();
         
         return $this->render('UserBundle:ApiUser:index.html.twig', array('api_users'=>$users));
     }

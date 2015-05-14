@@ -193,7 +193,7 @@ class SprintHandler
     
     public function endPlanificationSprint($request, Sprint $sprint)
     {
-        $form = $this->factory->create(new SprintLastStepType(), $sprint, array('method' => 'POST'));
+        $form = $this->factory->create(new SprintLastStepType($sprint->getCompany()->getId()), $sprint, array('method' => 'POST'));
         $form->handleRequest($request);
         if ($form->isValid()) {
             $sprint = $form->getData();

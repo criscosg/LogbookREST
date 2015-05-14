@@ -59,7 +59,7 @@
     </div>
     <div class="row">
     {% set inside = false %}
-    {% for sprint in sprints if not is_granted('ROLE_PRODUCT_OWNER') or ( sprint.project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(sprint.project.owner)) %}
+    {% for sprint in sprints if sprint.userCanSeeProject(app.user) %}
         {% set inside = true %}
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
         	<div class="widget-box">

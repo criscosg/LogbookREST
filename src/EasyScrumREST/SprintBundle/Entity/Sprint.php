@@ -5,6 +5,7 @@ use EasyScrumREST\ProjectBundle\Entity\Project;
 use EasyScrumREST\TaskBundle\Entity\Urgency;
 use Doctrine\ORM\Mapping as ORM;
 use EasyScrumREST\TaskBundle\Entity\Task;
+use EasyScrumREST\UserBundle\Entity\ApiUser;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
@@ -167,6 +168,12 @@ class Sprint
      * @ORM\OneToMany(targetEntity="EasyScrumREST\ActionBundle\Entity\ActionSprint", mappedBy="sprint", cascade={"persist", "remove"})
      */
     private $actions;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\TeamGroup", inversedBy="sprints")
+     * @Expose
+     */
+    private $teamGroup;
     
     public function __construct()
     {
@@ -639,14 +646,41 @@ class Sprint
 
         return null;
     }
-    
+
     public function getActions()
     {
         return $this->actions;
     }
-    
+
     public function setActions(ArrayCollection $actions)
     {
         $this->actions = $actions;
+    }
+
+    /**
+     * @param mixed $teamGroup
+     */
+    public function setTeamGroup($teamGroup)
+    {
+        $this->teamGroup = $teamGroup;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTeamGroup()
+    {
+        return $this->teamGroup;
+    }
+
+    public function userCanSeeProject(ApiUser $user)
+    {
+        if($user->getRole() === "ROLE_TEAM" && $this->teamGroup && !$this->teamGroup->getUsers()->contains($user)) {
+            return false;
+        } else if($user->getRole() === "ROLE_PRODUCT_OWNER" && !$user->isEqualTo($this->getProject()->getOwner())) {
+            return false;
+        }
+
+        return true;
     }
 }

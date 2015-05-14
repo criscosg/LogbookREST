@@ -6,15 +6,22 @@ use Doctrine\ORM\Query;
 class UrgencyRepository extends EntityRepository
 {
 
-    public function findAllUrgenciesCompany($company, $project = null)
+    public function findUrgenciesForStatistics($search)
     {
         $qb = $this->createQueryBuilder('u');
         $qb->select('u');
         $qb->join('u.project', 'p');
+        $qb->join('u.sprint', 's');
         $qb->andWhere($qb->expr()->like('u.state', '\''."DONE".'\''));
-        $qb->andWhere($qb->expr()->eq('p.company', $company));
-        if($project) {
-            $qb->andWhere($qb->expr()->eq('p.id', $project));
+        $qb->andWhere($qb->expr()->eq('p.company', $search->getCompany()));
+        if ($search->getFrom()) {
+            $qb->andWhere($qb->expr()->gte('s.dateFrom', '\''.$search->getFrom()->format('Y-m-d').'\''));
+        }
+        if ($search->getTo()) {
+            $qb->andWhere($qb->expr()->lte('s.dateTo', '\''.$search->getTo()->format('Y-m-d').'\''));
+        }
+        if ($search->getProject()) {
+            $qb->andWhere($qb->expr()->eq('p.id', $search->getProject()->getId()));
         }
 
         return $qb->getQuery()->getResult();

@@ -40,7 +40,13 @@
                         {{ form_widget(form.description, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
                 </div>
-                
+                <div class="form-group">
+                    <label id="label_description" for="sprint_description" class="col-sm-3 control-label log-active is-public"> {{ "Group" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.teamGroup, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+
                 {{ form_rest(form) }}
                 <div class="form-actions">
                     <button id="register" type="submit" class="btn btn-large btn-primary">

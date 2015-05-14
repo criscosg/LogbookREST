@@ -6,7 +6,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/jquery.gritter.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/datepicker.css') }}">
 {% endblock %}
 
 {% block breadcrumb %}
@@ -16,6 +16,50 @@
 {% endblock %}
 
 {% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="fa fa-search"></i>
+                    </span>
+                    <h5>{{ "Filter statistics"|trans }}</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <div class="row">
+                        <form action="{{ path('statistics') }}" method="get" class="form-inline" role="form">
+                            <div class="form-group">
+                                <div class="col-sm-12 input-group">
+                                    {{ form_widget(form.from, { 'attr':{ 'class':'form-control datepicker-from', 'autocomplete':'off', 'placeholder':"From"} }) }}
+                                    <span class="input-group-addon input-group-addon-click">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12 input-group">
+                                    {{ form_widget(form.to, { 'attr':{ 'class':'form-control datepicker-to','autocomplete':'off', 'placeholder':"To"} }) }}
+                                    <span class="input-group-addon input-group-addon-click">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    {{ form_widget(form.project, { 'attr':{ 'class':'form-control'} }) }}
+                                </div>
+                            </div>
+
+                            {{ form_rest(form) }}
+                            <button id="search" type="submit" class="btn btn-large btn-primary">
+                                {{ "Search"|trans }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
 		<div class="col-xs-12">
 			<div class="widget-box widget-plain">
@@ -138,6 +182,7 @@
     <script src="http://www.flotcharts.org/flot/jquery.flot.categories.js"></script>
     <script src="http://www.flotcharts.org/flot/jquery.flot.time.js"></script>
     <script src="http://www.flotcharts.org/flot/jquery.flot.pie.js"></script>
+    <script src="{{ asset('bundles/frontend/js/bootstrap-datepicker.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function(){
         	var plot = $.plot($("#focus-progression"),
@@ -252,7 +297,7 @@
         	});
 
             var dataAccuracy = [{% for key, value in accuracy %}{ label: "{{ key }}", data: {{ value }} }{% if not loop.last %},{% endif %}{% endfor %}];
-        	
+
         	var pie = $.plot($("#pie-accuracy"), dataAccuracy,{
                 series: {
                     pie: {
@@ -276,6 +321,14 @@
         			}
         		}
         	});
+
+            $('.datepicker-from').datepicker({
+                format: 'dd/mm/yyyy'
+            });
+            $('.datepicker-to').datepicker({
+                format: 'dd/mm/yyyy',
+                startDate: '+1d'
+            });
         });
     </script>    
 {% endblock %}
