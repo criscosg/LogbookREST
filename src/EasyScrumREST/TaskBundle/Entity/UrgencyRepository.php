@@ -27,6 +27,18 @@ class UrgencyRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findUrgenciesForUser($user)
+    {
+        $qb = $this->createQueryBuilder('u');
+        $qb->select('u');
+        $qb->join('u.sprint', 's');
+        $qb->join('u.listHours', 'h', Query\Expr\Join::WITH, "h.user = ".$user->getId());
+        $qb->andWhere($qb->expr()->like('u.state', '\''."DONE".'\''));
+        $qb->andWhere($qb->expr()->eq('s.company', $user->getCompany()->getId()));
+
+        return $qb->getQuery()->getResult();
+    }
+
     /*public function findOwnerBySearch($search = null, $orderby = null, $limit, $offset)
     {
         $qb = $this->createQueryBuilder('t');

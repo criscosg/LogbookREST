@@ -13,46 +13,111 @@
 {% block content %}
 
     <div class="row">
-        <a title="Modificar" href="{{ path('edit_normal_api_user', { 'id': api_user.id }) }}" class="btn btn-primary btn-s">
-            <i class="fa fa-pencil"></i> {{"Edit" | trans}}
-        </a>
-        <a title="Borrar" href="{{ path('delete_normal_api_user', { 'id': api_user.id }) }}" class="btn btn-danger btn-s">
-            <i class="fa fa-trash-o"></i> {{"Delete" | trans}}
-        </a>
+        <div class="col-sm-6 col-xs-12">
+            <a title="Modificar" href="{{ path('edit_normal_api_user', { 'id': api_user.id }) }}" class="btn btn-primary btn-s">
+                <i class="fa fa-pencil"></i> {{"Edit" | trans}}
+            </a>
+            <a title="Borrar" href="{{ path('delete_normal_api_user', { 'id': api_user.id }) }}" class="btn btn-danger btn-s">
+                <i class="fa fa-trash-o"></i> {{"Delete" | trans}}
+            </a>
+        </div>
     </div>
+    <div class="row">
+        <div class="col-sm-6 col-xs-12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="fa fa-th-list"></i>
+                    </span>
+                    <h5>{{ "User data"|trans }}</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="user-image" >
+                            {% if api_user.profileImage is not null %}
+                                {% set imagePath= api_user.profileImage.getWebFilePath %}
+                                <img src="{{ asset(imagePath) | imagine_filter('thumbnail') }}" alt="Imagen perfil" class="img-thumbnail" style="margin-left: 40px; margin-bottom: 25px; margin-top: 25px;">
+                            {% else %}
+                                <img src="{{ asset('bundles/frontend/img/no_image.png') | imagine_filter('thumbnail') }}" alt="Imagen perfil" class="img-thumbnail" style="margin-left: 40px; margin-bottom: 25px; margin-top: 25px;">
+                            {% endif %}
+                            </div>
 
-    <div class="widget-box">
-        <div class="widget-title">
+                        </div>
+                        <div class="col-sm-6">
+                            <ul class="user-attributes">
+                                <li>{% if api_user.name is defined %}{{ api_user.name }} {% if api_user.lastName is defined %}{{ api_user.lastName }}{% endif %}{% endif %}</li>
+                                <li>{% if api_user.email is defined %}{{ api_user.email }}{% endif %}</li>
+                                <li>{% if api_user.created is defined %}{{ api_user.created | date()}}{% endif %}</li>
+                                <li>{% if api_user.role is defined %}{{ api_user.role }}{% endif %}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xs-12">
+            <div class="widget-box">
+                <div class="widget-title">
             <span class="icon">
                 <i class="fa fa-th-list"></i>
             </span>
-            <h5>{{ "register data"|trans }}</h5>
-        </div>
-        <div class="widget-content nopadding">
-            <table class="table table-bordered table-striped table-hover">
-                <tbody>
-                    <tr>
-                        <td>{{ "Name"|trans }}</td>
-                        <td>{% if api_user.name is defined %}{{ api_user.name }}{% endif %}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ "Surname"|trans }}</td>
-                        <td>{% if api_user.lastName is defined %}{{ api_user.lastName }}{% endif %}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ "Email"|trans }}</td>
-                        <td>{% if api_user.email is defined %}{{ api_user.email }}{% endif %}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ "Created"|trans }}</td>
-                        <td>{% if api_user.created is defined %}{{ api_user.created | date()}}{% endif %}</td>
-                    </tr>
-                    <tr>
-                        <td>{{ "Rol"|trans }}</td>
-                        <td>{% if api_user.roles is defined %}{{ api_user.roles }}{% endif %}</td>
-                    </tr>
-                </tbody>
-            </table>
+                    <h5>{{ "User general statistics"|trans }}</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <table class="table table-bordered table-striped table-hover">
+                        <tbody>
+                        {% for key, statistic in generalStatistics %}
+                            <tr>
+                                <td>{{ key }}</td>
+                                <td>{{ statistic }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="widget-box">
+                <div class="widget-title">
+                        <span class="icon">
+                            <i class="fa fa-bar-chart-o"></i>
+                        </span>
+                    <h5>Spent hours vs hours spent since user was created</h5>
+                </div>
+                <div class="widget-content">
+                    <div class="chart" style="padding: 0px; position: relative;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+    <script src="http://www.flotcharts.org/flot/jquery.flot.time.js"></script>
+    <script type="text/javascript">
+        var plot = $.plot($(".chart"),
+            [ { data: [{% for key, value in hoursCharts %}["{{ key }}", {{ value['hours'] }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "useful hours", color: "#4fabd2"}
+                , { data: [{% for key, value in hoursCharts %}["{{ key }}", {{ value['hours_spent'] }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "spent hours", color: "#459D1C"}], {
+                series: {
+                    lines: { show: true },
+                    points: { show: false }
+                },
+                grid: { hoverable: true, clickable: true, borderColor: "#eeeeee", borderWidth: 1, color: "#AAAAAA" },
+                xaxis: {
+                    mode: "time",
+                    timeformat: "%Y/%m/%d",
+                    minTickSize: [1, "day"],
+                    tickLength: 10
+                }
+            });
+    </script>
 {% endblock %}

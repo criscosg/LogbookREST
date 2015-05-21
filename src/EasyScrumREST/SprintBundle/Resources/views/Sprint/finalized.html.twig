@@ -69,60 +69,62 @@
         </div>
     </div>
     <div class="row">
-            <div class="col-xs-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon">
-                            <i class="fa fa-bar-chart-o"></i>
-                        </span>
-                        <h5>Progression line</h5>
-                    </div>
-                    <div class="widget-content">
-                        <div class="chart" style="padding: 0px; position: relative;">
-                        
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <div class="row">
-        <div class="col-sm-12">    
-            <div class="widget-box hidden-xs">
+        <div class="col-xs-12">
+            <div class="widget-box">
                 <div class="widget-title">
                     <span class="icon">
-                        <i class="fa fa-align-justify"></i>
+                        <i class="fa fa-bar-chart-o"></i>
                     </span>
-                    <h5>{{ "Charts"|trans }}</h5>
-                    <ul class="nav nav-tabs pull-right steps-charts">
-                        <li class="active" data-target="#bars-general-container">
-                            <a data-toggle="tab" href="#inbox-tab">
-                                <span class="text">Whole team</span>
-                            </a>
-                        </li>
-                        {% for key in charts|keys %}
-                            <li data-target="#bars-user-container-{{ key }}">
-                                <a data-toggle="tab" href="#inbox-tab">
-                                    <span class="text"> {{ users[key].name ~ " " ~ users[key].lastName }}</span>
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                    <h5>Progression line</h5>
                 </div>
-                <div class="widget-content nopadding" id="sprint-charts">
-                    <div class="row" id="bars-general-container">
-                        <h5 class="col-md-12">All team focus factor</h5>
-                        <div class="bars col-md-12" id="bars-general" style="padding: 0px; position: relative;"></div>
+                <div class="widget-content">
+                    <div class="chart" style="padding: 0px; position: relative;">
+
                     </div>
-                    {% for key in charts|keys %}
-                        <div class="row hidden-charts" id="bars-user-container-{{ key }}">
-                            <h5 class="col-md-12">{{ users[key].name ~ " " ~ users[key].lastName }}</h5>
-                            <div class="bars col-md-12" id="bars-user-{{ key }}" style="padding: 0px; position: relative;"></div>
-                        </div>
-                    {% endfor %}   
                 </div>
             </div>
         </div>
     </div>
+    {% if is_granted('ROLE_SCRUM_MASTER') %}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="widget-box hidden-xs">
+                    <div class="widget-title">
+                        <span class="icon">
+                            <i class="fa fa-align-justify"></i>
+                        </span>
+                        <h5>{{ "Charts"|trans }}</h5>
+                        <ul class="nav nav-tabs pull-right steps-charts">
+                            <li class="active" data-target="#bars-general-container">
+                                <a data-toggle="tab" href="#inbox-tab">
+                                    <span class="text">Whole team</span>
+                                </a>
+                            </li>
+                            {% for key in charts|keys %}
+                                <li data-target="#bars-user-container-{{ key }}">
+                                    <a data-toggle="tab" href="#inbox-tab">
+                                        <span class="text"> {{ users[key].name ~ " " ~ users[key].lastName }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="widget-content nopadding" id="sprint-charts">
+                        <div class="row" id="bars-general-container">
+                            <h5 class="col-md-12">All team focus factor</h5>
+                            <div class="bars col-md-12" id="bars-general" style="padding: 0px; position: relative;"></div>
+                        </div>
+                        {% for key in charts|keys %}
+                            <div class="row hidden-charts" id="bars-user-container-{{ key }}">
+                                <h5 class="col-md-12">{{ users[key].name ~ " " ~ users[key].lastName }}</h5>
+                                <div class="bars col-md-12" id="bars-user-{{ key }}" style="padding: 0px; position: relative;"></div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
     {% if sprint.tasks | length > 0 %}
         <div class="row">
             <div class="col-sm-12">
@@ -323,41 +325,42 @@
     			minTickSize: [1, "day"],
     			tickLength: 10
     		}
-		}); 
+		});
+        {% if is_granted('ROLE_SCRUM_MASTER') %}
+            var data = [{% for subkey, value in generalChart %}["{{ subkey }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}];
 
-    	var data = [{% for subkey, value in generalChart %}["{{ subkey }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}];
+            $.plot("#bars-general", [data], {
+                series: {
+                    bars: {
+                        show: true,
+                        barWidth: 0.5,
+                        align: "center"
+                    }
+                },
+                xaxis: {
+                    mode: "categories",
+                    tickLength: 10
+                }
+            });
 
-    	$.plot("#bars-general", [data], {
-    		series: {
-    			bars: {
-    				show: true,
-    				barWidth: 0.5,
-    				align: "center"
-    			}
-    		},
-    		xaxis: {
-    			mode: "categories",
-    			tickLength: 10
-    		}
-    	});
+            {% for key, chart in charts %}
+                var data = [{% for subkey, value in chart %}["{{ subkey }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}];
 
-    	{% for key, chart in charts %}
-            var data = [{% for subkey, value in chart %}["{{ subkey }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}];
-
-        	$.plot("#bars-user-{{ key }}", [data], {
-        		series: {
-        			bars: {
-        				show: true,
-        				barWidth: 0.5,
-        				align: "center"
-        			}
-        		},
-        		xaxis: {
-        			mode: "categories",
-        			tickLength: 10
-        		}
-        	});
-    	{% endfor %}
+                $.plot("#bars-user-{{ key }}", [data], {
+                    series: {
+                        bars: {
+                            show: true,
+                            barWidth: 0.5,
+                            align: "center"
+                        }
+                    },
+                    xaxis: {
+                        mode: "categories",
+                        tickLength: 10
+                    }
+                });
+            {% endfor %}
+        {% endif %}
 
     	$.each($('.hidden-charts'), function(index, value){
             $(value).hide();

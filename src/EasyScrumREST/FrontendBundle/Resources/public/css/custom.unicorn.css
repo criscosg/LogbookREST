@@ -338,6 +338,15 @@ i.icon-caret-right{
     text-align: center;
 }
 
+.story-planning {
+    color: #4672e0;
+    float: left;
+    margin-right: 10px;
+    overflow: hidden;
+    padding-top: 10px;
+    text-align: center;
+}
+
 .backlog-tasks-view {
     margin: 0;
     padding: 0;
@@ -396,4 +405,16 @@ i.icon-caret-right{
 .icon .label {
     float: none !important;
     margin: 0 !important;
+}
+
+.user-attributes {
+    margin-bottom: 27px;
+    margin-left: 40px;
+    margin-top: 28px;
+    list-style-type: none;
+}
+
+.user-attributes li {
+    font-size: 15px;
+    margin-top: 15px;
 }

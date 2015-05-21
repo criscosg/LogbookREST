@@ -1,7 +1,6 @@
 <?php
 
 namespace EasyScrumREST\SprintBundle\Stadistics;
-use EasyScrumREST\UserBundle\Entity\ApiUser;
 use EasyScrumREST\SprintBundle\Entity\Sprint;
 use EasyScrumREST\UserBundle\Handler\UserHandlerInterface;
 use Doctrine\ORM\EntityManager;
@@ -25,7 +24,6 @@ class FocusFactorMembers
         $focusChart = array();
         $chartData = array();
         while ($date <= $to) {
-            $day=$date->format('l');
             foreach ($sprint->getTasks() as $task) {
                 $hours=$this->em->getRepository('TaskBundle:HoursSpent')->getHoursSpentByUser($task, $date);
                 $cont = 0;
@@ -54,7 +52,6 @@ class FocusFactorMembers
         }
 
         while ($from <= $to) {
-            $day=$from->format('l');
             foreach ($focusChart as $key => $userChart){
                 if(isset($userChart[$from->format('d/m')])){
                     $totalFocus=0;
@@ -87,7 +84,7 @@ class FocusFactorMembers
         foreach ($sprints as $sprint) {
             foreach ($sprint->getTasks() as $task) {
                 $cont = 0;
-                $hours = $task->getListHours();
+                $hours = $task->getListHours()->toArray();
                 foreach ($hours as $hour) {
                     if(!array_key_exists($hour->getUser()->__toString(), $focusChart)) {
                         $focusChart[$hour->getUser()->__toString()]['hours'] = 0;

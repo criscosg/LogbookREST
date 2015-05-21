@@ -12,6 +12,8 @@ use JMS\Serializer\Annotation\MaxDepth;
 use JMS\Serializer\Annotation\Type;
 
 /**
+ * This entity refers to a user story in a project
+ *
  * @ORM\Entity(repositoryClass="BacklogRepository")
  * @ExclusionPolicy("all")
  * @ORM\HasLifecycleCallbacks()
@@ -96,6 +98,12 @@ class Backlog
      * @ORM\OneToMany(targetEntity="EasyScrumREST\ActionBundle\Entity\ActionBacklog", mappedBy="backlog", cascade={"persist", "remove"})
      */
     private $actions;
+
+    /**
+     * @ORM\Column(type="integer", length=50, nullable=true)
+     * @Expose
+     */
+    protected $points;
 
     public function __construct()
     {
@@ -234,6 +242,22 @@ class Backlog
     public function setActions(ArrayCollection $actions)
     {
         $this->actions = $actions;
+    }
+
+    /**
+     * @param mixed $points
+     */
+    public function setPoints($points)
+    {
+        $this->points = $points;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPoints()
+    {
+        return $this->points;
     }
 
 }

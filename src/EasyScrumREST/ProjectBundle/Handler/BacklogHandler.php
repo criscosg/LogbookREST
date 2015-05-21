@@ -5,13 +5,10 @@ namespace EasyScrumREST\ProjectBundle\Handler;
 use EasyScrumREST\ProjectBundle\Entity\Issue;
 use EasyScrumREST\ProjectBundle\Entity\Backlog;
 use Symfony\Component\Form\FormInterface;
-use EasyScrumREST\ProjectBundle\Form\ProjectType;
 use Doctrine\ORM\EntityManager;
-use EasyScrumREST\UserBundle\Entity\AdminUser;
 use Symfony\Component\Form\FormFactoryInterface;
-use EasyScrumREST\UserBundle\Form\AdminUserType;
-use Symfony\Component\BrowserKit\Request;
 use EasyScrumREST\ProjectBundle\Form\BacklogRestType;
+use Symfony\Component\HttpFoundation\Request;
 
 class BacklogHandler
 {
@@ -142,6 +139,26 @@ class BacklogHandler
         }
     
         throw new \Exception('Invalid submitted data');
+    }
+
+    /**
+     * @param Backlog $entity
+     *
+     */
+    public function setStoryPoints(Request $request, Backlog $entity)
+    {
+        if($request->isMethod("POST")) {
+            if($request->request->get('points')) {
+                $entity->setPoints($request->request->get('points'));
+
+                $this->em->persist($entity);
+                $this->em->flush($entity);
+
+                return true;
+            }
+        }
+
+        return false;
     }
     
     /**

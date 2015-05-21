@@ -53,7 +53,10 @@ class UserNormalController extends EasyScrumController
      */
     public function apiUserShowAction($user)
     {
-        return $this->render('UserBundle:ApiUser:view.html.twig', array('api_user' => $user));
+        $generalStatistics = $this->get('user.statistics')->getGeneralStatistics($user);
+        $hoursCharts = $this->get('user.statistics')->hoursSpentCharts($user);
+
+        return $this->render('UserBundle:ApiUser:view.html.twig', array('api_user' => $user, 'generalStatistics'=>$generalStatistics, 'hoursCharts'=>$hoursCharts));
     }
     
     public function newApiUserAction()

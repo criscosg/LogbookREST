@@ -86,6 +86,7 @@ class TaskRepository extends EntityRepository
         $qb->join('t.sprint', 's');
         $qb->andWhere($qb->expr()->like('t.state', '\''."DONE".'\''));
         $qb->andWhere($qb->expr()->eq('s.company', $search->getCompany()));
+        $qb->andWhere($qb->expr()->eq('s.finalized', true));
         if ($search->getFrom()) {
             $qb->andWhere($qb->expr()->gte('s.dateFrom', '\''.$search->getFrom()->format('Y-m-d').'\''));
         }
@@ -95,6 +96,19 @@ class TaskRepository extends EntityRepository
         if ($search->getProject()) {
             $qb->andWhere($qb->expr()->eq('s.project', $search->getProject()->getId()));
         }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findTasksDoneByUser($user)
+    {
+        $qb = $this->createQueryBuilder('t');
+        $qb->select('t');
+        $qb->join('t.sprint', 's');
+        $qb->join('t.listHours', 'h', Query\Expr\Join::WITH, "h.user = ".$user->getId());
+        $qb->andWhere($qb->expr()->like('t.state', '\''."DONE".'\''));
+        $qb->andWhere($qb->expr()->eq('s.company', $user->getCompany()->getId()));
+        $qb->andWhere($qb->expr()->eq('s.finalized', true));
 
         return $qb->getQuery()->getResult();
     }

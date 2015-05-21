@@ -44,4 +44,12 @@ edit_issue:
     
 finalize_issue:
     pattern: /issue/finalize/{id}
-    defaults: { _controller: ProjectBundle:Project:finalizeIssue }    
+    defaults: { _controller: ProjectBundle:Project:finalizeIssue }
+
+planning_poker:
+    pattern: /planning-poker/{id}
+    defaults: { _controller: ProjectBundle:Project:planningPoker }
+
+set_story_points:
+    pattern: /set-story-points/{id}
+    defaults: { _controller: ProjectBundle:Project:setPointsStory }

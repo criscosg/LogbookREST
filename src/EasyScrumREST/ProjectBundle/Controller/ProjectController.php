@@ -73,7 +73,7 @@ class ProjectController extends EasyScrumController
     /**
      * @ParamConverter("project", class="ProjectBundle:Project")
      */
-    public function editProjectAction(Project $project)
+    public function editProjectAction(Request $request, Project $project)
     {
         if($this->container->get('security.context')->isGranted('ROLE_SCRUM_MASTER')){
             $type = new ProjectWithOwnerType();
@@ -84,7 +84,6 @@ class ProjectController extends EasyScrumController
         } else {
             return $this->redirect($this->generateUrl('projects_list'));
         }
-        $request=$this->getRequest();
         if($request->getMethod()=='POST'){
             $newProject = $this->get('project.handler')->createProject($form, $request);
             if($newProject) {
@@ -105,6 +104,30 @@ class ProjectController extends EasyScrumController
         $this->get('project.handler')->delete($project);
 
         return $this->redirect($this->generateUrl('projects_list'));
+    }
+
+    /**
+     * @ParamConverter("project", class="ProjectBundle:Project")
+     */
+    public function planningPokerAction(Project $project)
+    {
+        $userStories = $this->getDoctrine()->getRepository('ProjectBundle:Backlog')->findBy(array('project'=>$project->getId(),
+            'state'=>'TODO'), array('priority'=>'DESC'));
+
+        return $this->render('ProjectBundle:Backlog:planning-poker.html.twig', array('project' => $project, 'stories'=>$userStories));
+    }
+
+    /**
+     * @ParamConverter("story", class="ProjectBundle:Backlog")
+     */
+    public function setPointsStoryAction(Request $request, Backlog $story)
+    {
+        $jsonResponse = json_encode(array('ok' => false));
+        if ($request->isXmlHttpRequest() && $this->get('backlog.handler')->setStoryPoints($request, $story)) {
+            $jsonResponse = json_encode(array('ok' => true, 'points'=>$story->getPoints()));
+        }
+
+        return $this->getHttpJsonResponse($jsonResponse);
     }
 
     /**
@@ -136,9 +159,9 @@ class ProjectController extends EasyScrumController
         $form = $this->createForm(new BacklogType(), $backlog);
         $request=$this->getRequest();
         if($request->getMethod()=='POST'){
-            $newProject = $this->get('backlog.handler')->createBacklog($form, $request);
-            if($newProject) {
-                $this->get('action.manager')->createBacklogAction($newBacklog, $this->getUser(), ActionBacklog::EDIT_BACKLOG);
+            $newBacklog = $this->get('backlog.handler')->createBacklog($form, $request);
+            if($newBacklog) {
+                $this->get('action.manager')->createBacklogAction($backlog, $this->getUser(), ActionBacklog::EDIT_BACKLOG);
     
                 return $this->redirect($this->generateUrl('show_normal_project', array('id'=>$backlog->getProject()->getId())));
             }

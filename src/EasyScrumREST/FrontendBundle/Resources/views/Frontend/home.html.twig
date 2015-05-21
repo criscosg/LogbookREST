@@ -89,7 +89,7 @@
             </div>
         </div>
     {% endif %}
-    {% for sprint in sprints if not is_granted('ROLE_PRODUCT_OWNER') or ( sprint.project.owner is not empty and is_granted('ROLE_PRODUCT_OWNER') and app.user.isEqualTo(sprint.project.owner)) %}
+    {% for sprint in sprints if sprint.userCanSeeProject(app.user) %}
         <div class="col-xs-12">
         	<div class="widget-box">
         		<div class="widget-title">
@@ -139,7 +139,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
     	{% if app.user.notification %}
-        	{% for sprint in sprints %}
+        	{% for sprint in sprints if sprint.userCanSeeProject(app.user) %}
         	    {% for key, notification in sprint.getSprintNotifications %}
                 	$.gritter.add({
                 		title:	'{{ key }}',
@@ -165,7 +165,7 @@
         	{% endif %}	
     	});
         
-    	{% for sprint in sprints %}
+    	{% for sprint in sprints if sprint.userCanSeeProject(app.user) %}
     	    {% set chartHours = sprint.getChartHoursArray() %}
             var plot = $.plot($("#chart-{{ sprint.id }}"),
         		[ { data: [{% for key, value in sprint.getChartArray() %}["{{ key }}", {{ value }}]{% if not loop.last %},{% endif %}{% endfor %}], label: "Normal progression", color: "#4fabd2"}

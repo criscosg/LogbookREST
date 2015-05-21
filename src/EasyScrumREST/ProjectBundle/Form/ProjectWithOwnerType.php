@@ -20,7 +20,7 @@ class ProjectWithOwnerType extends ProjectType
                                                     return $er->createQueryBuilder('u')
                                                             ->add('select', 'u')
                                                             ->add('from', 'UserBundle:ApiUser u')
-                                                            ->add('where', "u.roles = 'ROLE_PRODUCT_OWNER' AND u.company=:company")
+                                                            ->add('where', "u.role = 'ROLE_PRODUCT_OWNER' AND u.company=:company")
                                                             ->setParameter('company', $company);
                                                     }, 'required'=>false, 'empty_value'=>'Choose a owner for the product'));
     }

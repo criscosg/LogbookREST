@@ -1,0 +1,94 @@
+{% extends "FrontendBundle:Layouts:2column.html.twig" %}
+{%  set edit = "Edit task for product backlog"|trans %}
+{%  set create = "Create new task for product backlog"|trans %}
+
+{% block title_section %}
+    {{ project.title ~ " set users stories points" | trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% set crumbs = {'Projects': path('projects_list'), 'project': path('show_normal_project', {id:project.id}),"set story hours":''} %}
+    {{ setCrumbs(crumbs) }}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {% if project.backlogs | length > 0 %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="fa fa-file"></i></span><h5>Set story hours</h5></div>
+                    <div class="widget-content nopadding">
+                            {% for story in stories %}
+                                <div class="row" id="{{ story.id }}">
+                                    <div class="story-planning col-sm-1">
+                                        <h2>{{ story.priority }}</h2>
+                                    </div>
+                                    <div class="col-sm-7">
+                                        <span class="user-info"> {{ story.updated | date }}</span>
+                                        <h4>{{ story.title }}</h4>
+                                        <p>
+                                            {{ story.description }}
+                                        </p>
+                                    </div>
+
+                                    <div class="story-points col-sm-3">
+                                        <form class="set-story-points form-inline" id="" action="{{ path('set_story_points', {'id': story.id}) }}">
+                                            <div class="form-group" style="margin-top: 20px;">
+                                                <input id="points" name="points" required="required" type="number" class="form-control" style="width: 70%;" value="{{ story.points }}" placeholder="{{ "story points" }}">
+                                                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i></button>
+                                                <i class="fa result" style="display: none;"></i>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt">
+            <strong>{{"Información!" | trans }}</strong>
+            {{"No users stories created" | trans }}
+        </div>
+    {% endif %}
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+           $('.set-story-points').submit(function(e){
+               e.preventDefault();
+               var fd = new FormData(this);
+               var frm = $(this);
+               $.ajax({
+                   url: $(frm).attr('action'),
+                   method: 'post',
+                   processData: false,  // tell jQuery not to process the data
+                   contentType: false,
+                   data: fd
+               }).done(function(response) {
+                   var result = frm.find('.result');
+                    if(response.ok) {
+                        $(result).removeClass("fa-times");
+                        $(result).addClass("fa-check");
+                        $(result).fadeIn( 2000, function() {
+                            $(result).fadeOut(2000);
+                        });
+                    } else {
+                        $(result).removeClass("fa-check");
+                        $(result).addClass("fa-times");
+                        $(result).fadeIn( 2000, function() {
+                            $(result).fadeOut(2000);
+                        });
+                    }
+
+               });
+           })
+        });
+    </script>
+{% endblock %}

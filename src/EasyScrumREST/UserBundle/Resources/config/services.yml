@@ -9,6 +9,7 @@ parameters:
     password.handler.class: EasyScrumREST\UserBundle\Handler\PasswordHandler
     user.send_email.class: EasyScrumREST\UserBundle\EventListener\SendEmailListener
     team_group.handler.class: EasyScrumREST\UserBundle\Handler\TeamGroupHandler
+    user.statistics.class: EasyScrumREST\UserBundle\Statistics\UserStatistics
 
 services:
     user.handler:
@@ -49,4 +50,7 @@ services:
     team_group.handler:
         class: %team_group.handler.class%
         arguments: [@doctrine.orm.entity_manager, @form.factory]
+    user.statistics:
+        class: %user.statistics.class%
+        arguments: [@doctrine.orm.entity_manager]
         
