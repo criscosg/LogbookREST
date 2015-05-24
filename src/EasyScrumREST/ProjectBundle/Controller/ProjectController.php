@@ -37,6 +37,10 @@ class ProjectController extends EasyScrumController
      */
     public function projectShowAction(Project $project)
     {
+        /*foreach ($project->getBacklogs() as $backlog) {
+            ld(($backlog->getPoints() - $backlog->storyPointsLeft()) / $backlog->getPoints());
+        }
+        ldd(1);*/
         return $this->render('ProjectBundle:Project:view.html.twig', array('project' => $project));
     }
 
@@ -244,5 +248,16 @@ class ProjectController extends EasyScrumController
         $this->container->get('backlog.handler')->finalizeIssue($issue);
         
         return array('task'=> $issue, 'issue'=>true);
+    }
+    
+    
+    /**
+     * @ParamConverter("story", class="ProjectBundle:Backlog")
+     */
+    public function getPointsStoryAction(Request $request, Backlog $story)
+    {
+        $jsonResponse = json_encode(array('story' => $story->getId(), 'points'=>$story->storyPointsLeft()));
+
+        return $this->getHttpJsonResponse($jsonResponse);
     }
 }

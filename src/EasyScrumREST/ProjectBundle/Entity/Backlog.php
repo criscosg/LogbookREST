@@ -100,15 +100,22 @@ class Backlog
     private $actions;
 
     /**
-     * @ORM\Column(type="integer", length=50, nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      * @Expose
      */
     protected $points;
+    
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="EasyScrumREST\TaskBundle\Entity\Task", mappedBy="story", cascade={"persist"})
+     */
+    private $tasks;
 
     public function __construct()
     {
         $this->issues = new \Doctrine\Common\Collections\ArrayCollection();
         $this->actions = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId()
@@ -260,4 +267,33 @@ class Backlog
         return $this->points;
     }
 
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
+    
+    public function setTasks(ArrayCollection $tasks)
+    {
+        $this->tasks = $tasks;
+    }
+    
+    public function storyPointsLeft()
+    {
+        $points= $this->points;
+        foreach ($this->tasks as $task) {
+            $points -= $task->getCompletedPoints();
+        }
+
+        return $points;
+    }
+    
+    public function storyPointsCompleted()
+    {
+        $points= 0;
+        foreach ($this->tasks as $task) {
+            $points += $task->getCompletedPoints();
+        }
+    
+        return $points;
+    }
 }

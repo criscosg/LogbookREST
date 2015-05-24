@@ -307,6 +307,36 @@ class Project
 
         return $elements->count();
     }
+    
+    public function getStoryPointsLeft()
+    {
+        $left = 0;
+        foreach($this->backlogs as $story) {
+            $left += $story->storyPointsLeft();
+        }
+        
+        return $left;
+    }
+
+    public function getStoryPointsCompleted()
+    {
+        $completed = 0;
+        foreach($this->backlogs as $story) {
+            $completed += $story->storyPointsCompleted();
+        }
+    
+        return $completed;
+    }
+
+    public function getStoryPoints()
+    {
+        $total = 0;
+        foreach($this->backlogs as $story) {
+            $total += $story->getPoints();
+        }
+
+        return $total;
+    }
 
     /**
      * @VirtualProperty

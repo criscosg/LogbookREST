@@ -66,6 +66,20 @@
                         {{ form_widget(form.hours, { 'attr': { 'class': 'form-control'} }) }}
                     </div>
                 </div>
+                
+                <div class="form-group">
+                    <label id="task_story_label" for="task_story" class="col-sm-3 control-label user-active">{{ "User story" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.story, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
+                
+                <div class="form-group" id="points" style="display:none;">
+                    <label id="label_hours" for="task_points" class="col-sm-3 control-label user-active">{{ "Story points" |trans}}</label>
+                    <div class="col-sm-4">
+                        {{ form_widget(form.points, { 'attr': { 'class': 'form-control'} }) }}
+                    </div>
+                </div>
 
                 {{ form_rest(form) }}
                 <div class="form-actions">
@@ -86,4 +100,38 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('bundles/frontend/js/jquery.validate.js') }}"></script>
+    <script type="text/javascript">
+    
+        $(document).ready(function(){
+        	var validator;
+            $("#task_story").change(function(e){
+                if($(this).val() !=  "") {
+                    var url = "{{ path('get_story_points') }}/"+$(this).val();
+                    $.get(url, function(result){
+                    	if (typeof result.points !== "undefined") {
+                    		$("#points").show();
+                        	validator = $('#form-create-item').validate({
+                                rules: {
+                                	'task[points]': {
+                                        digits: true,
+                                        max: result.points
+                                    }
+                                },
+                                errorElement: 'span',
+                                messages: {
+                                    'task[points]': '{{"Must be a number not over story points defined: "|trans}}' + result.points
+                                }
+                            });
+                    	}
+                    });
+                } else {
+                	$("#points").val("");
+                	$("#points").hide();
+                	validator = null;
+                }
+            });
+        });
+        
+</script>
 {% endblock %}

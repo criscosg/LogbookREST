@@ -44,8 +44,8 @@
         			<div class="row">
         				<div class="col-xs-12 project-index">
         				    <div class="knob-wrap">
-        				        {% if project.backlogs.count > 0 %}
-                                    {% set percentaje = ((project.getFinishedBacklogTasks|length) /project.backlogs.count) *100 %}
+        				        {% if project.getStoryPoints > 0 and project.getStoryPointsCompleted > 0 %}
+                                    {% set percentaje = ((project.getStoryPointsCompleted|length) /project.getStoryPoints) *100 %}
                                 {% else %}
                                      {% set percentaje = 0 %}
                                 {% endif %}

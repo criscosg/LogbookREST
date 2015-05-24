@@ -26,7 +26,7 @@ class SprintLastStepType extends AbstractType
                             ->add('from', 'UserBundle:TeamGroup t')
                             ->add('where', "t.company =:company")
                             ->setParameter('company', $company);
-                    }, 'required'=>true, 'empty_value'=>'Visible by all team members'));
+                    }, 'required'=>false, 'empty_value'=>'Visible by all team members'));
     }
 
     public function getName()

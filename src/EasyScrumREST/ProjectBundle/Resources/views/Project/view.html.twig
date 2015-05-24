@@ -97,6 +97,9 @@
         									<a title="Delete" href="{{ path('delete_backlog', { 'id': task.id }) }}" class="btn btn-danger btn-xs">Delete</a>
     								    {% endif %}
     								</div>
+    								<div class="progress" style="margin: 10px;">
+                                        <div class="progress-bar progress-bar-info" style="width: {{ (((task.points - task.storyPointsLeft) / task.points) | round(2)) * 100 }}%;"></div>
+                                    </div>
     							</li>
 							{% endfor %}
 							{% for task in project.backlogs %}

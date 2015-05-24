@@ -53,3 +53,7 @@ planning_poker:
 set_story_points:
     pattern: /set-story-points/{id}
     defaults: { _controller: ProjectBundle:Project:setPointsStory }
+    
+get_story_points:
+    pattern: /get-story-points/{id}
+    defaults: { _controller: ProjectBundle:Project:getPointsStory, id:null }    

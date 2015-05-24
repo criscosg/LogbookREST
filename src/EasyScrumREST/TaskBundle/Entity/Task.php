@@ -109,6 +109,17 @@ class Task
      * @ORM\ManyToOne(targetEntity="EasyScrumREST\UserBundle\Entity\ApiUser", inversedBy="tasks")
      */
     private $user;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="EasyScrumREST\ProjectBundle\Entity\Backlog", inversedBy="tasks")
+     */
+    private $story;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Expose
+     */
+    protected $points;
 
     public function __construct()
     {
@@ -235,7 +246,7 @@ class Task
             return $this->getListHours()->last()->getHoursEnd();
         }
 
-        return null;
+        return $this->hours;
     }
 
     public function getState()
@@ -349,4 +360,43 @@ class Task
         $this->actions = $actions;
     }
 
+    public function getStory()
+    {
+        return $this->story;
+    }
+
+    public function setStory($story)
+    {
+        $this->story = $story;
+    }
+
+    /**
+     * @param mixed $points
+     */
+    public function setPoints($points)
+    {
+        $this->points = $points;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPoints()
+    {
+        return $this->points;
+    }
+    
+    public function getLeftPoints()
+    {
+        if($this->state === self::DONE){
+            return 0;
+        } else {
+            return $this->points * ($this->getHoursEnd()/$this->getHours());
+        }
+    }
+    
+    public function getCompletedPoints()
+    {
+        return $this->points - $this->getLeftPoints();
+    }
 }
