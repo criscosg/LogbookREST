@@ -337,6 +337,14 @@ class Project
 
         return $total;
     }
+    
+    public function getCompletedPercentaje()
+    {
+        if($this->getStoryPoints() > 0 && $this->getStoryPointsCompleted() > 0)
+            return ($this->getStoryPointsCompleted() /$this->getStoryPoints()) *100;
+        else
+            return 0;
+    }
 
     /**
      * @VirtualProperty

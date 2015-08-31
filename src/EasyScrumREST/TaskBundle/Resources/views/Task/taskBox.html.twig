@@ -41,7 +41,7 @@
             <div class="bottom">
                 <div class="hours-task">
                     <p class="spent-end">
-                        {% if task.hoursSpent is not empty and task.hoursEnd is not empty %}
+                        {% if task.hoursSpent is not empty and task.hoursSpent > 0 and task.hoursEnd is not empty %}
                             {{ task.hoursSpent ~ "/" ~ task.hoursEnd }}
                         {% endif %}
                     </p>

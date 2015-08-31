@@ -17,12 +17,23 @@
                 <input type="checkbox" id="remember_me" name="_remember_me" checked="checked">
                     {{ "Remember me" | trans }}
           </div>
-          <div class="pull-right">
-              <a href="{{ path('recover_password') }}" class="flip-link to-recover grey">{{"Recuperar contraseña" | trans}} &raquo;</a>
-          </div>        
+          <div class="row">
+          <div class="col-md-12">
+              <div class="pull-right">
+                  <a href="{{ path('recover_password') }}" class="flip-link to-recover grey">{{"Recover password" | trans}} &raquo;</a>
+              </div>
+          </div>
+          </div>    
           <div class="form-actions clearfix">
-                <input type="submit" class="btn btn-block btn-primary btn-default" value="{{"Acceder" | trans}}" />
-            </div>
+              <div class="row">
+                  <div class="col-md-6">
+                      <input type="submit" class="btn btn-block btn-primary btn-default" value="{{"Access" | trans}}" />
+                  </div>
+                  <div class="col-md-6">
+                      <a href="{{ path('register') }}" class="btn btn-block btn-default">{{"Register" | trans}}</a>
+                  </div>
+              </div>
+           </div>
       </form>
     </div>
 {% endblock %}
