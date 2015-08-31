@@ -337,7 +337,13 @@ class Project
 
         return $total;
     }
-    
+
+    /**
+     * @VirtualProperty
+     * @SerializedName("completedPercentaje")
+     *
+     * @return string
+     */
     public function getCompletedPercentaje()
     {
         if($this->getStoryPoints() > 0 && $this->getStoryPointsCompleted() > 0)
