@@ -5,8 +5,6 @@ parameters:
     database_name: easyscrum
     database_user: root
     database_password: null
-    database_user_prod: iventia_ins
-    database_password_prod: jewEtus9
     database_host_prod: dbins.local.iventiajobs.com
     mailer_transport: smtp
     mailer_host: 127.0.0.1
